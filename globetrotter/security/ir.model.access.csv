@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_globetrotter_trip_user,access.globetrotter.trip.user,model_globetrotter_trip,base.group_user,1,1,1,1
-access_globetrotter_trip_stop_user,access.globetrotter.trip.stop.user,model_globetrotter_trip_stop,base.group_user,1,1,1,1
-access_globetrotter_city_user,access.globetrotter.city.user,model_globetrotter_city,base.group_user,1,1,0,0
-access_globetrotter_activity_user,access.globetrotter.activity.user,model_globetrotter_activity,base.group_user,1,1,0,0
