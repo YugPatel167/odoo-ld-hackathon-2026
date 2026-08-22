@@ -84,62 +84,120 @@
 
 <main>
   <section class="section container reveal">
-    
-    <!-- Top 4 KPIs -->
-    <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 28px;">
-      <div class="card stat">
-        <div class="stat-value" style="color: var(--brass);">1,428</div>
-        <div class="stat-label">Registered Travelers</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value" style="color: var(--coral);">3,892</div>
-        <div class="stat-label">Total Itineraries Built</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value" style="color: var(--sage);">16</div>
-        <div class="stat-label">Global Destination Hubs</div>
-      </div>
-      <div class="card stat">
-        <div class="stat-value">$142.5K</div>
-        <div class="stat-label">Estimated Transit GMV</div>
-      </div>
-    </div>
-
-    <!-- Active Platform Trips Table -->
-    <div class="card" style="padding: 24px; margin-bottom: 28px;">
-      <h3 style="margin-bottom: 16px;">🌐 Live Public Trips Telemetry</h3>
+    <!-- Security Lock Screen Gate -->
+    <div id="admin-lock-screen" class="card" style="max-width: 440px; margin: 40px auto; padding: 32px; text-align: center; border: 2px solid var(--brass);">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
+      <h2 style="margin-bottom: 6px;">Admin Access Control</h2>
+      <p class="muted" style="font-size: 0.88rem; margin-bottom: 20px;">Enter Admin Passcode PIN to access platform analytics and operational controls.</p>
       
-      <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
-          <thead>
-            <tr style="border-bottom: 1px solid var(--line); color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase;">
-              <th style="padding: 12px 14px;">Trip Name</th>
-              <th style="padding: 12px 14px;">Travel Dates</th>
-              <th style="padding: 12px 14px;">Duration</th>
-              <th style="padding: 12px 14px;">Status</th>
-              <th style="padding: 12px 14px; text-align: right;">Action</th>
-            </tr>
-          </thead>
-          <tbody id="admin-trips-tbody">
-            <tr style="border-bottom: 1px solid var(--line);">
-              <td style="padding: 12px 14px;"><strong>Grand European Discovery</strong></td>
-              <td style="padding: 12px 14px;">2026-06-15 &rarr; 2026-06-25</td>
-              <td style="padding: 12px 14px;"><span class="pill-badge pill-duration">11 Days</span></td>
-              <td style="padding: 12px 14px;"><span class="pill-badge pill-destinations">Planning</span></td>
-              <td style="padding: 12px 14px; text-align: right;"><a href="itinerary-view.html" class="btn btn-ghost btn-sm">Inspect</a></td>
-            </tr>
-            <tr style="border-bottom: 1px solid var(--line);">
-              <td style="padding: 12px 14px;"><strong>Tokyo &amp; Kyoto Highlights</strong></td>
-              <td style="padding: 12px 14px;">2026-09-10 &rarr; 2026-09-22</td>
-              <td style="padding: 12px 14px;"><span class="pill-badge pill-duration">13 Days</span></td>
-              <td style="padding: 12px 14px;"><span class="pill-badge pill-budget">Confirmed</span></td>
-              <td style="padding: 12px 14px; text-align: right;"><a href="itinerary-view.html" class="btn btn-ghost btn-sm">Inspect</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <form onsubmit="event.preventDefault(); unlockAdminConsole();">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <input type="password" id="admin-pin-input" class="form-control" placeholder="Enter Admin Passcode" style="text-align: center; font-family: var(--font-mono); letter-spacing: 4px; font-size: 1.2rem;" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Unlock Control Panel</button>
+      </form>
     </div>
 
+    <!-- Admin Unlocked Dashboard Console -->
+    <div id="admin-dashboard-content" style="display: none;">
+      <!-- Security Status Bar -->
+      <div style="background: rgba(110,143,107,0.15); border: 1px solid var(--sage); padding: 12px 20px; border-radius: var(--radius-sm); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: var(--sage); font-weight: 600; font-size: 0.9rem;">🛡️ Authenticated as SuperAdmin &bull; Security Level 1 (Session Active)</span>
+        <button class="btn btn-ghost btn-sm" onclick="lockAdminConsole()">🔒 Lock Session</button>
+      </div>
+
+      <!-- Top 4 KPIs -->
+      <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 28px;">
+        <div class="card stat">
+          <div class="stat-value" style="color: var(--brass);" id="kpi-users">1,428</div>
+          <div class="stat-label">Registered Travelers</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-value" style="color: var(--coral);" id="kpi-trips">3,892</div>
+          <div class="stat-label">Total Itineraries Built</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-value" style="color: var(--sage);" id="kpi-views">1,126</div>
+          <div class="stat-label">Total Site Pageviews</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-value" id="kpi-messages">$142.5K</div>
+          <div class="stat-label">Contact Messages Received</div>
+        </div>
+      </div>
+
+      <!-- Analytics Charts Grid -->
+      <div class="grid-2" style="margin-bottom: 28px; align-items: start;">
+        <!-- Pageview Telemetry Bar Chart -->
+        <div class="card" style="padding: 24px;">
+          <h3 style="margin-bottom: 6px;">📈 Real-time Site Visits Analytics</h3>
+          <p class="muted" style="font-size: 0.82rem; margin-bottom: 18px;">Pageview telemetry recorded dynamically across site pages.</p>
+          <div id="chart-pageviews-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </div>
+
+        <!-- Destination Popularity Donut SVG Chart -->
+        <div class="card" style="padding: 24px;">
+          <h3 style="margin-bottom: 6px;">🥧 Destination Visitor Distribution</h3>
+          <p class="muted" style="font-size: 0.82rem; margin-bottom: 18px;">Breakdown of user interest across top global hubs.</p>
+          
+          <div style="display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 16px;">
+            <!-- SVG Donut Chart -->
+            <svg width="150" height="150" viewBox="0 0 42 42" class="donut">
+              <circle class="donut-hole" cx="21" cy="21" r="15.91549430918954" fill="var(--card)"></circle>
+              <circle class="donut-ring" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--parchment)" stroke-width="5"></circle>
+              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--brass)" stroke-width="5" stroke-dasharray="40 60" stroke-dashoffset="25"></circle>
+              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--coral)" stroke-width="5" stroke-dasharray="30 70" stroke-dashoffset="85"></circle>
+              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="var(--sage)" stroke-width="5" stroke-dasharray="30 70" stroke-dashoffset="55"></circle>
+            </svg>
+
+            <!-- Legend -->
+            <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px;">
+              <div><span style="display: inline-block; width: 10px; height: 10px; background: var(--brass); border-radius: 50%; margin-right: 6px;"></span> Paris &amp; Europe (40%)</div>
+              <div><span style="display: inline-block; width: 10px; height: 10px; background: var(--coral); border-radius: 50%; margin-right: 6px;"></span> Tokyo &amp; Japan (30%)</div>
+              <div><span style="display: inline-block; width: 10px; height: 10px; background: var(--sage); border-radius: 50%; margin-right: 6px;"></span> Americas &amp; Others (30%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Us Messages Inbox -->
+      <div class="card" style="padding: 24px; margin-bottom: 28px;">
+        <h3 style="margin-bottom: 16px;">📩 Contact Us Messages Inbox (hemilclg001@gmail.com)</h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--line); color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase;">
+                <th style="padding: 10px 14px;">Date</th>
+                <th style="padding: 10px 14px;">Sender</th>
+                <th style="padding: 10px 14px;">Email</th>
+                <th style="padding: 10px 14px;">Target Email</th>
+                <th style="padding: 10px 14px;">Message Content</th>
+              </tr>
+            </thead>
+            <tbody id="admin-messages-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Active Platform Trips Table -->
+      <div class="card" style="padding: 24px; margin-bottom: 28px;">
+        <h3 style="margin-bottom: 16px;">🌐 Live Public Trips Telemetry</h3>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--line); color: var(--ink-soft); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase;">
+                <th style="padding: 12px 14px;">Trip Name</th>
+                <th style="padding: 12px 14px;">Travel Dates</th>
+                <th style="padding: 12px 14px;">Duration</th>
+                <th style="padding: 12px 14px;">Status</th>
+                <th style="padding: 12px 14px; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-trips-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -166,6 +224,8 @@
 
 </div><!-- /.page -->
 
+<div class="toast" id="toast"></div>
+
 <button id="chatbot-launcher" aria-label="Open chat">💬</button>
 <div id="chatbot-panel">
   <div id="chatbot-head">
@@ -188,5 +248,121 @@
 <script src="js/nav.js"></script>
 <script src="js/cursor.js"></script>
 <script src="js/chatbot.js"></script>
+<script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function unlockAdminConsole() {
+  const pin = document.getElementById('admin-pin-input').value;
+  if (pin === '1234' || pin === 'admin') {
+    sessionStorage.setItem('globetrotter_admin_auth', 'true');
+    document.getElementById('admin-lock-screen').style.display = 'none';
+    document.getElementById('admin-dashboard-content').style.display = 'block';
+    loadAdminData();
+    showToast("🛡️ Admin console unlocked!");
+  } else {
+    showToast("❌ Invalid Security Passcode. Access Denied.");
+  }
+}
+
+function lockAdminConsole() {
+  sessionStorage.removeItem('globetrotter_admin_auth');
+  document.getElementById('admin-dashboard-content').style.display = 'none';
+  document.getElementById('admin-lock-screen').style.display = 'block';
+  document.getElementById('admin-pin-input').value = '';
+  showToast("🔒 Admin session locked.");
+}
+
+function loadAdminData() {
+  const trips = Api.trips();
+  const messages = Api.getMessages();
+  const analytics = Api.getAnalytics();
+
+  // KPIs
+  document.getElementById('kpi-trips').innerText = trips.length;
+  document.getElementById('kpi-messages').innerText = `${messages.length} Msgs`;
+
+  const viewsObj = analytics.pageViews || {};
+  const totalViews = Object.values(viewsObj).reduce((a, b) => a + b, 0);
+  document.getElementById('kpi-views').innerText = totalViews;
+
+  // Render Pageviews Bar Chart
+  renderPageviewChart(viewsObj, totalViews);
+
+  // Render Messages Inbox Table
+  const msgTbody = document.getElementById('admin-messages-tbody');
+  if (!messages || messages.length === 0) {
+    msgTbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding: 16px; text-align: center;">No contact messages received yet.</td></tr>';
+  } else {
+    msgTbody.innerHTML = messages.map(m => `
+      <tr style="border-bottom: 1px solid var(--line);">
+        <td style="padding: 10px 14px; font-family: var(--font-mono); font-size: 0.8rem;">${m.date}</td>
+        <td style="padding: 10px 14px;"><strong>${m.name}</strong></td>
+        <td style="padding: 10px 14px;">${m.email}</td>
+        <td style="padding: 10px 14px; font-weight: 600; color: var(--brass);">${m.targetEmail || 'hemilclg001@gmail.com'}</td>
+        <td style="padding: 10px 14px; color: var(--ink-soft);">${m.message}</td>
+      </tr>
+    `).join('');
+  }
+
+  // Render Trips Table
+  const tripsTbody = document.getElementById('admin-trips-tbody');
+  if (trips.length === 0) {
+    tripsTbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding: 16px; text-align: center;">No trips created yet.</td></tr>';
+  } else {
+    tripsTbody.innerHTML = trips.map(t => `
+      <tr style="border-bottom: 1px solid var(--line);">
+        <td style="padding: 12px 14px;"><strong>${t.name}</strong></td>
+        <td style="padding: 12px 14px;">${t.startDate} &rarr; ${t.endDate}</td>
+        <td style="padding: 12px 14px;"><span class="pill-badge pill-duration">${t.durationDays || 7} Days</span></td>
+        <td style="padding: 12px 14px;"><span class="pill-badge pill-destinations">${t.status || 'Planning'}</span></td>
+        <td style="padding: 12px 14px; text-align: right;"><a href="itinerary-view.html" class="btn btn-ghost btn-sm">Inspect</a></td>
+      </tr>
+    `).join('');
+  }
+}
+
+function renderPageviewChart(viewsObj, totalViews) {
+  const container = document.getElementById('chart-pageviews-container');
+  const pages = Object.keys(viewsObj);
+
+  if (pages.length === 0) {
+    container.innerHTML = '<p class="muted">No pageviews recorded yet.</p>';
+    return;
+  }
+
+  const maxVal = Math.max(...Object.values(viewsObj), 1);
+
+  container.innerHTML = pages.map(page => {
+    const val = viewsObj[page];
+    const pct = Math.round((val / maxVal) * 100);
+
+    return `
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+          <span>${page}</span>
+          <strong style="font-family: var(--font-mono);">${val} visits</strong>
+        </div>
+        <div style="height: 8px; background: var(--parchment); border-radius: 4px; overflow: hidden; border: 1px solid var(--line);">
+          <div style="width: ${pct}%; height: 100%; background: var(--brass); border-radius: 4px;"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('globetrotter_admin_auth') === 'true') {
+    document.getElementById('admin-lock-screen').style.display = 'none';
+    document.getElementById('admin-dashboard-content').style.display = 'block';
+    loadAdminData();
+  }
+});
+</script>
 </body>
 </html>

@@ -99,29 +99,34 @@
   <div class="container">
     <span class="eyebrow" style="color:#E8B979;">Get in touch</span>
     <h1>Questions, feedback, or partnership ideas?</h1>
-    <p style="color: rgba(246,241,227,0.75);">Send us a note — we read every message.</p>
+    <p style="color: rgba(246,241,227,0.75);">Send us a note — messages are delivered directly to <strong>h******001@gmail.com</strong>.</p>
   </div>
 </header>
 
 <main>
   <section class="section container reveal contact-wrap">
+    <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 18px 24px; margin-bottom: 20px; text-align: center;">
+      <span class="muted" style="font-size: 0.85rem; display: block; margin-bottom: 4px;">DIRECT RECIPIENT EMAIL ADDRESS:</span>
+      <span style="font-family: var(--font-mono); font-weight: 700; font-size: 1.15rem; color: var(--brass);">📧 h******001@gmail.com</span>
+    </div>
+
     <form id="contact-form" class="card" style="padding: 28px;" novalidate>
       <div class="field">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required>
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" placeholder="Hemil Patadiya" required>
         <div class="field-error" id="name-error">Please enter your name.</div>
       </div>
       <div class="field">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+        <label for="email">Your Email Address</label>
+        <input type="email" id="email" name="email" placeholder="yourname@domain.com" required>
         <div class="field-error" id="email-error">Please enter a valid email.</div>
       </div>
       <div class="field">
         <label for="message">Message</label>
-        <textarea id="message" name="message" required></textarea>
+        <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
         <div class="field-error" id="message-error">Please enter a message.</div>
       </div>
-      <button type="submit" class="btn btn-primary" id="contact-submit">Send message</button>
+      <button type="submit" class="btn btn-primary" id="contact-submit" style="width: 100%; justify-content: center;">Send Message to Support</button>
       <div class="form-status" id="form-status"></div>
     </form>
   </section>
@@ -200,22 +205,58 @@
     if (!validate()) return;
 
     submitBtn.disabled = true;
-    submitBtn.textContent = "Sending…";
+    submitBtn.textContent = "Sending Message…";
+    const nameVal = document.getElementById("name").value.trim();
+    const emailVal = document.getElementById("email").value.trim();
+    const messageVal = document.getElementById("message").value.trim();
+
     try {
+      // 1. Log to local storage & Admin Dashboard Inbox
       await Api.contactSubmit({
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        message: document.getElementById("message").value.trim(),
+        name: nameVal,
+        email: emailVal,
+        message: messageVal,
       });
-      status.textContent = "Thanks — we'll get back to you soon.";
+
+      // 2. FormSubmit AJAX Dispatch directly to hemilclg001@gmail.com
+      fetch("https://formsubmit.co/ajax/hemilclg001@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          name: nameVal,
+          email: emailVal,
+          _subject: `GlobeTrotter New Inquiry from ${nameVal}`,
+          message: messageVal
+        })
+      }).catch(err => console.log("FormSubmit dispatch info:", err));
+
+      // 3. Construct direct Mailto URL for mobile email client
+      const targetMail = "hemilclg001" + "@gmail.com";
+      const mailtoUrl = `mailto:${targetMail}?subject=${encodeURIComponent("GlobeTrotter Inquiry from " + nameVal)}&body=${encodeURIComponent("Sender Name: " + nameVal + "\nSender Email: " + emailVal + "\n\nMessage:\n" + messageVal)}`;
+
+      status.innerHTML = `
+        <div style="font-size: 0.95rem; line-height: 1.5; text-align: center; padding: 6px;">
+          🎯 <strong>You have sent the message successfully to h******001@gmail.com!</strong><br>
+          <span style="font-size: 0.85rem;" class="muted">Your message has been logged in Admin Console &amp; dispatched to support.</span>
+          <div style="margin-top: 10px;">
+            <a href="${mailtoUrl}" class="btn btn-primary btn-sm" style="padding: 6px 14px;" target="_blank">📱 Tap to Open Mobile Mail App to Send Instantly</a>
+          </div>
+        </div>
+      `;
       status.className = "form-status success";
       form.reset();
+
+      // Automatically launch mailto prompt after 1 second for phone users
+      setTimeout(() => {
+        window.location.href = mailtoUrl;
+      }, 1000);
+
     } catch (err) {
-      status.textContent = `Couldn't send your message (${err.message}). Try again in a moment.`;
+      status.textContent = `Couldn't send message (${err.message}). Try again in a moment.`;
       status.className = "form-status error";
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Send message";
+      submitBtn.textContent = "Send Message to Support";
     }
   });
 </script>

@@ -2,8 +2,8 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    username: process.env.DB_USER || 'globetrotter_user',
-    password: process.env.DB_PASSWORD || 'globetrotter_pass',
+    username: process.env.DB_USER !== undefined ? process.env.DB_USER : 'globetrotter_user',
+    password: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : 'globetrotter_pass',
     database: process.env.DB_NAME || 'globetrotter_dev',
     host: process.env.DB_HOST || '127.0.0.1',
     port: parseInt(process.env.DB_PORT || '3306', 10),

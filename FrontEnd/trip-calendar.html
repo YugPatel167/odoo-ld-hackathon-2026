@@ -92,16 +92,70 @@
 
 <main>
   <section class="section container reveal">
+    <!-- Countdown & Trip Header Banner -->
+    <div class="card" style="padding: 24px; margin-bottom: 24px; background: linear-gradient(135deg, rgba(232,185,121,0.08) 0%, rgba(110,143,107,0.08) 100%);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span class="pill-badge pill-duration" id="countdown-badge">⏳ Departure Countdown</span>
+          <h2 id="cal-trip-title" style="margin: 8px 0 4px; color: var(--ink);">Itinerary Schedule</h2>
+          <span id="cal-dates-subtitle" class="muted" style="font-size: 0.88rem;">Trip dates loading...</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <!-- Countdown Box -->
+          <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 18px; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; color: var(--brass);" id="countdown-timer">18d : 04h : 22m</div>
+            <span class="muted" style="font-size: 0.72rem; text-transform: uppercase;">Until Departure</span>
+          </div>
+
+          <button class="btn btn-primary btn-sm" onclick="openAddEventModal()">+ Add Event / Note</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Schedule Container -->
     <div class="card" style="padding: 28px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-        <h3 id="cal-trip-title" style="margin: 0;">Itinerary Schedule</h3>
+        <h3 style="margin: 0;">📅 Day-by-Day Schedule Timeline</h3>
         <div id="cal-kpis" class="badge-row"></div>
       </div>
 
-      <div id="days-timeline" style="display: flex; flex-direction: column; gap: 20px;"></div>
+      <div id="days-timeline" style="display: flex; flex-direction: column; gap: 24px;"></div>
     </div>
   </section>
 </main>
+
+<!-- Add Custom Event / Note Modal -->
+<div id="modal-add-event" class="modal-overlay" style="display: none; z-index: 9999;">
+  <div class="modal-box">
+    <h3 style="margin-bottom: 6px;">Add Event or Schedule Note</h3>
+    <p class="muted" style="font-size: 0.88rem; margin-bottom: 18px;">Attach a custom dinner reservation, flight, or activity note to your schedule:</p>
+
+    <div class="form-group" style="margin-bottom: 14px;">
+      <label for="evt-city-select">Destination Leg</label>
+      <select id="evt-city-select" class="form-control"></select>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 14px;">
+      <label for="evt-time-slot">Time Slot</label>
+      <select id="evt-time-slot" class="form-control">
+        <option value="Morning">🌅 Morning (09:00 - 12:00)</option>
+        <option value="Afternoon">☀️ Afternoon (13:00 - 17:00)</option>
+        <option value="Evening">🌙 Evening (18:00 - 22:00)</option>
+      </select>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 18px;">
+      <label for="evt-title">Event Title / Detail</label>
+      <input type="text" id="evt-title" class="form-control" placeholder="e.g. Dinner reservation at Le Bistro, Flight departure, etc." required>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="closeAddEventModal()">Cancel</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="confirmAddEvent()">Add to Schedule</button>
+    </div>
+  </div>
+</div>
 
 <footer class="footer">
   <div class="container">
@@ -126,6 +180,8 @@
 
 </div><!-- /.page -->
 
+<div class="toast" id="toast"></div>
+
 <button id="chatbot-launcher" aria-label="Open chat">💬</button>
 <div id="chatbot-panel">
   <div id="chatbot-head">
@@ -149,10 +205,14 @@
 <script src="js/cursor.js"></script>
 <script src="js/chatbot.js"></script>
 <script>
-function getTrips() {
-  const data = localStorage.getItem('globetrotter_trips');
-  if (!data) return [];
-  try { return JSON.parse(data); } catch(e) { return []; }
+let currentActiveTrip = null;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function calculateDays(start, end) {
@@ -161,8 +221,28 @@ function calculateDays(start, end) {
   return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1);
 }
 
+function updateCountdown(startDateStr) {
+  if (!startDateStr) return;
+  const target = new Date(startDateStr).getTime();
+  const now = new Date().getTime();
+  const diff = target - now;
+
+  if (diff <= 0) {
+    document.getElementById('countdown-badge').innerText = '🚀 Trip In Progress / Active';
+    document.getElementById('countdown-timer').innerText = 'NOW LIVE';
+    return;
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  document.getElementById('countdown-timer').innerText = `${days}d : ${hours}h : ${mins}m`;
+  document.getElementById('countdown-badge').innerText = `⏳ ${days} Days Until Departure`;
+}
+
 function initCalendar() {
-  const trips = getTrips();
+  const trips = Api.trips();
   const select = document.getElementById('calendar-trip-select');
   if (!trips || trips.length === 0) {
     select.innerHTML = '<option value="">No Trips Found</option>';
@@ -174,11 +254,16 @@ function initCalendar() {
 }
 
 function renderCalendarForTrip(tripId) {
-  const trips = getTrips();
+  const trips = Api.trips();
   const trip = trips.find(t => t.id === tripId) || trips[0];
   if (!trip) return;
+  currentActiveTrip = trip;
 
-  document.getElementById('cal-trip-title').innerText = `${trip.name} (${trip.startDate} &rarr; ${trip.endDate})`;
+  document.getElementById('cal-trip-title').innerText = trip.name;
+  document.getElementById('cal-dates-subtitle').innerText = `${trip.startDate} \u2192 ${trip.endDate}`;
+  
+  updateCountdown(trip.startDate);
+
   const daysCount = trip.durationDays || calculateDays(trip.startDate, trip.endDate);
   document.getElementById('cal-kpis').innerHTML = `
     <span class="pill-badge pill-duration">⏱️ ${daysCount} Days</span>
@@ -186,7 +271,7 @@ function renderCalendarForTrip(tripId) {
     <span class="pill-badge pill-budget">✈ ${trip.status || 'Planning'}</span>
   `;
 
-  const stops = trip.stops || [{ city: 'Paris', startDate: trip.startDate, endDate: trip.endDate, activities: ['Eiffel Tower Summit'] }];
+  const stops = trip.stops || [{ id: 'st_1', city: 'Paris', startDate: trip.startDate, endDate: trip.endDate, activities: ['Eiffel Tower Summit'] }];
   const timelineContainer = document.getElementById('days-timeline');
 
   let dayIndex = 1;
@@ -196,25 +281,48 @@ function renderCalendarForTrip(tripId) {
     const endDay = dayIndex + sDays - 1;
     dayIndex = endDay + 1;
 
+    const acts = stop.activities || [];
+    const customEvents = stop.customEvents || [];
+
     return `
     <div style="border-left: 3px solid var(--brass); padding-left: 20px; position: relative;">
       <div style="position: absolute; left: -8px; top: 0; width: 13px; height: 13px; border-radius: 50%; background: var(--brass); border: 2px solid var(--card);"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
         <h4 style="margin: 0; font-size: 1.15rem; color: var(--ink);">Days ${startDay}–${endDay} &bull; ${stop.city}</h4>
         <span class="pill-badge pill-destinations">${stop.startDate} &rarr; ${stop.endDate}</span>
       </div>
-      <p class="muted" style="font-size: 0.85rem; margin-bottom: 12px;">Primary base in ${stop.city} (${sDays} nights accommodation).</p>
+      <p class="muted" style="font-size: 0.85rem; margin-bottom: 14px;">Primary base in ${stop.city} (${sDays} nights accommodation).</p>
       
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        ${(stop.activities && stop.activities.length) ? stop.activities.map((act, idx) => `
-          <div style="background: var(--parchment); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--brass); background: var(--card); padding: 2px 8px; border-radius: 4px;">Day ${startDay + (idx % sDays)}</span>
-              <strong>${act}</strong>
+      <!-- Time Slot Grid -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- Morning -->
+        <div style="background: var(--parchment); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--brass); font-family: var(--font-mono); margin-bottom: 6px;">🌅 MORNING (09:00 - 12:00)</div>
+          ${acts[0] ? `<strong>🎯 ${acts[0]}</strong>` : '<span class="muted" style="font-size: 0.85rem;">Free exploration &amp; breakfast</span>'}
+        </div>
+
+        <!-- Afternoon -->
+        <div style="background: var(--parchment); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--coral); font-family: var(--font-mono); margin-bottom: 6px;">☀️ AFTERNOON (13:00 - 17:00)</div>
+          ${acts[1] ? `<strong>🎯 ${acts[1]}</strong>` : acts[0] ? '<span class="muted" style="font-size: 0.85rem;">Free time / local shopping</span>' : '<span class="muted" style="font-size: 0.85rem;">Sightseeing tour</span>'}
+        </div>
+
+        <!-- Evening -->
+        <div style="background: var(--parchment); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--sage); font-family: var(--font-mono); margin-bottom: 6px;">🌙 EVENING (18:00 - 22:00)</div>
+          ${acts[2] ? `<strong>🎯 ${acts[2]}</strong>` : '<strong>🍷 Local Dining &amp; Evening Stroll</strong>'}
+        </div>
+
+        <!-- Custom Notes / Events -->
+        ${customEvents.map(e => `
+          <div style="background: rgba(232,185,121,0.12); border: 1px solid var(--brass); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span class="pill-badge pill-budget" style="margin-right: 6px;">📌 ${e.slot}</span>
+              <strong>${e.title}</strong>
             </div>
-            <span class="pill-badge pill-duration">Scheduled</span>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="removeEvent('${stop.id}', '${e.id}')" style="color: var(--rust); padding: 2px 6px;">✕</button>
           </div>
-        `).join('') : '<span class="muted" style="font-size: 0.85rem; font-style: italic;">No activities scheduled yet for this leg.</span>'}
+        `).join('')}
       </div>
     </div>
     `;
@@ -223,7 +331,64 @@ function renderCalendarForTrip(tripId) {
   timelineContainer.innerHTML = rendered;
 }
 
-document.addEventListener('DOMContentLoaded', initCalendar);
+function openAddEventModal() {
+  if (!currentActiveTrip) return;
+  const select = document.getElementById('evt-city-select');
+  const stops = currentActiveTrip.stops || [{ id: 'st_1', city: 'Paris' }];
+  select.innerHTML = stops.map(s => `<option value="${s.id}">${s.city}</option>`).join('');
+  document.getElementById('modal-add-event').style.display = 'flex';
+}
+
+function closeAddEventModal() {
+  document.getElementById('modal-add-event').style.display = 'none';
+}
+
+function confirmAddEvent() {
+  const stopId = document.getElementById('evt-city-select').value;
+  const slot = document.getElementById('evt-time-slot').value;
+  const title = document.getElementById('evt-title').value.trim();
+
+  if (!title) {
+    showToast("Please enter an event title.");
+    return;
+  }
+
+  const trips = Api.trips();
+  const trip = trips.find(t => t.id === currentActiveTrip.id);
+  if (!trip) return;
+
+  const stop = (trip.stops || []).find(s => s.id === stopId);
+  if (stop) {
+    if (!stop.customEvents) stop.customEvents = [];
+    stop.customEvents.push({ id: 'evt_' + Date.now(), slot, title });
+    Api.saveTrips(trips);
+    renderCalendarForTrip(trip.id);
+    showToast(`📌 Added "${title}" to schedule!`);
+  }
+  closeAddEventModal();
+  document.getElementById('evt-title').value = '';
+}
+
+function removeEvent(stopId, evtId) {
+  const trips = Api.trips();
+  const trip = trips.find(t => t.id === currentActiveTrip.id);
+  if (!trip) return;
+
+  const stop = (trip.stops || []).find(s => s.id === stopId);
+  if (stop && stop.customEvents) {
+    stop.customEvents = stop.customEvents.filter(e => e.id !== evtId);
+    Api.saveTrips(trips);
+    renderCalendarForTrip(trip.id);
+    showToast("Event removed from schedule.");
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initCalendar();
+  setInterval(() => {
+    if (currentActiveTrip) updateCountdown(currentActiveTrip.startDate);
+  }, 30000);
+});
 </script>
 </body>
 </html>

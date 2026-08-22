@@ -104,55 +104,117 @@
         <div class="stat-label">Average Cost Per Day</div>
       </div>
       <div class="card stat">
-        <div class="stat-value" id="kpi-activities-cost">$0</div>
-        <div class="stat-label">Booked Experiences Total</div>
+        <div class="stat-value" id="kpi-target-budget" style="color: var(--brass);">$0</div>
+        <div class="stat-label">Target Trip Budget</div>
       </div>
     </div>
 
-    <!-- Category Breakdown -->
-    <div class="card" style="padding: 28px; margin-bottom: 28px;">
-      <h3 style="margin-bottom: 20px;">📊 Category Spending Breakdown</h3>
-      <div style="display: flex; flex-direction: column; gap: 18px;" id="category-bars">
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
-            <span>🏨 Accommodations &amp; Stays</span>
-            <strong id="val-cat-stays">$0</strong>
-          </div>
-          <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
-            <div id="bar-cat-stays" class="progress-bar" style="width: 45%; background: var(--brass);"></div>
-          </div>
-        </div>
+    <!-- Budget Status Banner -->
+    <div id="budget-status-banner" style="padding: 14px 20px; border-radius: var(--radius-sm); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; background: rgba(110,143,107,0.15); border: 1px solid var(--sage);">
+      <div>
+        <strong id="budget-status-title" style="color: var(--sage);">✅ On Track</strong>
+        <span id="budget-status-desc" class="muted" style="font-size: 0.88rem; margin-left: 8px;">Your estimated spending is within your target budget.</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="promptEditBudget()">Edit Target Budget</button>
+    </div>
 
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
-            <span>✈️ Intercity Transport &amp; Flights</span>
-            <strong id="val-cat-transit">$0</strong>
+    <!-- Category Breakdown & Fare Estimator -->
+    <div class="grid-2" style="margin-bottom: 28px; align-items: start;">
+      <!-- Spending Category Bars -->
+      <div class="card" style="padding: 24px;">
+        <h3 style="margin-bottom: 18px;">📊 Category Spending Breakdown</h3>
+        <div style="display: flex; flex-direction: column; gap: 18px;" id="category-bars">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
+              <span>🏨 Accommodations &amp; Stays</span>
+              <strong id="val-cat-stays">$0</strong>
+            </div>
+            <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
+              <div id="bar-cat-stays" class="progress-bar" style="width: 45%; background: var(--brass);"></div>
+            </div>
           </div>
-          <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
-            <div id="bar-cat-transit" class="progress-bar" style="width: 25%; background: var(--coral);"></div>
-          </div>
-        </div>
 
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
-            <span>🎯 Tours &amp; Curated Activities</span>
-            <strong id="val-cat-activities">$0</strong>
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
+              <span>✈️ Intercity Transport &amp; Flights</span>
+              <strong id="val-cat-transit">$0</strong>
+            </div>
+            <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
+              <div id="bar-cat-transit" class="progress-bar" style="width: 25%; background: var(--coral);"></div>
+            </div>
           </div>
-          <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
-            <div id="bar-cat-activities" class="progress-bar" style="width: 18%; background: var(--sage);"></div>
-          </div>
-        </div>
 
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
-            <span>🍷 Dining, Food &amp; Incidentals</span>
-            <strong id="val-cat-food">$0</strong>
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
+              <span>🎯 Tours &amp; Curated Activities</span>
+              <strong id="val-cat-activities">$0</strong>
+            </div>
+            <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
+              <div id="bar-cat-activities" class="progress-bar" style="width: 18%; background: var(--sage);"></div>
+            </div>
           </div>
-          <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
-            <div id="bar-cat-food" class="progress-bar" style="width: 12%; background: #A29BFE;"></div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 6px;">
+              <span>🍷 Dining, Food &amp; Incidentals</span>
+              <strong id="val-cat-food">$0</strong>
+            </div>
+            <div class="progress" style="height: 10px; background: var(--parchment); border-radius: 6px; overflow: hidden; border: 1px solid var(--line);">
+              <div id="bar-cat-food" class="progress-bar" style="width: 12%; background: #A29BFE;"></div>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Nearest Flight & Transit Fare Estimator -->
+      <div class="card" style="padding: 24px;">
+        <h3 style="margin-bottom: 8px;">✈️ Nearest Transit &amp; Flight Fare Estimator</h3>
+        <p class="muted" style="font-size: 0.85rem; margin-bottom: 16px;">Calculate flight or train fares from your home airport to your destination stops.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+          <div>
+            <label style="font-size: 0.78rem; font-family: var(--font-mono); text-transform: uppercase;">Origin City:</label>
+            <select id="fare-origin" class="form-control" onchange="calculateFareEstimate()">
+              <option value="New York">New York (JFK)</option>
+              <option value="London">London (LHR)</option>
+              <option value="Tokyo">Tokyo (HND)</option>
+              <option value="Paris">Paris (CDG)</option>
+              <option value="Mumbai">Mumbai (BOM)</option>
+              <option value="Sydney">Sydney (SYD)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 0.78rem; font-family: var(--font-mono); text-transform: uppercase;">Destination Stop:</label>
+            <select id="fare-dest" class="form-control" onchange="calculateFareEstimate()"></select>
+          </div>
+        </div>
+
+        <!-- Estimated Fare Output Box -->
+        <div id="fare-result-box" style="background: var(--parchment); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span class="pill-badge pill-duration" id="fare-mode-badge">✈️ Non-stop Flight</span>
+              <div style="font-size: 0.95rem; font-weight: 600; margin-top: 4px;" id="fare-route-title">New York &rarr; Paris</div>
+              <span class="muted" style="font-size: 0.8rem;" id="fare-details">Est. distance: 5,830 km &bull; 7h 20m</span>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--sage);" id="fare-price">$620</div>
+              <span class="muted" style="font-size: 0.75rem;">est. per person</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost btn-sm" style="width: 100%; justify-content: center;" onclick="addFareToTransit()">+ Add $620 Fare to Transit Budget</button>
+      </div>
+    </div>
+
+    <!-- Custom Expenses Manager -->
+    <div class="card" style="padding: 24px; margin-bottom: 28px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="margin: 0;">📝 Custom Trip Expenses</h3>
+        <button class="btn btn-primary btn-sm" onclick="promptAddExpense()">+ Add Custom Expense</button>
+      </div>
+      <div id="custom-expenses-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </div>
 
     <!-- Per-City Allocation -->
@@ -190,6 +252,8 @@
 
 </div><!-- /.page -->
 
+<div class="toast" id="toast"></div>
+
 <button id="chatbot-launcher" aria-label="Open chat">💬</button>
 <div id="chatbot-panel">
   <div id="chatbot-head">
@@ -220,10 +284,29 @@ const cityDailyEst = {
   "Rio de Janeiro": 75, "Sydney": 170, "Cape Town": 85, "Cairo": 55
 };
 
-function getTrips() {
-  const data = localStorage.getItem('globetrotter_trips');
-  if (!data) return [];
-  try { return JSON.parse(data); } catch(e) { return []; }
+const cityCoords = {
+  "New York": { lat: 40.7128, lng: -74.0060 },
+  "London": { lat: 51.5074, lng: -0.1278 },
+  "Tokyo": { lat: 35.6762, lng: 139.6503 },
+  "Paris": { lat: 48.8566, lng: 2.3522 },
+  "Mumbai": { lat: 19.0760, lng: 72.8777 },
+  "Sydney": { lat: -33.8688, lng: 151.2093 },
+  "Rome": { lat: 41.9028, lng: 12.4964 },
+  "Interlaken": { lat: 46.6863, lng: 7.8632 },
+  "Barcelona": { lat: 41.3851, lng: 2.1734 },
+  "Kyoto": { lat: 35.0116, lng: 135.7681 },
+  "Dubai": { lat: 25.2048, lng: 55.2708 }
+};
+
+let currentActiveTrip = null;
+let currentEstimatedFare = 620;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 function calculateDays(start, end) {
@@ -233,7 +316,7 @@ function calculateDays(start, end) {
 }
 
 function initBudgetPage() {
-  const trips = getTrips();
+  const trips = Api.trips();
   const select = document.getElementById('budget-trip-select');
   if (!trips || trips.length === 0) {
     select.innerHTML = '<option value="">No Trips Found</option>';
@@ -244,67 +327,262 @@ function initBudgetPage() {
 }
 
 function loadBudgetForTrip(tripId) {
-  const trips = getTrips();
+  const trips = Api.trips();
   const trip = trips.find(t => t.id === tripId) || trips[0];
   if (!trip) return;
+  currentActiveTrip = trip;
+
+  // Setup Destination Stops Dropdown for Fare Estimator
+  const fareDestSelect = document.getElementById('fare-dest');
+  const stops = trip.stops || [{ city: 'Paris', startDate: trip.startDate, endDate: trip.endDate, activities: [] }];
+  fareDestSelect.innerHTML = stops.map(s => `<option value="${s.city}">${s.city}</option>`).join('');
 
   const totalDays = trip.durationDays || calculateDays(trip.startDate, trip.endDate);
-  const stops = trip.stops || [];
 
   let staysCost = 0;
-  let transitCost = Math.max(200, stops.length * 120);
+  let transitCost = 0;
   let activitiesCost = 0;
-  let foodCost = totalDays * 45;
+  let foodCost = totalDays * 50;
 
-  const cityCards = stops.map(stop => {
+  stops.forEach(s => {
+    staysCost += s.lodgingEst || (calculateDays(s.startDate, s.endDate) * (cityDailyEst[s.city] || 150));
+    transitCost += s.transitEst || 200;
+    activitiesCost += (s.activities || []).length * 40;
+  });
+
+  // Include Custom Expenses
+  const customExps = trip.customExpenses || [];
+  customExps.forEach(e => {
+    if (e.category === 'Stays') staysCost += e.amount;
+    else if (e.category === 'Transit') transitCost += e.amount;
+    else if (e.category === 'Activities') activitiesCost += e.amount;
+    else foodCost += e.amount;
+  });
+
+  if (staysCost === 0) staysCost = totalDays * 120;
+  if (transitCost === 0) transitCost = 350;
+
+  const totalBudget = staysCost + transitCost + activitiesCost + foodCost;
+  const avgDaily = Math.round(totalBudget / Math.max(1, totalDays));
+  const targetBudget = trip.targetBudget || 3500;
+
+  document.getElementById('kpi-total-cost').innerText = `$${totalBudget.toLocaleString()}`;
+  document.getElementById('kpi-daily-avg').innerText = `$${avgDaily} / day`;
+  document.getElementById('kpi-target-budget').innerText = `$${targetBudget.toLocaleString()}`;
+
+  // Update Status Banner
+  const statusBanner = document.getElementById('budget-status-banner');
+  const statusTitle = document.getElementById('budget-status-title');
+  const statusDesc = document.getElementById('budget-status-desc');
+
+  if (totalBudget <= targetBudget) {
+    statusBanner.style.background = 'rgba(110,143,107,0.15)';
+    statusBanner.style.borderColor = 'var(--sage)';
+    statusTitle.style.color = 'var(--sage)';
+    statusTitle.innerText = '✅ On Track';
+    statusDesc.innerText = `Estimated $${totalBudget.toLocaleString()} is within your $${targetBudget.toLocaleString()} target budget.`;
+  } else {
+    statusBanner.style.background = 'rgba(181,72,42,0.12)';
+    statusBanner.style.borderColor = 'var(--rust)';
+    statusTitle.style.color = 'var(--rust)';
+    statusTitle.innerText = '⚠️ Exceeding Target Budget';
+    statusDesc.innerText = `Estimated spending is $${(totalBudget - targetBudget).toLocaleString()} over your target.`;
+  }
+
+  // Update Category Bars
+  const pStays = Math.round((staysCost / totalBudget) * 100);
+  const pTransit = Math.round((transitCost / totalBudget) * 100);
+  const pAct = Math.round((activitiesCost / totalBudget) * 100);
+  const pFood = Math.round((foodCost / totalBudget) * 100);
+
+  document.getElementById('val-cat-stays').innerText = `$${staysCost.toLocaleString()} (${pStays}%)`;
+  document.getElementById('bar-cat-stays').style.width = `${pStays}%`;
+
+  document.getElementById('val-cat-transit').innerText = `$${transitCost.toLocaleString()} (${pTransit}%)`;
+  document.getElementById('bar-cat-transit').style.width = `${pTransit}%`;
+
+  document.getElementById('val-cat-activities').innerText = `$${activitiesCost.toLocaleString()} (${pAct}%)`;
+  document.getElementById('bar-cat-activities').style.width = `${pAct}%`;
+
+  document.getElementById('val-cat-food').innerText = `$${foodCost.toLocaleString()} (${pFood}%)`;
+  document.getElementById('bar-cat-food').style.width = `${pFood}%`;
+
+  // Render Custom Expenses
+  renderCustomExpenses(customExps);
+
+  // Render City Cards
+  renderCityCards(stops);
+
+  // Recalculate Fare Estimator
+  calculateFareEstimate();
+}
+
+function renderCustomExpenses(exps) {
+  const container = document.getElementById('custom-expenses-list');
+  if (!exps || exps.length === 0) {
+    container.innerHTML = '<span class="muted" style="font-size: 0.85rem; font-style: italic;">No custom line items added yet. Click above to add items like insurance or pass tickets.</span>';
+    return;
+  }
+  container.innerHTML = exps.map(e => `
+    <div style="background: var(--parchment); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="color: var(--ink); font-size: 0.95rem;">${e.title}</strong>
+        <span class="pill-badge pill-budget" style="margin-left: 8px;">${e.category}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-family: var(--font-mono); font-weight: 700; color: var(--sage);">$${e.amount}</span>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="deleteCustomExpense('${e.id}')" style="color: var(--rust); padding: 2px 6px;">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCityCards(stops) {
+  const container = document.getElementById('city-budget-cards');
+  container.innerHTML = stops.map(stop => {
     const days = calculateDays(stop.startDate, stop.endDate);
     const dailyRate = cityDailyEst[stop.city] || 150;
-    const stopStay = days * dailyRate;
-    staysCost += stopStay;
-
-    const stopActCost = (stop.activities || []).length * 35;
-    activitiesCost += stopActCost;
-    const totalStop = stopStay + stopActCost + (days * 45);
+    const stopStay = stop.lodgingEst || (days * dailyRate);
+    const stopActCost = (stop.activities || []).length * 40;
+    const stopTransit = stop.transitEst || 200;
+    const totalStop = stopStay + stopActCost + stopTransit + (days * 50);
 
     return `
     <div class="card" style="padding: 22px;">
       <span class="pill-badge pill-destinations" style="margin-bottom: 8px;">📍 ${stop.city}</span>
       <h3 style="margin-bottom: 4px;">${stop.city} Allocation</h3>
       <p class="muted" style="font-size: 0.82rem;">${days} Days stay &bull; ${stop.startDate}</p>
-      <div style="margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; display: flex; justify-content: space-between;">
-        <span class="muted">Estimated City Subtotal:</span>
-        <strong style="font-family: var(--font-mono); color: var(--brass);">$${totalStop}</strong>
+      
+      <div style="margin: 12px 0; font-size: 0.85rem; display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; justify-content: space-between;"><span class="muted">Lodging &amp; Stays:</span><strong>$${stopStay}</strong></div>
+        <div style="display: flex; justify-content: space-between;"><span class="muted">Intercity Transit:</span><strong>$${stopTransit}</strong></div>
+        <div style="display: flex; justify-content: space-between;"><span class="muted">Activities:</span><strong>$${stopActCost}</strong></div>
+      </div>
+
+      <div style="border-top: 1px solid var(--line); padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span class="muted">Subtotal:</span>
+        <strong style="font-family: var(--font-mono); color: var(--brass); font-size: 1.1rem;">$${totalStop}</strong>
       </div>
     </div>
     `;
   }).join('');
+}
 
-  if (staysCost === 0) staysCost = totalDays * 120;
-  if (activitiesCost === 0) activitiesCost = 140;
+function calculateFareEstimate() {
+  const origin = document.getElementById('fare-origin').value;
+  const dest = document.getElementById('fare-dest').value || 'Paris';
 
-  const totalBudget = staysCost + transitCost + activitiesCost + foodCost;
-  const avgDaily = Math.round(totalBudget / Math.max(1, totalDays));
+  const c1 = cityCoords[origin] || { lat: 40.7128, lng: -74.0060 };
+  const c2 = cityCoords[dest] || { lat: 48.8566, lng: 2.3522 };
 
-  document.getElementById('kpi-total-cost').innerText = `$${totalBudget.toLocaleString()}`;
-  document.getElementById('kpi-daily-avg').innerText = `$${avgDaily} / day`;
-  document.getElementById('kpi-activities-cost').innerText = `$${activitiesCost}`;
+  // Calculate approximate Haversine distance
+  const R = 6371; // km
+  const dLat = (c2.lat - c1.lat) * Math.PI / 180;
+  const dLon = (c2.lng - c1.lng) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(c1.lat * Math.PI / 180) * Math.cos(c2.lat * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const dist = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
 
-  document.getElementById('val-cat-stays').innerText = `$${staysCost.toLocaleString()} (${Math.round(staysCost/totalBudget*100)}%)`;
-  document.getElementById('bar-cat-stays').style.width = `${Math.round(staysCost/totalBudget*100)}%`;
+  let mode = "✈️ Flight";
+  let hours = Math.max(1, Math.round(dist / 750));
+  let price = Math.max(80, Math.round(dist * 0.11 + 60));
 
-  document.getElementById('val-cat-transit').innerText = `$${transitCost.toLocaleString()} (${Math.round(transitCost/totalBudget*100)}%)`;
-  document.getElementById('bar-cat-transit').style.width = `${Math.round(transitCost/totalBudget*100)}%`;
+  if (dist < 600) {
+    mode = "🚆 High-Speed Rail";
+    hours = Math.round(dist / 200);
+    price = Math.round(dist * 0.15 + 30);
+  }
 
-  document.getElementById('val-cat-activities').innerText = `$${activitiesCost.toLocaleString()} (${Math.round(activitiesCost/totalBudget*100)}%)`;
-  document.getElementById('bar-cat-activities').style.width = `${Math.round(activitiesCost/totalBudget*100)}%`;
+  currentEstimatedFare = price;
 
-  document.getElementById('val-cat-food').innerText = `$${foodCost.toLocaleString()} (${Math.round(foodCost/totalBudget*100)}%)`;
-  document.getElementById('bar-cat-food').style.width = `${Math.round(foodCost/totalBudget*100)}%`;
+  document.getElementById('fare-mode-badge').innerText = mode;
+  document.getElementById('fare-route-title').innerText = `${origin} &rarr; ${dest}`;
+  document.getElementById('fare-details').innerText = `Est. distance: ${dist.toLocaleString()} km \u2022 ${hours}h trip duration`;
+  document.getElementById('fare-price').innerText = `$${price}`;
+}
 
-  document.getElementById('city-budget-cards').innerHTML = cityCards || '<p class="muted">No city stops defined yet.</p>';
+function addFareToTransit() {
+  if (!currentActiveTrip) return;
+  const origin = document.getElementById('fare-origin').value;
+  const dest = document.getElementById('fare-dest').value || 'Paris';
+
+  const trips = Api.trips();
+  const trip = trips.find(t => t.id === currentActiveTrip.id);
+  if (!trip) return;
+
+  if (!trip.customExpenses) trip.customExpenses = [];
+  trip.customExpenses.push({
+    id: 'exp_' + Date.now(),
+    title: `Transit: ${origin} to ${dest}`,
+    category: 'Transit',
+    amount: currentEstimatedFare
+  });
+
+  Api.saveTrips(trips);
+  GlobeStorage.trackClick("budget_calc");
+  loadBudgetForTrip(trip.id);
+  showToast(`✈️ Added $${currentEstimatedFare} transit fare to trip budget!`);
+}
+
+function promptAddExpense() {
+  if (!currentActiveTrip) return;
+  const title = prompt("Enter expense description (e.g. Travel Insurance, Museum Pass):");
+  if (!title) return;
+  const amountStr = prompt("Enter amount in USD ($):", "50");
+  const amount = parseInt(amountStr, 10);
+  if (isNaN(amount) || amount <= 0) return;
+
+  const category = prompt("Select category (Stays, Transit, Activities, Incidentals):", "Incidentals") || "Incidentals";
+
+  const trips = Api.trips();
+  const trip = trips.find(t => t.id === currentActiveTrip.id);
+  if (!trip) return;
+
+  if (!trip.customExpenses) trip.customExpenses = [];
+  trip.customExpenses.push({
+    id: 'exp_' + Date.now(),
+    title: title,
+    category: category,
+    amount: amount
+  });
+
+  Api.saveTrips(trips);
+  loadBudgetForTrip(trip.id);
+  showToast(`✨ Added expense "${title}" ($${amount})!`);
+}
+
+function deleteCustomExpense(expId) {
+  if (!currentActiveTrip) return;
+  const trips = Api.trips();
+  const trip = trips.find(t => t.id === currentActiveTrip.id);
+  if (!trip || !trip.customExpenses) return;
+
+  trip.customExpenses = trip.customExpenses.filter(e => e.id !== expId);
+  Api.saveTrips(trips);
+  loadBudgetForTrip(trip.id);
+  showToast("Expense removed.");
+}
+
+function promptEditBudget() {
+  if (!currentActiveTrip) return;
+  const val = prompt("Enter new Target Trip Budget ($):", currentActiveTrip.targetBudget || 3500);
+  const newBudget = parseInt(val, 10);
+  if (isNaN(newBudget) || newBudget <= 0) return;
+
+  const trips = Api.trips();
+  const trip = trips.find(t => t.id === currentActiveTrip.id);
+  if (trip) {
+    trip.targetBudget = newBudget;
+    Api.saveTrips(trips);
+    loadBudgetForTrip(trip.id);
+    showToast(`Target budget updated to $${newBudget.toLocaleString()}`);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initBudgetPage);
 </script>
+</body>
+</html>
 </body>
 </html>

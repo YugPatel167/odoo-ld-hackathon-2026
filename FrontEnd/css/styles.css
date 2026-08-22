@@ -6,37 +6,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Core palette */
-  --void: #070C12;         /* deepest surface — sidebar, footer, ticket stub */
-  --parchment: #0C1620;    /* page background — night paper */
-  --card: #12202C;         /* card surface, one step up from page */
-  --card-hi: #172A38;      /* hover / elevated card */
-  --ink: #ECE6D7;          /* primary text — warm off-white */
-  --ink-2: #17293A;        /* mid navy — gradients, subtle fills */
-  --brass: #E8B15C;        /* accent — links, icons, dividers */
-  --coral: #FF7A56;        /* primary CTA / alerts */
-  --sage: #7FD08A;         /* positive / on-budget */
-  --rust: #FF5C6C;         /* over-budget / destructive */
+  /* Core palette — Luxury Gold & Obsidian Night Map */
+  --void: #05080D;         /* deepest obsidian surface */
+  --parchment: #080E15;    /* luxury dark midnight page canvas */
+  --card: rgba(15, 25, 35, 0.85); /* glassmorphism card surface */
+  --card-hi: #152432;      /* elevated / hover luxury card */
+  --ink: #F4EFE6;          /* warm champagne white text */
+  --ink-2: #142434;        /* mid navy tone */
+  --brass: #F0C475;        /* radiant gold accent */
+  --coral: #FF7A56;        /* sunset coral CTA */
+  --sage: #86E294;         /* positive green */
+  --rust: #FF5C6C;         /* alert red */
 
-  /* Derived / semantic */
-  --ink-soft: #93A1AC;     /* secondary text */
-  --line: rgba(236, 230, 215, 0.10);       /* hairline borders on dark */
-  --line-dark: rgba(236, 230, 215, 0.24);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-  --shadow-sm: 0 10px 26px rgba(0, 0, 0, 0.35);
-  --glow-brass: 0 0 0 1px rgba(232,177,92,0.25), 0 8px 30px rgba(232,177,92,0.12);
+  /* Semantic & Luxury Effects */
+  --ink-soft: #A0B0BD;     /* soft secondary text */
+  --line: rgba(240, 196, 117, 0.14);       /* subtle gold hairline borders */
+  --line-dark: rgba(240, 196, 117, 0.28);
+  --shadow: 0 28px 70px rgba(0, 0, 0, 0.65);
+  --shadow-sm: 0 12px 32px rgba(0, 0, 0, 0.40);
+  --glow-brass: 0 0 20px rgba(240, 196, 117, 0.25), 0 8px 30px rgba(240, 196, 117, 0.15);
+  --glow-card: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(240, 196, 117, 0.2);
 
   /* Type */
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Work Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  --radius: 14px;
-  --radius-sm: 8px;
+  --radius: 16px;
+  --radius-sm: 10px;
 
   /* Layout */
   --sidebar-w: 260px;
-  --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease: cubic-bezier(.16, 1, .3, 1);
 }
 
 * { box-sizing: border-box; }
