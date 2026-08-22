@@ -131,11 +131,33 @@ const cityDatabase = {
 };
 
 // Flattened list of all activities with city and country attached for activity search & filtering
-const allActivities = Object.entries(cityDatabase).flatMap(([city, data]) =>
-  data.activities.map(act => ({
-    ...act,
-    city: city,
-    country: data.country,
-    desc: act.desc || ''
-  }))
-);
+function getCanonicalActivities() {
+  return Object.entries(cityDatabase).flatMap(([city, data], cityIdx) =>
+    data.activities.map((act, actIdx) => ({
+      id: `act_seed_${cityIdx}_${actIdx}`,
+      ...act,
+      city: city,
+      country: data.country,
+      rating: act.rating || "4.8",
+      desc: act.desc || ''
+    }))
+  );
+}
+
+// Global accessor that merges standard cityDatabase with user custom activities
+function getStoredActivities() {
+  const stored = localStorage.getItem('globetrotter_activities');
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch(e) {}
+  }
+  const initial = getCanonicalActivities();
+  localStorage.setItem('globetrotter_activities', JSON.stringify(initial));
+  return initial;
+}
+
+function saveStoredActivitiesList(list) {
+  localStorage.setItem('globetrotter_activities', JSON.stringify(list));
+}

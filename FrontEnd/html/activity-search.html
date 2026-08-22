@@ -117,6 +117,10 @@
             <option value="Singapore">Singapore</option>
             <option value="Dubai">Dubai, UAE</option>
             <option value="San Francisco">San Francisco, USA</option>
+            <option value="Rio de Janeiro">Rio de Janeiro, Brazil</option>
+            <option value="Sydney">Sydney, Australia</option>
+            <option value="Cape Town">Cape Town, South Africa</option>
+            <option value="Cairo">Cairo, Egypt</option>
           </select>
         </div>
 
@@ -349,50 +353,9 @@
 <script src="../js/cursor.js"></script>
 <script src="../js/chatbot.js"></script>
 <script>
-const defaultActivitiesSeed = [
-  { id: "a1", name: "Eiffel Tower Summit", city: "Paris", country: "France", cost: 35, duration: "3h", type: "Sightseeing", rating: "4.9", desc: "Ascend to the top deck for 360-degree vistas across Paris." },
-  { id: "a2", name: "Louvre Museum Guided Tour", city: "Paris", country: "France", cost: 45, duration: "4h", type: "Culture", rating: "4.8", desc: "Skip-the-line access to the Mona Lisa and classical antiquities." },
-  { id: "a3", name: "Seine River Dinner Cruise", city: "Paris", country: "France", cost: 75, duration: "2.5h", type: "Food", rating: "4.7", desc: "Four-course French gourmet meal gliding past illuminated monuments." },
-  { id: "a4", name: "Shibuya Crossing & Hachiko", city: "Tokyo", country: "Japan", cost: 0, duration: "1.5h", type: "Sightseeing", rating: "4.9", desc: "Experience the world's busiest pedestrian intersection." },
-  { id: "a5", name: "TeamLab Planets Digital Art", city: "Tokyo", country: "Japan", cost: 28, duration: "2.5h", type: "Culture", rating: "4.9", desc: "Walk through water and immersive glowing light installations." },
-  { id: "a6", name: "Mount Fuji Day Trip", city: "Tokyo", country: "Japan", cost: 95, duration: "8h", type: "Adventure", rating: "4.8", desc: "Full-day scenic excursion to 5th Station and Lake Kawaguchiko." },
-  { id: "a7", name: "Colosseum & Roman Forum Tour", city: "Rome", country: "Italy", cost: 40, duration: "3.5h", type: "Culture", rating: "4.9", desc: "Walk the gladiatorial arena and ancient imperial ruins." },
-  { id: "a8", name: "Vatican Museums & Sistine Chapel", city: "Rome", country: "Italy", cost: 55, duration: "4h", type: "Culture", rating: "4.9", desc: "Marvel at Michelangelo's ceiling frescos and St. Peter's Basilica." },
-  { id: "a9", name: "Trastevere Food Tasting", city: "Rome", country: "Italy", cost: 65, duration: "3h", type: "Food", rating: "4.8", desc: "Authentic handmade pasta, supplì, pecorino, and local wine." },
-  { id: "a10", name: "Jungfraujoch Top of Europe Train", city: "Interlaken", country: "Switzerland", cost: 180, duration: "6h", type: "Adventure", rating: "5.0", desc: "Cogwheel train climbing to 3,454m glacier wonderland." },
-  { id: "a11", name: "Paragliding over Swiss Alps", city: "Interlaken", country: "Switzerland", cost: 160, duration: "2h", type: "Adventure", rating: "4.9", desc: "Tandem flight with panoramic views of Eiger and Jungfrau." },
-  { id: "a12", name: "Statue of Liberty & Ellis Island", city: "New York", country: "USA", cost: 30, duration: "4h", type: "Sightseeing", rating: "4.7", desc: "Ferry cruise and museum tour of American immigration history." },
-  { id: "a13", name: "Broadway Show Musical", city: "New York", country: "USA", cost: 120, duration: "3h", type: "Culture", rating: "4.9", desc: "World-class theatrical performance in the heart of Times Square." },
-  { id: "a14", name: "Sagrada Família Guided Tour", city: "Barcelona", country: "Spain", cost: 35, duration: "2.5h", type: "Culture", rating: "4.8", desc: "Gaudí's unfinished basilica masterpiece with stained-glass towers." },
-  { id: "a15", name: "Park Güell Discovery", city: "Barcelona", country: "Spain", cost: 15, duration: "2h", type: "Sightseeing", rating: "4.7", desc: "Mosaic dragons, wavy benches, and Mediterranean views." },
-  { id: "a16", name: "Tower of London Tour", city: "London", country: "United Kingdom", cost: 40, duration: "3h", type: "Culture", rating: "4.8", desc: "See the Crown Jewels and 1,000 years of royal intrigue." },
-  { id: "a17", name: "London Eye Flight", city: "London", country: "United Kingdom", cost: 38, duration: "1h", type: "Sightseeing", rating: "4.6", desc: "Panoramic observation wheel overlooking the River Thames." },
-  { id: "a18", name: "Fushimi Inari Shrine Walk", city: "Kyoto", country: "Japan", cost: 0, duration: "3h", type: "Culture", rating: "4.9", desc: "Thousands of vermillion torii gates winding up Mount Inari." },
-  { id: "a19", name: "Arashiyama Bamboo Grove", city: "Kyoto", country: "Japan", cost: 0, duration: "2h", type: "Sightseeing", rating: "4.7", desc: "Towering green bamboo stalks and tranquil walking trails." },
-  { id: "a20", name: "Grand Palace & Wat Pho", city: "Bangkok", country: "Thailand", cost: 18, duration: "3.5h", type: "Culture", rating: "4.8", desc: "Golden spires, the Emerald Buddha, and the 46m Reclining Buddha." },
-  { id: "a21", name: "Burj Khalifa 148th Floor", city: "Dubai", country: "United Arab Emirates", cost: 95, duration: "2h", type: "Sightseeing", rating: "4.8", desc: "Highest observation deck on earth with lounge access." },
-  { id: "a22", name: "Desert 4x4 Safari & BBQ", city: "Dubai", country: "United Arab Emirates", cost: 65, duration: "5h", type: "Adventure", rating: "4.9", desc: "Dune bashing, camel riding, sandboarding, and bedouin dinner." }
-];
-
-let allActivities = [];
+let currentActivities = [];
 let selectedCategory = 'all';
 let currentSelectedAct = null;
-
-function loadStoredActivities() {
-  const stored = localStorage.getItem('globetrotter_activities');
-  if (stored) {
-    try {
-      allActivities = JSON.parse(stored);
-      return;
-    } catch (e) {}
-  }
-  allActivities = [...defaultActivitiesSeed];
-  saveStoredActivities();
-}
-
-function saveStoredActivities() {
-  localStorage.setItem('globetrotter_activities', JSON.stringify(allActivities));
-}
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -425,7 +388,8 @@ function renderActivities(list) {
     return;
   }
 
-  const profile = Api.getProfile();
+  let profile = {};
+  try { profile = Api.getProfile() || {}; } catch(e) { profile = {}; }
   const saved = profile.savedActivities || [];
 
   container.innerHTML = list.map(act => {
@@ -447,7 +411,7 @@ function renderActivities(list) {
           <span class="pill-badge pill-budget">🏷️ ${act.type}</span>
           <span style="font-size: 0.82rem; color: var(--brass); font-weight: 600;">${act.rating || '4.9'} ★</span>
         </div>
-        <p class="muted" style="font-size: 0.86rem; line-height: 1.5; margin: 8px 0 0;">${act.desc}</p>
+        <p class="muted" style="font-size: 0.86rem; line-height: 1.5; margin: 8px 0 0;">${act.desc || ''}</p>
       </div>
 
       <div style="border-top: 1px solid var(--line); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
@@ -469,14 +433,14 @@ function filterActivities() {
   const maxCost = parseInt(document.getElementById('price-range').value, 10);
   const sort = document.getElementById('sort-select').value;
 
-  let filtered = allActivities.filter(act => {
-    const matchesQ = !q || act.name.toLowerCase().includes(q) ||
-                     act.city.toLowerCase().includes(q) ||
+  let filtered = currentActivities.filter(act => {
+    const matchesQ = !q || (act.name && act.name.toLowerCase().includes(q)) ||
+                     (act.city && act.city.toLowerCase().includes(q)) ||
                      (act.country && act.country.toLowerCase().includes(q)) ||
                      (act.desc && act.desc.toLowerCase().includes(q)) ||
-                     act.type.toLowerCase().includes(q);
-    const matchesCat = selectedCategory === 'all' || act.type.toLowerCase() === selectedCategory.toLowerCase();
-    const matchesCity = city === 'all' || act.city.toLowerCase() === city.toLowerCase();
+                     (act.type && act.type.toLowerCase().includes(q));
+    const matchesCat = selectedCategory === 'all' || (act.type && act.type.toLowerCase() === selectedCategory.toLowerCase());
+    const matchesCity = city === 'all' || (act.city && act.city.toLowerCase() === city.toLowerCase());
     const matchesPrice = (act.cost || 0) <= maxCost;
     return matchesQ && matchesCat && matchesCity && matchesPrice;
   });
@@ -517,7 +481,7 @@ function resetFilters() {
 }
 
 function toggleFav(actName, btn) {
-  const profile = Api.getProfile();
+  const profile = Api.getProfile() || {};
   if (!profile.savedActivities) profile.savedActivities = [];
 
   const idx = profile.savedActivities.indexOf(actName);
@@ -534,7 +498,7 @@ function toggleFav(actName, btn) {
 }
 
 function openDetailModal(actId) {
-  const act = allActivities.find(a => a.id === actId);
+  const act = currentActivities.find(a => a.id === actId);
   if (!act) return;
   currentSelectedAct = { ...act };
   document.getElementById('det-title').innerText = act.name;
@@ -543,9 +507,9 @@ function openDetailModal(actId) {
   document.getElementById('det-cost').innerText = act.cost > 0 ? `$${act.cost}` : 'Free';
   document.getElementById('det-duration').innerText = act.duration;
   document.getElementById('det-rating').innerText = `${act.rating || '4.9'} ★`;
-  document.getElementById('det-desc').innerText = act.desc;
+  document.getElementById('det-desc').innerText = act.desc || '';
 
-  const profile = Api.getProfile();
+  const profile = Api.getProfile() || {};
   const isFav = (profile.savedActivities || []).includes(act.name);
   document.getElementById('det-fav-btn').innerHTML = isFav ? '❤️ Saved in Wishlist' : '🤍 Save to Wishlist';
 
@@ -559,7 +523,7 @@ function closeDetailModal() {
 function toggleWishlistFromModal() {
   if (!currentSelectedAct) return;
   toggleFav(currentSelectedAct.name);
-  const profile = Api.getProfile();
+  const profile = Api.getProfile() || {};
   const isFav = (profile.savedActivities || []).includes(currentSelectedAct.name);
   document.getElementById('det-fav-btn').innerHTML = isFav ? '❤️ Saved in Wishlist' : '🤍 Save to Wishlist';
   filterActivities();
@@ -592,7 +556,7 @@ function openActivityEditor(actId) {
   form.reset();
 
   if (actId) {
-    const act = allActivities.find(a => a.id === actId);
+    const act = currentActivities.find(a => a.id === actId);
     if (!act) return;
     document.getElementById('act-modal-title').innerText = 'Edit Activity';
     document.getElementById('form-act-id').value = act.id;
@@ -602,7 +566,7 @@ function openActivityEditor(actId) {
     document.getElementById('form-act-type').value = act.type;
     document.getElementById('form-act-cost').value = act.cost || 0;
     document.getElementById('form-act-duration').value = act.duration;
-    document.getElementById('form-act-desc').value = act.desc;
+    document.getElementById('form-act-desc').value = act.desc || '';
     document.getElementById('btn-save-activity').innerText = 'Update Activity';
   } else {
     document.getElementById('act-modal-title').innerText = 'Add Custom Activity';
@@ -630,10 +594,10 @@ function saveActivityForm(e) {
 
   if (id) {
     // Update existing activity
-    const idx = allActivities.findIndex(a => a.id === id);
+    const idx = currentActivities.findIndex(a => a.id === id);
     if (idx > -1) {
-      allActivities[idx] = {
-        ...allActivities[idx],
+      currentActivities[idx] = {
+        ...currentActivities[idx],
         name,
         city,
         country,
@@ -657,22 +621,22 @@ function saveActivityForm(e) {
       rating: "5.0",
       desc
     };
-    allActivities.unshift(newAct);
+    currentActivities.unshift(newAct);
     showToast(`🎉 Added new activity "${name}" to catalog!`);
   }
 
-  saveStoredActivities();
+  saveStoredActivitiesList(currentActivities);
   closeActivityEditor();
   filterActivities();
 }
 
 function deleteActivity(actId) {
-  const act = allActivities.find(a => a.id === actId);
+  const act = currentActivities.find(a => a.id === actId);
   if (!act) return;
   if (!confirm(`Are you sure you want to delete "${act.name}"?`)) return;
 
-  allActivities = allActivities.filter(a => a.id !== actId);
-  saveStoredActivities();
+  currentActivities = currentActivities.filter(a => a.id !== actId);
+  saveStoredActivitiesList(currentActivities);
   showToast(`🗑️ Deleted "${act.name}" from catalog.`);
   filterActivities();
 }
@@ -684,7 +648,7 @@ function openActModal(actName, actCity) {
   currentSelectedAct = { name: actName, city: actCity };
   document.getElementById('modal-act-desc').innerText = `Assign "${actName}" (${actCity}) to a trip itinerary:`;
   const select = document.getElementById('modal-act-trip-select');
-  const trips = Api.trips();
+  const trips = Api.trips() || [];
 
   if (trips.length === 0) {
     select.innerHTML = `<option value="new">+ Create a new trip for this activity</option>`;
@@ -698,7 +662,7 @@ function openActModal(actName, actCity) {
 function updateModalStopsOptions() {
   const tripId = document.getElementById('modal-act-trip-select').value;
   const stopSelect = document.getElementById('modal-act-stop-select');
-  const trips = Api.trips();
+  const trips = Api.trips() || [];
   const trip = trips.find(t => t.id === tripId);
 
   if (!trip || !trip.stops || trip.stops.length === 0) {
@@ -719,7 +683,7 @@ function confirmAddActToTrip() {
     window.location.href = 'create-trip.html';
     return;
   }
-  const trips = Api.trips();
+  const trips = Api.trips() || [];
   const trip = trips.find(t => t.id === tripId);
   if (!trip) return;
 
@@ -755,7 +719,7 @@ function confirmAddActToTrip() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadStoredActivities();
+  currentActivities = getStoredActivities();
   filterActivities();
 });
 </script>
