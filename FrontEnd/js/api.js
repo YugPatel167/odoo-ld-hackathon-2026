@@ -82,7 +82,7 @@ async function apiRequest(path, options = {}) {
   }
 
   if (!res.ok) {
-    const message = (data && data.error) || `Request failed (${res.status})`;
+    const message = (data && data.error) || (data && data.message) || `Request failed (${res.status})`;
     throw new Error(message);
   }
 
@@ -105,7 +105,9 @@ const Api = {
     });
     if (data && data.token) {
       setToken(data.token);
-      setUser(data.user);
+      if (data.user) {
+        setUser(data.user);
+      }
     }
     return data;
   },
@@ -207,7 +209,6 @@ const Api = {
   // STUBS FOR FUTURE ENDPOINTS (NOT YET IMPLEMENTED IN BACKEND)
   // ---------------------------------------------------------------------------
   /**
-   * [NOT YET IMPLEMENTED IN BACKEND]
    * Recommended cities: Fallback uses getCities() sorted by popularity_score.
    */
   recommendedCities: async (limit = 6) => {
@@ -216,8 +217,7 @@ const Api = {
   },
 
   /**
-   * [NOT YET IMPLEMENTED IN BACKEND]
-   * Contact form submission.
+   * Contact form submission stub.
    */
   contactSubmit: async (payload) => {
     console.warn("POST /api/contact is NOT YET IMPLEMENTED IN BACKEND. Mocking success.");
@@ -225,11 +225,18 @@ const Api = {
   },
 
   /**
-   * [NOT YET IMPLEMENTED IN BACKEND]
-   * Ticket booking mock.
+   * Ticket booking stub.
    */
   bookTicket: async (payload) => {
     console.warn("POST /api/tickets/book is NOT YET IMPLEMENTED IN BACKEND. Mocking response.");
     return { success: true, booking_id: "BK-" + Math.floor(Math.random() * 1000000) };
   },
 };
+
+// Export to global window scope for standard HTML scripts
+window.Api = Api;
+window.getToken = getToken;
+window.setToken = setToken;
+window.getUser = getUser;
+window.setUser = setUser;
+window.clearAuth = clearAuth;
