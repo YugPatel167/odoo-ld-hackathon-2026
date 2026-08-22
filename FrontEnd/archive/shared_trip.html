@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Summer EuroTrip 2026 — GlobeTrotter</title>
+    <meta name="description" content="Shared itinerary: Summer EuroTrip 2026"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+            min-height: 100vh;
+        }
+
+        /* ── Navbar ─────────────────────────────────────────────── */
+        .gt-navbar {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 16px rgba(108,92,231,.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .gt-navbar .brand {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-actions { display: flex; gap: 10px; }
+        .btn-nav {
+            background: rgba(255,255,255,.15);
+            backdrop-filter: blur(6px);
+            border: 1.5px solid rgba(255,255,255,.35);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: .88rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background .15s;
+        }
+        .btn-nav:hover { background: rgba(255,255,255,.25); }
+
+        /* ── Hero ───────────────────────────────────────────────── */
+        .gt-hero {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: #fff;
+            padding: 56px 28px 44px;
+            text-align: center;
+        }
+        .gt-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 8px rgba(0,0,0,.15);
+        }
+        .gt-hero .meta {
+            opacity: .9;
+            font-size: .97rem;
+            margin-bottom: 20px;
+        }
+        .gt-hero .badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .badge-pill {
+            background: rgba(255,255,255,.2);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,.35);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .84rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* ── Main layout ────────────────────────────────────────── */
+        .gt-container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 36px 20px 72px;
+        }
+
+        /* ── Card base ──────────────────────────────────────────── */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 14px rgba(0,0,0,.07);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        /* ── Share bar ──────────────────────────────────────────── */
+        .gt-share-bar {
+            padding: 20px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .share-label {
+            font-weight: 700;
+            font-size: .95rem;
+            color: #6c5ce7;
+            flex: 0 0 auto;
+        }
+        .gt-url-box {
+            flex: 1 1 220px;
+            background: #f7f5ff;
+            border: 1.5px solid #d6ceff;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: .82rem;
+            color: #4a3fbd;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            user-select: all;
+        }
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 9px 18px;
+            font-size: .88rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            transition: opacity .15s, transform .1s;
+        }
+        .btn:hover { opacity: .88; transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn-copy   { background: #6c5ce7; color: #fff; }
+        .btn-wa     { background: #25D366; color: #fff; }
+        .btn-tw     { background: #1DA1F2; color: #fff; }
+        .btn-fb     { background: #1877F2; color: #fff; }
+        .btn-primary { background: #6c5ce7; color: #fff; font-size: .95rem; padding: 12px 28px; }
+        .copy-feedback {
+            display: none;
+            color: #00b894;
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        /* ── Section title ──────────────────────────────────────── */
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Stop cards ─────────────────────────────────────────── */
+        .gt-stop-card { margin-bottom: 20px; }
+        .gt-stop-header {
+            background: linear-gradient(90deg, #6c5ce7 0%, #a29bfe 100%);
+            color: #fff;
+            padding: 16px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .gt-stop-seq {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: .95rem;
+            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,.4);
+        }
+        .gt-stop-info h3 {
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .gt-stop-info .dates {
+            opacity: .88;
+            font-size: .82rem;
+        }
+        .gt-stop-body {
+            padding: 18px 22px;
+        }
+        .activities-title {
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        .gt-activities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .gt-activity-chip {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: #f7f5ff;
+            border: 1px solid #d6ceff;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: .83rem;
+            color: #4a3fbd;
+            transition: background .15s;
+        }
+        .gt-activity-chip:hover { background: #ede9ff; }
+        .type-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .type-sightseeing { background: #6c5ce7; }
+        .type-food        { background: #fd79a8; }
+        .type-adventure   { background: #00b894; }
+        .type-culture     { background: #fdcb6e; }
+        .type-leisure     { background: #74b9ff; }
+        .cost-tag {
+            opacity: .65;
+            font-size: .78rem;
+        }
+
+        /* ── Copy Trip CTA ──────────────────────────────────────── */
+        .gt-copy-cta {
+            text-align: center;
+            padding: 32px 24px;
+        }
+        .gt-copy-cta h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #6c5ce7;
+            margin-bottom: 8px;
+        }
+        .gt-copy-cta p {
+            color: #666;
+            font-size: .92rem;
+            margin-bottom: 20px;
+        }
+        .copy-success {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 20px;
+            background: #e8fff6;
+            border: 1.5px solid #00b894;
+            border-radius: 10px;
+            color: #00856a;
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        /* ── Footer ─────────────────────────────────────────────── */
+        .gt-footer {
+            text-align: center;
+            padding: 28px 20px;
+            font-size: .82rem;
+            color: #aaa;
+            border-top: 1px solid #e8e8e8;
+            background: #fff;
+        }
+        .gt-footer a { color: #6c5ce7; text-decoration: none; }
+
+        /* ── Toast ──────────────────────────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: .88rem;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,.2);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: transform .3s ease, opacity .3s ease;
+            z-index: 999;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        @media (max-width: 600px) {
+            .gt-hero h1 { font-size: 1.7rem; }
+            .gt-share-bar { flex-direction: column; align-items: flex-start; }
+            .gt-url-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Navbar ──────────────────────────────────────────────── -->
+    <nav class="gt-navbar">
+        <a class="brand" href="index.html">✈ GlobeTrotter</a>
+        <div class="nav-actions">
+            <a href="index.html" class="btn-nav">My Trips</a>
+        </div>
+    </nav>
+
+    <!-- ── Hero ────────────────────────────────────────────────── -->
+    <div class="gt-hero">
+        <h1>Summer EuroTrip 2026</h1>
+        <div class="meta">Shared itinerary by <strong>Alex Johnson</strong></div>
+        <div class="badges">
+            <span class="badge-pill">📅 Jun 15 — Jul 10, 2026</span>
+            <span class="badge-pill">⏱ 26 days</span>
+            <span class="badge-pill">📍 4 stops</span>
+            <span class="badge-pill">✈ Confirmed</span>
+        </div>
+    </div>
+
+    <!-- ── Main ────────────────────────────────────────────────── -->
+    <div class="gt-container">
+
+        <!-- Share bar -->
+        <div class="card">
+            <div class="gt-share-bar">
+                <span class="share-label">🔗 Share this trip</span>
+                <div class="gt-url-box" id="publicUrl">
+                    http://localhost:8069/trip/shared/a3f7c2d1-9b4e-4f12-8c3a-e2d5f6a7b8c9
+                </div>
+                <button class="btn btn-copy" onclick="copyUrl()">
+                    <i class="fa fa-clipboard"></i> Copy Link
+                </button>
+                <span class="copy-feedback" id="copyFeedback">✓ Copied!</span>
+                <a class="btn btn-wa"
+                   href="https://wa.me/?text=Check%20out%20this%20trip%20on%20GlobeTrotter!%20http://localhost:8069/trip/shared/a3f7c2d1"
+                   target="_blank" rel="noopener">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                </a>
+                <a class="btn btn-tw"
+                   href="https://twitter.com/intent/tweet?text=Check%20out%20this%20trip!&url=http://localhost:8069/trip/shared/a3f7c2d1"
+                   target="_blank" rel="noopener">
+                    <i class="fa-brands fa-x-twitter"></i> Twitter
+                </a>
+                <a class="btn btn-fb"
+                   href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:8069/trip/shared/a3f7c2d1"
+                   target="_blank" rel="noopener">
+                    <i class="fa-brands fa-facebook"></i> Facebook
+                </a>
+            </div>
+        </div>
+
+        <!-- Stop 1 -->
+        <div class="card gt-stop-card">
+            <div class="gt-stop-header">
+                <div class="gt-stop-seq">1</div>
+                <div class="gt-stop-info">
+                    <h3>Paris, France</h3>
+                    <div class="dates">Jun 15 — Jun 22, 2026 &nbsp;·&nbsp; 7 days</div>
+                </div>
+            </div>
+            <div class="gt-stop-body">
+                <p class="activities-title">Planned Activities</p>
+                <div class="gt-activities">
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-sightseeing"></span>
+                        Eiffel Tower Visit <span class="cost-tag">· $25</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-culture"></span>
+                        Louvre Museum <span class="cost-tag">· $18</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-food"></span>
+                        Seine River Dinner Cruise <span class="cost-tag">· $65</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-leisure"></span>
+                        Montmartre Stroll <span class="cost-tag">· $0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stop 2 -->
+        <div class="card gt-stop-card">
+            <div class="gt-stop-header">
+                <div class="gt-stop-seq">2</div>
+                <div class="gt-stop-info">
+                    <h3>Amsterdam, Netherlands</h3>
+                    <div class="dates">Jun 22 — Jun 27, 2026 &nbsp;·&nbsp; 5 days</div>
+                </div>
+            </div>
+            <div class="gt-stop-body">
+                <p class="activities-title">Planned Activities</p>
+                <div class="gt-activities">
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-culture"></span>
+                        Anne Frank House <span class="cost-tag">· $16</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-sightseeing"></span>
+                        Canal Boat Tour <span class="cost-tag">· $22</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-adventure"></span>
+                        Bike Through Vondelpark <span class="cost-tag">· $12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stop 3 -->
+        <div class="card gt-stop-card">
+            <div class="gt-stop-header">
+                <div class="gt-stop-seq">3</div>
+                <div class="gt-stop-info">
+                    <h3>Rome, Italy</h3>
+                    <div class="dates">Jun 27 — Jul 5, 2026 &nbsp;·&nbsp; 8 days</div>
+                </div>
+            </div>
+            <div class="gt-stop-body">
+                <p class="activities-title">Planned Activities</p>
+                <div class="gt-activities">
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-sightseeing"></span>
+                        Colosseum &amp; Forum <span class="cost-tag">· $20</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-culture"></span>
+                        Vatican Museums <span class="cost-tag">· $28</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-food"></span>
+                        Trastevere Food Walk <span class="cost-tag">· $45</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-leisure"></span>
+                        Trevi Fountain &amp; Gelato <span class="cost-tag">· $5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stop 4 -->
+        <div class="card gt-stop-card">
+            <div class="gt-stop-header">
+                <div class="gt-stop-seq">4</div>
+                <div class="gt-stop-info">
+                    <h3>Barcelona, Spain</h3>
+                    <div class="dates">Jul 5 — Jul 10, 2026 &nbsp;·&nbsp; 5 days</div>
+                </div>
+            </div>
+            <div class="gt-stop-body">
+                <p class="activities-title">Planned Activities</p>
+                <div class="gt-activities">
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-sightseeing"></span>
+                        Sagrada Família <span class="cost-tag">· $30</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-adventure"></span>
+                        Beach Day at Barceloneta <span class="cost-tag">· $0</span>
+                    </div>
+                    <div class="gt-activity-chip">
+                        <span class="type-dot type-food"></span>
+                        La Boqueria Market Tour <span class="cost-tag">· $20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copy Trip CTA -->
+        <div class="card">
+            <div class="gt-copy-cta">
+                <h3>✈ Like this itinerary?</h3>
+                <p>Copy it to your own GlobeTrotter account and make it your own.</p>
+                <button class="btn btn-primary" onclick="handleCopyTrip()">
+                    <i class="fa fa-copy"></i> Copy Trip to My Account
+                </button>
+                <div class="copy-success" id="copySuccess">
+                    ✅ Trip copied! "Copy of Summer EuroTrip 2026" has been added to your trips.
+                    <br/><a href="index.html" style="color:#00856a;">View My Trips →</a>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /gt-container -->
+
+    <!-- ── Footer ───────────────────────────────────────────────── -->
+    <div class="gt-footer">
+        Powered by <strong>GlobeTrotter</strong> &nbsp;·&nbsp;
+        <a href="index.html">Plan your own trip</a>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Copy public URL to clipboard
+        function copyUrl() {
+            const url = document.getElementById('publicUrl').textContent.trim();
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('🔗 Link copied to clipboard!');
+                const fb = document.getElementById('copyFeedback');
+                fb.style.display = 'inline';
+                setTimeout(() => fb.style.display = 'none', 2500);
+            }).catch(() => {
+                // Fallback for browsers that block clipboard without HTTPS
+                showToast('📋 Select and copy the URL above');
+            });
+        }
+
+        // Simulate Copy Trip (in real Odoo this is a POST to /trip/shared/<token>/copy)
+        function handleCopyTrip() {
+            const btn = event.currentTarget;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Copying...';
+
+            setTimeout(() => {
+                btn.style.display = 'none';
+                document.getElementById('copySuccess').style.display = 'block';
+                showToast('✅ Trip copied to your account!');
+            }, 1200);
+        }
+
+        // Toast helper
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

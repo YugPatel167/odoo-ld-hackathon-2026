@@ -70,7 +70,7 @@
 
   <div class="sidebar-user">
     <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
-    <a href="login.html" class="btn btn-primary btn-sm">Sign up</a>
+    <a href="login.html?tab=signup" class="btn btn-primary btn-sm">Sign up</a>
   </div>
 </aside>
 
@@ -197,6 +197,7 @@
 <div id="cursor-dot"></div>
 
 <script src="../js/api.js"></script>
+<script src="../js/data.js"></script>
 <script src="../js/nav.js"></script>
 <script src="../js/cursor.js"></script>
 <script src="../js/chatbot.js"></script>
@@ -219,25 +220,6 @@ const fullCitiesList = [
   { name: "Cape Town", country: "South Africa" },
   { name: "Cairo", country: "Egypt" }
 ];
-
-const cityDatabase = {
-  "Paris": { country: "France", activities: [{ name: "Eiffel Tower Summit", cost: 35, duration: "3h", type: "Sightseeing" }, { name: "Louvre Museum Guided Tour", cost: 45, duration: "4h", type: "Culture" }, { name: "Seine River Dinner Cruise", cost: 75, duration: "2.5h", type: "Food" }, { name: "Montmartre Walking Tour", cost: 20, duration: "2h", type: "Culture" }] },
-  "Tokyo": { country: "Japan", activities: [{ name: "Shibuya Crossing & Hachiko", cost: 0, duration: "1.5h", type: "Sightseeing" }, { name: "TeamLab Planets Digital Art", cost: 28, duration: "2.5h", type: "Culture" }, { name: "Mount Fuji Day Trip", cost: 95, duration: "8h", type: "Adventure" }, { name: "Tsukiji Outer Market Food Tour", cost: 40, duration: "2.5h", type: "Food" }] },
-  "Rome": { country: "Italy", activities: [{ name: "Colosseum & Roman Forum Tour", cost: 40, duration: "3.5h", type: "Culture" }, { name: "Vatican Museums & Sistine Chapel", cost: 55, duration: "4h", type: "Culture" }, { name: "Trastevere Food Tasting", cost: 65, duration: "3h", type: "Food" }, { name: "Trevi Fountain Gelato Walk", cost: 8, duration: "1h", type: "Leisure" }] },
-  "Interlaken": { country: "Switzerland", activities: [{ name: "Jungfraujoch Top of Europe Train", cost: 180, duration: "6h", type: "Adventure" }, { name: "Paragliding over Swiss Alps", cost: 160, duration: "2h", type: "Adventure" }, { name: "Lake Brienz Cruise", cost: 35, duration: "2h", type: "Leisure" }] },
-  "New York": { country: "USA", activities: [{ name: "Statue of Liberty & Ellis Island", cost: 30, duration: "4h", type: "Sightseeing" }, { name: "Broadway Show Musical", cost: 120, duration: "3h", type: "Culture" }, { name: "Central Park Bike Rental", cost: 25, duration: "2h", type: "Adventure" }] },
-  "Barcelona": { country: "Spain", activities: [{ name: "Sagrada Família Guided Tour", cost: 35, duration: "2.5h", type: "Culture" }, { name: "Park Güell Discovery", cost: 15, duration: "2h", type: "Sightseeing" }, { name: "Tapas Crawl in Gothic Quarter", cost: 45, duration: "3h", type: "Food" }] },
-  "London": { country: "United Kingdom", activities: [{ name: "Tower of London Tour", cost: 40, duration: "3h", type: "Culture" }, { name: "London Eye Flight", cost: 38, duration: "1h", type: "Sightseeing" }, { name: "British Museum Highlights", cost: 15, duration: "2.5h", type: "Culture" }] },
-  "Kyoto": { country: "Japan", activities: [{ name: "Fushimi Inari Shrine Walk", cost: 0, duration: "3h", type: "Culture" }, { name: "Arashiyama Bamboo Grove", cost: 0, duration: "2h", type: "Sightseeing" }, { name: "Traditional Tea Ceremony", cost: 35, duration: "1.5h", type: "Culture" }] },
-  "Bangkok": { country: "Thailand", activities: [{ name: "Grand Palace & Wat Pho", cost: 18, duration: "3.5h", type: "Culture" }, { name: "Floating Markets Longtail Boat", cost: 30, duration: "4h", type: "Adventure" }, { name: "Chinatown Street Food Tour", cost: 25, duration: "2.5h", type: "Food" }] },
-  "Singapore": { country: "Singapore", activities: [{ name: "Gardens by the Bay Cloud Forest", cost: 25, duration: "3h", type: "Sightseeing" }, { name: "Marina Bay Sands SkyPark", cost: 28, duration: "1.5h", type: "Sightseeing" }] },
-  "Dubai": { country: "United Arab Emirates", activities: [{ name: "Burj Khalifa 148th Floor", cost: 95, duration: "2h", type: "Sightseeing" }, { name: "Desert 4x4 Safari & BBQ", cost: 65, duration: "5h", type: "Adventure" }] },
-  "San Francisco": { country: "USA", activities: [{ name: "Alcatraz Island Night Tour", cost: 55, duration: "3h", type: "Culture" }, { name: "Golden Gate Bridge Bike Tour", cost: 35, duration: "3h", type: "Adventure" }] },
-  "Rio de Janeiro": { country: "Brazil", activities: [{ name: "Christ the Redeemer Train", cost: 25, duration: "3h", type: "Sightseeing" }, { name: "Sugarloaf Mountain Cable Car", cost: 30, duration: "2.5h", type: "Sightseeing" }] },
-  "Sydney": { country: "Australia", activities: [{ name: "Sydney Opera House Tour", cost: 35, duration: "2h", type: "Culture" }, { name: "Bondi to Coogee Coastal Walk", cost: 0, duration: "2.5h", type: "Leisure" }] },
-  "Cape Town": { country: "South Africa", activities: [{ name: "Table Mountain Cableway", cost: 22, duration: "3h", type: "Adventure" }, { name: "Cape Peninsula & Boulders Beach", cost: 50, duration: "6h", type: "Sightseeing" }] },
-  "Cairo": { country: "Egypt", activities: [{ name: "Giza Pyramids & Sphinx Camel Tour", cost: 45, duration: "4h", type: "Culture" }, { name: "Egyptian Museum & Treasures", cost: 20, duration: "3h", type: "Culture" }] }
-};
 
 let currentStops = [];
 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobeTrotter — Create New Trip</title>
+    <style>
+        :root {
+            --gt-primary: #FF5A5F;
+            --gt-primary-hover: #E0484D;
+            --gt-secondary: #00A699;
+            --gt-dark: #222222;
+            --gt-light: #F7F7F7;
+            --gt-card-bg: #FFFFFF;
+            --gt-border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #F8F9FA;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #333;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--gt-card-bg);
+            border-radius: var(--gt-border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #EAEAEA;
+            overflow: hidden;
+        }
+
+        .header-bar {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-bar h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .form-content {
+            padding: 2rem;
+        }
+
+        .cover-photo-box {
+            border: 2px dashed #D0D0D0;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #FAFAFA;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .cover-photo-box:hover {
+            border-color: var(--gt-primary);
+        }
+
+        .cover-photo-box span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .cover-photo-box p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1.5px solid #E0E0E0;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--gt-primary);
+            box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.15);
+        }
+
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .duration-preview {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #EAEAEA;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: #EEEEEE;
+            color: #555;
+        }
+
+        .btn-secondary:hover {
+            background: #E0E0E0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gt-primary) 0%, #FF385C 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 90, 95, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 90, 95, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-bar">
+            <h1>✈️ GlobeTrotter — Create Trip</h1>
+            <span class="status-badge">Status: Planning</span>
+        </div>
+
+        <form class="form-content" onsubmit="event.preventDefault(); alert('Trip Created Successfully!');">
+            <div class="cover-photo-box" onclick="document.getElementById('cover-input').click()">
+                <span>📷</span>
+                <strong>Upload Cover Photo (Optional)</strong>
+                <p>Add a beautiful landscape or banner image</p>
+                <input id="cover-input" type="file" accept="image/*" style="display: none;" onchange="previewImage(this)">
+            </div>
+
+            <div class="form-group">
+                <label for="trip-name">Trip Name *</label>
+                <input id="trip-name" class="form-control" type="text" placeholder="e.g. Summer EuroTrip 2026" required value="Summer EuroTrip 2026">
+            </div>
+
+            <div class="date-row">
+                <div class="form-group">
+                    <label for="start-date">Start Date *</label>
+                    <input id="start-date" class="form-control" type="date" required onchange="calculateDuration()">
+                </div>
+                <div class="form-group">
+                    <label for="end-date">End Date *</label>
+                    <input id="end-date" class="form-control" type="date" required onchange="calculateDuration()">
+                </div>
+            </div>
+
+            <div id="duration-box" class="duration-preview" style="display: none;">
+                ⏱️ Calculated Duration: <span id="duration-text">0</span> Days
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label for="trip-desc">Trip Description & Goals</label>
+                <textarea id="trip-desc" class="form-control" placeholder="Describe your dream stops, packing goals, or personal notes..."></textarea>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save &amp; Build Itinerary</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start-date').value = today;
+        const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        document.getElementById('end-date').value = nextWeek;
+
+        function calculateDuration() {
+            const start = new Date(document.getElementById('start-date').value);
+            const end = new Date(document.getElementById('end-date').value);
+            if (start && end && end >= start) {
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                document.getElementById('duration-box').style.display = 'inline-block';
+                document.getElementById('duration-text').innerText = diffDays;
+            }
+        }
+        calculateDuration();
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                alert('Cover photo selected: ' + input.files[0].name);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobeTrotter — Travel Planning Platform</title>
+    <style>
+        :root {
+            --gt-primary: #FF5A5F;
+            --gt-primary-hover: #E0484D;
+            --gt-secondary: #00A699;
+            --gt-dark: #1E293B;
+            --gt-bg: #F8FAFC;
+            --gt-card-bg: #FFFFFF;
+            --gt-border-radius: 14px;
+            --gt-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--gt-bg);
+            color: var(--gt-dark);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation */
+        header.navbar {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-create-trip {
+            background: linear-gradient(135deg, var(--gt-primary), #FF385C);
+            color: white;
+            padding: 0.55rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 90, 95, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-create-trip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 90, 95, 0.45);
+        }
+
+        /* App Container */
+        main.app-container {
+            flex: 1;
+            max-width: 1180px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .page-header p {
+            color: #64748B;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+        }
+
+        /* Grid */
+        .trips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.75rem;
+        }
+
+        .trip-card {
+            background: var(--gt-card-bg);
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trip-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-cover {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            background-color: #CBD5E1;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+        }
+
+        .card-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+        }
+
+        .card-state-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .card-cover-title {
+            position: relative;
+            z-index: 2;
+            color: white;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-body {
+            padding: 1.4rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pill-duration {
+            background: #EFF6FF;
+            color: #1D4ED8;
+        }
+
+        .pill-destinations {
+            background: #ECFDF5;
+            color: #047857;
+        }
+
+        .pill-budget {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.6rem;
+            border-top: 1px solid #F1F5F9;
+            padding-top: 1rem;
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid #E2E8F0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+
+        .btn-card.primary-action {
+            background: #F0FDF4;
+            color: #166534;
+            border-color: #BBF7D0;
+        }
+
+        .btn-card.primary-action:hover {
+            background: #DCFCE7;
+        }
+
+        .btn-card:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+        }
+
+        .btn-card.delete {
+            color: #EF4444;
+            flex: 0 0 40px;
+        }
+
+        .btn-card.delete:hover {
+            background: #FEF2F2;
+            border-color: #FCA5A5;
+        }
+
+        /* Search & Filter Bar for Cities */
+        .search-container {
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .search-input-box {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.85rem 1.25rem;
+            border-radius: 10px;
+            border: 1.5px solid #CBD5E1;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--gt-primary);
+            box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.15);
+        }
+
+        .filter-tags-row {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        .filter-pill {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: 1px solid #CBD5E1;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-pill:hover {
+            border-color: var(--gt-primary);
+            color: var(--gt-primary);
+        }
+
+        .filter-pill.active {
+            background: var(--gt-primary);
+            color: white;
+            border-color: var(--gt-primary);
+        }
+
+        /* City Cards */
+        .city-card {
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .city-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+        }
+
+        .city-cover {
+            height: 190px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            background-color: #CBD5E1;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.25rem;
+        }
+
+        .city-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+        }
+
+        .city-title-group {
+            position: relative;
+            z-index: 2;
+            color: white;
+        }
+
+        .city-title-group h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .city-title-group p {
+            font-size: 0.9rem;
+            color: #E2E8F0;
+        }
+
+        .city-popularity-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            color: #FBBF24;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .city-body {
+            padding: 1.4rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .btn-add-city-trip {
+            background: linear-gradient(135deg, var(--gt-secondary), #059669);
+            color: white;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            transition: transform 0.15s, box-shadow 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .btn-add-city-trip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+        }
+
+        /* Modal for adding city to trip */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            max-width: 480px;
+            width: 90%;
+            padding: 2rem;
+        }
+
+        /* Form elements */
+        .form-view-container {
+            max-width: 860px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            padding: 2.25rem;
+        }
+
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 1.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 9px;
+            border: 1.5px solid #CBD5E1;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--gt-primary);
+            box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.15);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stops-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stop-item-card {
+            background: #F8FAFC;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .stop-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .stop-number {
+            background: var(--gt-dark);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .stop-controls {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .btn-mini {
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid #CBD5E1;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn-mini:hover {
+            background: #F1F5F9;
+        }
+
+        .btn-mini.danger {
+            color: #EF4444;
+        }
+
+        .btn-add-stop {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            border: 1.5px dashed #93C5FD;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .activity-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        .activity-pill {
+            background: white;
+            border: 1px solid #CBD5E1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s;
+        }
+
+        .activity-pill.selected {
+            background: #ECFDF5;
+            border-color: #10B981;
+            color: #047857;
+            font-weight: 600;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--gt-primary), #FF385C);
+            color: white;
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 9px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 12px rgba(255, 90, 95, 0.3);
+        }
+
+        /* Review screen elements */
+        .view-switcher-bar {
+            display: flex;
+            background: #E2E8F0;
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .view-switcher-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 7px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .view-switcher-btn.active {
+            background: white;
+            color: var(--gt-primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .review-hero {
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .kpi-container {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .kpi-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #0F172A;
+            margin-top: 0.15rem;
+        }
+
+        .calendar-view-box {
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            padding: 2rem;
+        }
+
+        .timeline-stop-block {
+            border-left: 4px solid var(--gt-secondary);
+            padding-left: 1.25rem;
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-stop-block::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gt-secondary);
+            border: 3px solid white;
+        }
+
+        .timeline-city-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0F172A;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .timeline-dates-tag {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .calendar-activity-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.85rem;
+        }
+
+        .activity-card-compact {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.88rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .activity-card-compact .act-cost {
+            color: #059669;
+            font-weight: 700;
+            background: #ECFDF5;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+        }
+
+        .list-view-box {
+            background: white;
+            border-radius: var(--gt-border-radius);
+            box-shadow: var(--gt-shadow);
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+        }
+
+        .list-city-header {
+            background: #F8FAFC;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            color: #0F172A;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .list-activity-row {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #F1F5F9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header class="navbar">
+        <div class="brand-logo" onclick="switchView('trips')">
+            <span>🌍 GlobeTrotter</span>
+        </div>
+        <nav class="nav-links">
+            <button class="nav-btn active" id="nav-trips-btn" onclick="switchView('trips')">My Trips</button>
+            <button class="nav-btn" id="nav-cities-btn" onclick="switchView('cities')">🔍 Explore Cities</button>
+            <button class="nav-btn" onclick="window.location.href='login.html'">Sign In / Out</button>
+            <button class="btn-create-trip" onclick="switchView('create')">
+                <span>+</span> Plan New Trip
+            </button>
+        </nav>
+    </header>
+
+    <main class="app-container">
+
+        <!-- VIEW 1: MY TRIPS (Kanban Cards & Empty State) -->
+        <section id="view-trips">
+            <div class="page-header">
+                <div>
+                    <h1>My Travel Plans</h1>
+                    <p>Manage your custom multi-city journeys, itinerary stops, and activities</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button class="nav-btn" style="color: #475569; border: 1.5px solid #CBD5E1; background: white;"
+                        onclick="switchView('cities')">🔍 Discover Destinations</button>
+                    <button class="btn-create-trip" onclick="switchView('create')">
+                        <span>+</span> Plan New Trip
+                    </button>
+                </div>
+            </div>
+
+            <div id="trips-grid-container" class="trips-grid"></div>
+
+            <div id="empty-state-container" class="empty-state" style="display: none;">
+                <div class="icon">✈️</div>
+                <h3>No trips planned yet!</h3>
+                <p>Start by exploring global destinations or creating a customized itinerary.</p>
+                <button class="btn-create-trip" style="margin: 0 auto;" onclick="switchView('create')">
+                    <span>+</span> Plan Your First Trip
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 2: EXPLORE & SEARCH CITIES (City Search Screen) -->
+        <section id="view-cities" style="display: none;">
+            <div class="page-header">
+                <div>
+                    <h1>Explore Global Destinations</h1>
+                    <p>Search over 16 curated cities by region, cost index, and popularity to add to your trips</p>
+                </div>
+                <button class="btn-create-trip" onclick="switchView('create')">
+                    <span>+</span> Plan New Trip
+                </button>
+            </div>
+
+            <!-- Search & Filters Container -->
+            <div class="search-container">
+                <div class="search-input-box">
+                    <span style="font-size: 1.25rem;">🔍</span>
+                    <input type="text" id="city-search-input" class="search-input"
+                        placeholder="Search cities, countries, or regions (e.g. Paris, Japan, Switzerland)..."
+                        oninput="filterCities()" />
+                </div>
+                <div class="filter-tags-row">
+                    <span class="filter-label">Region:</span>
+                    <button class="filter-pill active" onclick="setRegionFilter('all', this)">All Regions</button>
+                    <button class="filter-pill" onclick="setRegionFilter('Europe', this)">Europe</button>
+                    <button class="filter-pill" onclick="setRegionFilter('Asia', this)">Asia</button>
+                    <button class="filter-pill" onclick="setRegionFilter('Americas', this)">Americas</button>
+                    <button class="filter-pill" onclick="setRegionFilter('Oceania', this)">Oceania</button>
+                    <button class="filter-pill" onclick="setRegionFilter('Africa', this)">Africa</button>
+                </div>
+                <div class="filter-tags-row">
+                    <span class="filter-label">Cost Index:</span>
+                    <button class="filter-pill active" onclick="setCostFilter('all', this)">All Budgets</button>
+                    <button class="filter-pill" onclick="setCostFilter('$', this)">Budget ($)</button>
+                    <button class="filter-pill" onclick="setCostFilter('$$', this)">Moderate ($$)</button>
+                    <button class="filter-pill" onclick="setCostFilter('$$$', this)">Luxury ($$$)</button>
+                </div>
+            </div>
+
+            <!-- Cities Grid -->
+            <div id="cities-grid-container" class="trips-grid"></div>
+        </section>
+
+        <!-- VIEW 3: ITINERARY BUILDER & TRIP FORM -->
+        <section id="view-create" style="display: none;">
+            <div class="page-header">
+                <div>
+                    <h1 id="form-title">Itinerary Builder</h1>
+                    <p>Design your multi-city route, pick stops, and select activities</p>
+                </div>
+                <button class="nav-btn" style="color: #64748B; border: 1px solid #CBD5E1;"
+                    onclick="switchView('trips')">← Back to My Trips</button>
+            </div>
+
+            <div class="form-view-container">
+                <form id="trip-form" onsubmit="handleTripSave(event)">
+                    <input type="hidden" id="edit-trip-id" value="">
+
+                    <div class="form-group">
+                        <label for="trip-name">Trip Name *</label>
+                        <input id="trip-name" class="form-control" type="text" placeholder="e.g. Summer EuroTrip 2026"
+                            required />
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="trip-start-date">Trip Start Date *</label>
+                            <input id="trip-start-date" class="form-control" type="date" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="trip-end-date">Trip End Date *</label>
+                            <input id="trip-end-date" class="form-control" type="date" required />
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="trip-cover">Cover Image URL</label>
+                            <input id="trip-cover" class="form-control" type="url"
+                                placeholder="https://images.unsplash.com/..." />
+                        </div>
+                        <div class="form-group">
+                            <label for="trip-status">Status</label>
+                            <select id="trip-status" class="form-control">
+                                <option value="Planning">Planning</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ITINERARY STOPS BUILDER -->
+                    <div class="form-section-title">
+                        <span>🗺️ Itinerary Stops &amp; Activities</span>
+                        <span id="stops-counter" style="font-size: 0.9rem; color: #64748B; font-weight: 500;">0
+                            Stops</span>
+                    </div>
+
+                    <div id="stops-list" class="stops-container"></div>
+
+                    <button type="button" class="btn-add-stop" onclick="addStop()">
+                        <span>+ Add Destination Stop</span>
+                    </button>
+
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label for="trip-desc">Trip Description &amp; Notes</label>
+                        <textarea id="trip-desc" class="form-control" rows="2"
+                            placeholder="Personal notes, transportation tips, packing notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btn-save-trip">Save Itinerary</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW 4: ITINERARY REVIEW / READ-ONLY SCREEN -->
+        <section id="view-itinerary-review" style="display: none;">
+            <div class="page-header">
+                <div>
+                    <h1 id="review-trip-name">Itinerary Overview</h1>
+                    <p id="review-trip-dates">Structured day-wise travel timeline and activity summary</p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div class="view-switcher-bar">
+                        <button class="view-switcher-btn active" id="btn-mode-calendar"
+                            onclick="switchItineraryMode('calendar')">
+                            <span>📅</span> Calendar Mode
+                        </button>
+                        <button class="view-switcher-btn" id="btn-mode-list" onclick="switchItineraryMode('list')">
+                            <span>📋</span> Grouped List
+                        </button>
+                    </div>
+                    <button class="nav-btn" style="color: #64748B; border: 1px solid #CBD5E1;"
+                        onclick="switchView('trips')">← Back to Trips</button>
+                </div>
+            </div>
+
+            <div class="review-hero">
+                <div>
+                    <span id="review-trip-status" class="pill-badge pill-destinations">Planning</span>
+                    <h3 id="review-trip-title" style="margin-top: 0.5rem; font-size: 1.4rem;">Trip Overview</h3>
+                    <p id="review-trip-desc" style="color: #64748B; font-size: 0.9rem; margin-top: 0.25rem;">Overview of
+                        destinations</p>
+                </div>
+                <div class="kpi-container">
+                    <div class="kpi-box">
+                        <span class="kpi-label">Total Duration</span>
+                        <span class="kpi-value" id="kpi-duration">11 Days</span>
+                    </div>
+                    <div class="kpi-box">
+                        <span class="kpi-label">Destinations</span>
+                        <span class="kpi-value" id="kpi-stops">2 Cities</span>
+                    </div>
+                    <div class="kpi-box">
+                        <span class="kpi-label">Estimated Cost</span>
+                        <span class="kpi-value" id="kpi-cost" style="color: #059669;">$155</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALENDAR / TIMELINE MODE -->
+            <div id="container-calendar-mode" class="calendar-view-box">
+                <h3 style="margin-bottom: 1.5rem; color: #0F172A; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📅</span> Multi-City Itinerary Timeline
+                </h3>
+                <div id="calendar-timeline-content" class="calendar-timeline-row"></div>
+            </div>
+
+            <!-- GROUPED LIST MODE -->
+            <div id="container-list-mode" class="list-view-box" style="display: none;">
+                <div id="list-grouped-content"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ADD CITY TO TRIP MODAL -->
+    <div id="modal-add-city" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">
+                Add <span id="modal-city-name" style="color: var(--gt-primary);">Paris</span> to Trip
+            </h3>
+            <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 1.25rem;">
+                Select which trip you would like to attach this destination to:
+            </p>
+            <div class="form-group">
+                <label>Select Trip</label>
+                <select id="modal-trip-select" class="form-control"></select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                <button type="button" class="nav-btn" style="color: #64748B; border: 1px solid #CBD5E1;"
+                    onclick="closeCityModal()">Cancel</button>
+                <button type="button" class="btn-create-trip" onclick="confirmAddCityToTrip()">Confirm Add to
+                    Trip</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database of 16 Global Cities
+        const fullCitiesList = [
+            { name: "Paris", country: "France", region: "Europe", cost: "$$", popularity: 98, image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=700&auto=format&fit=crop&q=80", desc: "The city of lights, world-class art at the Louvre, iconic architecture, and romantic Seine cruises." },
+            { name: "Tokyo", country: "Japan", region: "Asia", cost: "$$$", popularity: 96, image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=700&auto=format&fit=crop&q=80", desc: "Ultra-modern metropolis blending neon skyscrapers, historic temples, and legendary culinary culture." },
+            { name: "Rome", country: "Italy", region: "Europe", cost: "$$", popularity: 94, image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=700&auto=format&fit=crop&q=80", desc: "Ancient wonders including the Colosseum, Vatican City, and scenic piazzas with authentic espresso." },
+            { name: "Interlaken", country: "Switzerland", region: "Europe", cost: "$$$", popularity: 91, image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=700&auto=format&fit=crop&q=80", desc: "Adventure capital of the Swiss Alps, gateway to Jungfraujoch, crystal lakes, and paragliding." },
+            { name: "New York", country: "USA", region: "Americas", cost: "$$$", popularity: 97, image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=700&auto=format&fit=crop&q=80", desc: "The city that never sleeps, Broadway theaters, Central Park, and the Statue of Liberty." },
+            { name: "Barcelona", country: "Spain", region: "Europe", cost: "$$", popularity: 92, image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=700&auto=format&fit=crop&q=80", desc: "Gaudí architecture at Sagrada Família, Mediterranean beaches, and vibrant tapas culture." },
+            { name: "London", country: "United Kingdom", region: "Europe", cost: "$$$", popularity: 95, image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=700&auto=format&fit=crop&q=80", desc: "Historic royal landmarks, West End theater shows, Big Ben, and world-class museums." },
+            { name: "Kyoto", country: "Japan", region: "Asia", cost: "$$", popularity: 93, image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=700&auto=format&fit=crop&q=80", desc: "Thousands of classical Buddhist temples, gardens, imperial palaces, and traditional wooden houses." },
+            { name: "Bangkok", country: "Thailand", region: "Asia", cost: "$", popularity: 90, image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=700&auto=format&fit=crop&q=80", desc: "Vibrant street food, ornate shrines, bustling river canals, and lively night markets." },
+            { name: "Singapore", country: "Singapore", region: "Asia", cost: "$$$", popularity: 89, image: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=700&auto=format&fit=crop&q=80", desc: "Futuristic Gardens by the Bay, Marina Bay Sands, and lush tropical urban architecture." },
+            { name: "Dubai", country: "United Arab Emirates", region: "Asia", cost: "$$$", popularity: 91, image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=700&auto=format&fit=crop&q=80", desc: "Burj Khalifa, luxury shopping, desert safari dune bashing, and futuristic skylines." },
+            { name: "San Francisco", country: "USA", region: "Americas", cost: "$$$", popularity: 88, image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=700&auto=format&fit=crop&q=80", desc: "Golden Gate Bridge, historic cable cars, Fisherman's Wharf, and bay cruises." },
+            { name: "Rio de Janeiro", country: "Brazil", region: "Americas", cost: "$", popularity: 87, image: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=700&auto=format&fit=crop&q=80", desc: "Christ the Redeemer, Copacabana beach, vibrant samba music, and Sugarloaf Mountain." },
+            { name: "Sydney", country: "Australia", region: "Oceania", cost: "$$$", popularity: 92, image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=700&auto=format&fit=crop&q=80", desc: "Sydney Opera House, Harbour Bridge, Bondi Beach surfing, and scenic coastal walks." },
+            { name: "Cape Town", country: "South Africa", region: "Africa", cost: "$", popularity: 86, image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=700&auto=format&fit=crop&q=80", desc: "Table Mountain cable car, coastal penguin colonies at Boulders Beach, and scenic vineyards." },
+            { name: "Cairo", country: "Egypt", region: "Africa", cost: "$", popularity: 89, image: "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=700&auto=format&fit=crop&q=80", desc: "The Great Pyramids of Giza, the Sphinx, the Nile river, and rich millennia of ancient civilization." }
+        ];
+
+        const cityDatabase = {
+            "Paris": { country: "France", activities: [{ name: "Eiffel Tower Summit", cost: 35, duration: "3h", type: "Sightseeing" }, { name: "Louvre Museum Guided Tour", cost: 45, duration: "4h", type: "Culture" }, { name: "Seine River Dinner Cruise", cost: 75, duration: "2.5h", type: "Food" }] },
+            "Tokyo": { country: "Japan", activities: [{ name: "Shibuya Crossing & Hachiko", cost: 0, duration: "1.5h", type: "Sightseeing" }, { name: "TeamLab Planets Digital Art", cost: 28, duration: "2.5h", type: "Culture" }, { name: "Mount Fuji Day Trip", cost: 95, duration: "8h", type: "Adventure" }] },
+            "Rome": { country: "Italy", activities: [{ name: "Colosseum & Roman Forum Tour", cost: 40, duration: "3.5h", type: "Culture" }, { name: "Vatican Museums & Sistine Chapel", cost: 55, duration: "4h", type: "Culture" }, { name: "Trastevere Food Tasting", cost: 65, duration: "3h", type: "Food" }] },
+            "Interlaken": { country: "Switzerland", activities: [{ name: "Jungfraujoch Top of Europe Train", cost: 180, duration: "6h", type: "Adventure" }, { name: "Paragliding over Swiss Alps", cost: 160, duration: "2h", type: "Adventure" }] },
+            "New York": { country: "USA", activities: [{ name: "Statue of Liberty & Ellis Island", cost: 30, duration: "4h", type: "Sightseeing" }, { name: "Broadway Show Musical", cost: 120, duration: "3h", type: "Culture" }] },
+            "Barcelona": { country: "Spain", activities: [{ name: "Sagrada Família Guided Tour", cost: 35, duration: "2.5h", type: "Culture" }, { name: "Park Güell Discovery", cost: 15, duration: "2h", type: "Sightseeing" }] },
+            "London": { country: "United Kingdom", activities: [{ name: "Tower of London Tour", cost: 40, duration: "3h", type: "Culture" }, { name: "London Eye Flight", cost: 38, duration: "1h", type: "Sightseeing" }] },
+            "Kyoto": { country: "Japan", activities: [{ name: "Fushimi Inari Shrine Walk", cost: 0, duration: "3h", type: "Culture" }, { name: "Arashiyama Bamboo Grove", cost: 0, duration: "2h", type: "Sightseeing" }] },
+            "Bangkok": { country: "Thailand", activities: [{ name: "Grand Palace & Wat Pho", cost: 18, duration: "3.5h", type: "Culture" }, { name: "Floating Markets Longtail Boat", cost: 30, duration: "4h", type: "Adventure" }] },
+            "Singapore": { country: "Singapore", activities: [{ name: "Gardens by the Bay Cloud Forest", cost: 25, duration: "3h", type: "Sightseeing" }] },
+            "Dubai": { country: "United Arab Emirates", activities: [{ name: "Burj Khalifa 148th Floor", cost: 95, duration: "2h", type: "Sightseeing" }, { name: "Desert 4x4 Safari & BBQ", cost: 65, duration: "5h", type: "Adventure" }] },
+            "San Francisco": { country: "USA", activities: [{ name: "Alcatraz Island Night Tour", cost: 55, duration: "3h", type: "Culture" }] },
+            "Rio de Janeiro": { country: "Brazil", activities: [{ name: "Christ the Redeemer Train", cost: 25, duration: "3h", type: "Sightseeing" }] },
+            "Sydney": { country: "Australia", activities: [{ name: "Sydney Opera House Tour", cost: 35, duration: "2h", type: "Culture" }] },
+            "Cape Town": { country: "South Africa", activities: [{ name: "Table Mountain Cableway", cost: 22, duration: "3h", type: "Adventure" }] },
+            "Cairo": { country: "Egypt", activities: [{ name: "Giza Pyramids & Sphinx Camel Tour", cost: 45, duration: "4h", type: "Culture" }] }
+        };
+
+        const defaultTrips = [
+            {
+                id: 'trip_1',
+                name: 'Grand European Discovery',
+                startDate: '2026-06-15',
+                endDate: '2026-06-25',
+                durationDays: 11,
+                status: 'Planning',
+                cover: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=700&auto=format&fit=crop&q=80',
+                description: 'Scenic journey across Paris and Rome exploring art, cuisine, and history.',
+                stops: [
+                    { id: 'stop_1', city: 'Paris', startDate: '2026-06-15', endDate: '2026-06-20', activities: ['Eiffel Tower Summit', 'Louvre Museum Guided Tour'] },
+                    { id: 'stop_2', city: 'Rome', startDate: '2026-06-20', endDate: '2026-06-25', activities: ['Colosseum & Roman Forum Tour'] }
+                ]
+            }
+        ];
+
+        let selectedRegion = 'all';
+        let selectedCost = 'all';
+        let currentCityToAdd = null;
+        let currentStops = [];
+        let viewingTrip = null;
+
+        function getTrips() {
+            const data = localStorage.getItem('globetrotter_trips');
+            if (!data) {
+                localStorage.setItem('globetrotter_trips', JSON.stringify(defaultTrips));
+                return defaultTrips;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveTrips(trips) {
+            localStorage.setItem('globetrotter_trips', JSON.stringify(trips));
+            renderTrips();
+        }
+
+        function calculateDays(start, end) {
+            if (!start || !end) return 1;
+            const diff = new Date(end) - new Date(start);
+            return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1);
+        }
+
+        function renderTrips() {
+            const trips = getTrips();
+            const grid = document.getElementById('trips-grid-container');
+            const emptyState = document.getElementById('empty-state-container');
+
+            if (trips.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            grid.innerHTML = trips.map(trip => {
+                const stopCount = (trip.stops && trip.stops.length) || 1;
+                const stopNames = trip.stops ? trip.stops.map(s => s.city).join(' &rarr; ') : 'Custom Route';
+                return `
+                <div class="trip-card">
+                    <div class="card-cover" style="background-image: url('${trip.cover || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80'}');">
+                        <span class="card-state-badge">${trip.status || 'Planning'}</span>
+                        <div class="card-cover-title">${trip.name}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <div class="meta-item">
+                                <span>📅</span>
+                                <strong>${trip.startDate}</strong> &rarr; <strong>${trip.endDate}</strong>
+                            </div>
+                            <div class="meta-item" style="color: #0F172A; font-weight: 600;">
+                                <span>🗺️</span> Route: ${stopNames}
+                            </div>
+                            <div class="badge-row">
+                                <span class="pill-badge pill-duration">⏱️ ${trip.durationDays || calculateDays(trip.startDate, trip.endDate)} Days</span>
+                                <span class="pill-badge pill-destinations">📍 ${stopCount} Stops</span>
+                            </div>
+                            <p style="color: #64748B; font-size: 0.88rem; margin-top: 0.4rem; line-height: 1.4;">
+                                ${trip.description || 'No description provided.'}
+                            </p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-card primary-action" onclick="viewItineraryReview('${trip.id}')">📅 View Itinerary</button>
+                            <button class="btn-card" onclick="editTrip('${trip.id}')">✏️ Edit</button>
+                            <button class="btn-card delete" onclick="deleteTrip('${trip.id}')" title="Delete Trip">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        /* CITY SEARCH RENDERING & FILTERS */
+        function renderCities(cities) {
+            const container = document.getElementById('cities-grid-container');
+            container.innerHTML = cities.map(city => `
+                <div class="city-card">
+                    <div class="city-cover" style="background-image: url('${city.image}');">
+                        <span class="city-popularity-badge">⭐ ${city.popularity}% Popularity</span>
+                        <div class="city-title-group">
+                            <h3>${city.name}</h3>
+                            <p>📍 ${city.country} &bull; ${city.region}</p>
+                        </div>
+                    </div>
+                    <div class="city-body">
+                        <div>
+                            <div class="badge-row">
+                                <span class="pill-badge pill-budget">${city.cost === '$$$' ? '💎 Luxury ($$$)' : city.cost === '$$' ? '💳 Moderate ($$)' : '🏷️ Budget ($)'}</span>
+                                <span class="pill-badge pill-destinations">🌐 ${city.region}</span>
+                            </div>
+                            <p style="color: #64748B; font-size: 0.88rem; margin-top: 0.75rem; line-height: 1.4;">
+                                ${city.desc}
+                            </p>
+                        </div>
+                        <button class="btn-add-city-trip" onclick="openAddCityModal('${city.name}')">
+                            <span>+</span> Add to Trip Itinerary
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCities() {
+            const query = (document.getElementById('city-search-input').value || '').toLowerCase();
+            const filtered = fullCitiesList.filter(city => {
+                const matchesQuery = city.name.toLowerCase().includes(query) ||
+                    city.country.toLowerCase().includes(query) ||
+                    city.region.toLowerCase().includes(query);
+                const matchesRegion = selectedRegion === 'all' || city.region === selectedRegion;
+                const matchesCost = selectedCost === 'all' || city.cost === selectedCost;
+                return matchesQuery && matchesRegion && matchesCost;
+            });
+            renderCities(filtered);
+        }
+
+        function setRegionFilter(region, btn) {
+            selectedRegion = region;
+            btn.parentElement.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterCities();
+        }
+
+        function setCostFilter(cost, btn) {
+            selectedCost = cost;
+            btn.parentElement.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterCities();
+        }
+
+        function openAddCityModal(cityName) {
+            currentCityToAdd = cityName;
+            document.getElementById('modal-city-name').innerText = cityName;
+            const select = document.getElementById('modal-trip-select');
+            const trips = getTrips();
+            select.innerHTML = trips.map(t => `<option value="${t.id}">${t.name} (${t.startDate})</option>`).join('');
+            document.getElementById('modal-add-city').style.display = 'flex';
+        }
+
+        function closeCityModal() {
+            document.getElementById('modal-add-city').style.display = 'none';
+        }
+
+        function confirmAddCityToTrip() {
+            const tripId = document.getElementById('modal-trip-select').value;
+            const trips = getTrips();
+            const trip = trips.find(t => t.id === tripId);
+            if (!trip) return;
+
+            if (!trip.stops) trip.stops = [];
+            const lastStop = trip.stops[trip.stops.length - 1];
+            const startDate = lastStop ? lastStop.endDate : trip.startDate;
+            const endDate = trip.endDate;
+
+            trip.stops.push({
+                id: 'stop_' + Date.now(),
+                city: currentCityToAdd,
+                startDate: startDate,
+                endDate: endDate,
+                activities: []
+            });
+
+            saveTrips(trips);
+            closeCityModal();
+            alert(`🎉 Success! ${currentCityToAdd} has been added to "${trip.name}"!`);
+            viewItineraryReview(trip.id);
+        }
+
+        function switchView(viewName) {
+            document.getElementById('view-trips').style.display = viewName === 'trips' ? 'block' : 'none';
+            document.getElementById('view-cities').style.display = viewName === 'cities' ? 'block' : 'none';
+            document.getElementById('view-create').style.display = viewName === 'create' ? 'block' : 'none';
+            document.getElementById('view-itinerary-review').style.display = viewName === 'review' ? 'block' : 'none';
+
+            const navTripsBtn = document.getElementById('nav-trips-btn');
+            const navCitiesBtn = document.getElementById('nav-cities-btn');
+            navTripsBtn.classList.toggle('active', viewName === 'trips');
+            navCitiesBtn.classList.toggle('active', viewName === 'cities');
+
+            if (viewName === 'trips') renderTrips();
+            if (viewName === 'cities') {
+                filterCities();
+            }
+            if (viewName === 'create') resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById('trip-form').reset();
+            document.getElementById('edit-trip-id').value = '';
+            document.getElementById('form-title').innerText = 'Itinerary Builder';
+            document.getElementById('btn-save-trip').innerText = 'Save Itinerary';
+
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeek = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            document.getElementById('trip-start-date').value = today;
+            document.getElementById('trip-end-date').value = nextWeek;
+
+            currentStops = [
+                { id: 'st_' + Date.now(), city: 'Paris', startDate: today, endDate: nextWeek, activities: ['Eiffel Tower Summit'] }
+            ];
+            renderStops();
+        }
+
+        function addStop() {
+            const lastStop = currentStops[currentStops.length - 1];
+            const startDate = lastStop ? lastStop.endDate : document.getElementById('trip-start-date').value;
+            const endDate = document.getElementById('trip-end-date').value;
+            currentStops.push({
+                id: 'st_' + Date.now() + Math.random().toString(36).substr(2, 4),
+                city: 'Tokyo',
+                startDate: startDate,
+                endDate: endDate,
+                activities: []
+            });
+            renderStops();
+        }
+
+        function removeStop(index) {
+            currentStops.splice(index, 1);
+            renderStops();
+        }
+
+        function moveStop(index, direction) {
+            if (direction === -1 && index > 0) {
+                const temp = currentStops[index];
+                currentStops[index] = currentStops[index - 1];
+                currentStops[index - 1] = temp;
+            } else if (direction === 1 && index < currentStops.length - 1) {
+                const temp = currentStops[index];
+                currentStops[index] = currentStops[index + 1];
+                currentStops[index + 1] = temp;
+            }
+            renderStops();
+        }
+
+        function updateStopCity(index, newCity) {
+            currentStops[index].city = newCity;
+            currentStops[index].activities = [];
+            renderStops();
+        }
+
+        function toggleStopActivity(stopIndex, actName) {
+            const stop = currentStops[stopIndex];
+            const actIdx = stop.activities.indexOf(actName);
+            if (actIdx >= 0) {
+                stop.activities.splice(actIdx, 1);
+            } else {
+                stop.activities.push(actName);
+            }
+            renderStops();
+        }
+
+        function renderStops() {
+            const container = document.getElementById('stops-list');
+            document.getElementById('stops-counter').innerText = `${currentStops.length} ${currentStops.length === 1 ? 'Stop' : 'Stops'}`;
+
+            container.innerHTML = currentStops.map((stop, idx) => {
+                const cityData = cityDatabase[stop.city] || { country: '', activities: [] };
+                return `
+                <div class="stop-item-card">
+                    <div class="stop-header">
+                        <span class="stop-number">Stop #${idx + 1}</span>
+                        <div class="stop-controls">
+                            ${idx > 0 ? `<button type="button" class="btn-mini" onclick="moveStop(${idx}, -1)" title="Move Up">⬆️</button>` : ''}
+                            ${idx < currentStops.length - 1 ? `<button type="button" class="btn-mini" onclick="moveStop(${idx}, 1)" title="Move Down">⬇️</button>` : ''}
+                            ${currentStops.length > 1 ? `<button type="button" class="btn-mini danger" onclick="removeStop(${idx})" title="Remove Stop">✕ Remove</button>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label>Destination City</label>
+                            <select class="form-control" onchange="updateStopCity(${idx}, this.value)">
+                                ${fullCitiesList.map(c => `<option value="${c.name}" ${c.name === stop.city ? 'selected' : ''}>${c.name} (${c.country})</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label>Arrive</label>
+                            <input class="form-control" type="date" value="${stop.startDate || ''}" onchange="currentStops[${idx}].startDate = this.value" />
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.5rem;">
+                            <label>Depart</label>
+                            <input class="form-control" type="date" value="${stop.endDate || ''}" onchange="currentStops[${idx}].endDate = this.value" />
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 0.75rem;">
+                        <label style="font-size: 0.82rem; font-weight: 600; color: #475569;">Select Activities in ${stop.city}:</label>
+                        <div class="activity-checkboxes">
+                            ${(cityData.activities || []).map(act => {
+                    const isSelected = stop.activities.includes(act.name);
+                    return `
+                                <div class="activity-pill ${isSelected ? 'selected' : ''}" onclick="toggleStopActivity(${idx}, '${act.name}')">
+                                    <span>${isSelected ? '✓' : '+'}</span>
+                                    <span>${act.name}</span>
+                                    <span style="opacity: 0.75; font-size: 0.75rem;">(${act.cost > 0 ? '$' + act.cost : 'Free'})</span>
+                                </div>
+                                `;
+                }).join('')}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function editTrip(tripId) {
+            const trips = getTrips();
+            const trip = trips.find(t => t.id === tripId);
+            if (!trip) return;
+
+            switchView('create');
+            document.getElementById('form-title').innerText = 'Edit Itinerary: ' + trip.name;
+            document.getElementById('edit-trip-id').value = trip.id;
+            document.getElementById('trip-name').value = trip.name;
+            document.getElementById('trip-start-date').value = trip.startDate;
+            document.getElementById('trip-end-date').value = trip.endDate;
+            document.getElementById('trip-status').value = trip.status || 'Planning';
+            document.getElementById('trip-cover').value = trip.cover || '';
+            document.getElementById('trip-desc').value = trip.description || '';
+            document.getElementById('btn-save-trip').innerText = 'Update Itinerary';
+
+            currentStops = trip.stops && trip.stops.length ? JSON.parse(JSON.stringify(trip.stops)) : [
+                { id: 'st_1', city: 'Paris', startDate: trip.startDate, endDate: trip.endDate, activities: [] }
+            ];
+            renderStops();
+        }
+
+        function deleteTrip(tripId) {
+            if (confirm('Are you sure you want to delete this trip itinerary?')) {
+                const trips = getTrips().filter(t => t.id !== tripId);
+                saveTrips(trips);
+            }
+        }
+
+        function handleTripSave(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-trip-id').value || 'trip_' + Date.now();
+            const name = document.getElementById('trip-name').value;
+            const startDate = document.getElementById('trip-start-date').value;
+            const endDate = document.getElementById('trip-end-date').value;
+            const status = document.getElementById('trip-status').value;
+            const cover = document.getElementById('trip-cover').value || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80';
+            const description = document.getElementById('trip-desc').value;
+            const durationDays = calculateDays(startDate, endDate);
+
+            let trips = getTrips();
+            const existingIndex = trips.findIndex(t => t.id === id);
+
+            const tripObj = { id, name, startDate, endDate, durationDays, status, cover, description, stops: currentStops };
+
+            if (existingIndex >= 0) {
+                trips[existingIndex] = tripObj;
+            } else {
+                trips.unshift(tripObj);
+            }
+
+            saveTrips(trips);
+            viewItineraryReview(id);
+        }
+
+        function viewItineraryReview(tripId) {
+            const trips = getTrips();
+            const trip = trips.find(t => t.id === tripId);
+            if (!trip) return;
+            viewingTrip = trip;
+
+            switchView('review');
+
+            document.getElementById('review-trip-name').innerText = trip.name;
+            document.getElementById('review-trip-dates').innerText = `📅 ${trip.startDate} to ${trip.endDate}`;
+            document.getElementById('review-trip-title').innerText = trip.name;
+            document.getElementById('review-trip-desc').innerText = trip.description || 'Full multi-city travel itinerary.';
+            document.getElementById('review-trip-status').innerText = trip.status || 'Planning';
+            document.getElementById('kpi-duration').innerText = `${trip.durationDays || calculateDays(trip.startDate, trip.endDate)} Days`;
+            document.getElementById('kpi-stops').innerText = `${(trip.stops && trip.stops.length) || 0} Cities`;
+
+            let totalCost = 0;
+            if (trip.stops) {
+                trip.stops.forEach(stop => {
+                    const cityData = cityDatabase[stop.city];
+                    if (cityData && stop.activities) {
+                        stop.activities.forEach(actName => {
+                            const act = cityData.activities.find(a => a.name === actName);
+                            if (act) totalCost += act.cost;
+                        });
+                    }
+                });
+            }
+            document.getElementById('kpi-cost').innerText = `$${totalCost}`;
+
+            renderItineraryCalendarMode();
+            renderItineraryListMode();
+            switchItineraryMode('calendar');
+        }
+
+        function switchItineraryMode(mode) {
+            const btnCal = document.getElementById('btn-mode-calendar');
+            const btnList = document.getElementById('btn-mode-list');
+            const boxCal = document.getElementById('container-calendar-mode');
+            const boxList = document.getElementById('container-list-mode');
+
+            if (mode === 'calendar') {
+                btnCal.classList.add('active');
+                btnList.classList.remove('active');
+                boxCal.style.display = 'block';
+                boxList.style.display = 'none';
+            } else {
+                btnCal.classList.remove('active');
+                btnList.classList.add('active');
+                boxCal.style.display = 'none';
+                boxList.style.display = 'block';
+            }
+        }
+
+        function renderItineraryCalendarMode() {
+            const container = document.getElementById('calendar-timeline-content');
+            if (!viewingTrip.stops || viewingTrip.stops.length === 0) {
+                container.innerHTML = '<p style="color: #64748B;">No stops added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = viewingTrip.stops.map((stop, idx) => {
+                const cityData = cityDatabase[stop.city] || { activities: [] };
+                return `
+                <div class="timeline-stop-block">
+                    <div class="timeline-city-title">
+                        <span>Stop ${idx + 1}: ${stop.city}</span>
+                        <span class="timeline-dates-tag">📅 ${stop.startDate} &rarr; ${stop.endDate}</span>
+                    </div>
+                    <div class="calendar-activity-chips">
+                        ${(stop.activities && stop.activities.length) ? stop.activities.map(actName => {
+                    const act = cityData.activities.find(a => a.name === actName) || { cost: 0, duration: '2h', type: 'Experience' };
+                    return `
+                            <div class="activity-card-compact">
+                                <span>🎯</span>
+                                <strong>${actName}</strong>
+                                <span style="color: #64748B; font-size: 0.8rem;">(${act.duration})</span>
+                                <span class="act-cost">${act.cost > 0 ? '$' + act.cost : 'Free'}</span>
+                            </div>
+                            `;
+                }).join('') : '<span style="color: #94A3B8; font-size: 0.88rem; font-style: italic;">No activities planned for this stop.</span>'}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderItineraryListMode() {
+            const container = document.getElementById('list-grouped-content');
+            if (!viewingTrip.stops || viewingTrip.stops.length === 0) {
+                container.innerHTML = '<p style="padding: 1.5rem; color: #64748B;">No stops added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = viewingTrip.stops.map((stop, idx) => {
+                const cityData = cityDatabase[stop.city] || { activities: [] };
+                return `
+                <div class="list-city-group">
+                    <div class="list-city-header">
+                        <div>
+                            <span>📍 City: <strong>${stop.city}</strong></span>
+                            <span style="margin-left: 1rem; color: #64748B; font-weight: 500; font-size: 0.88rem;">📅 ${stop.startDate} to ${stop.endDate}</span>
+                        </div>
+                        <span class="pill-badge pill-duration">${calculateDays(stop.startDate, stop.endDate)} Days Stay</span>
+                    </div>
+                    <div>
+                        ${(stop.activities && stop.activities.length) ? stop.activities.map(actName => {
+                    const act = cityData.activities.find(a => a.name === actName) || { cost: 0, duration: '2h', type: 'General' };
+                    return `
+                            <div class="list-activity-row">
+                                <div>
+                                    <strong style="color: #1E293B; font-size: 0.95rem;">${actName}</strong>
+                                    <span style="margin-left: 0.5rem; font-size: 0.8rem; background: #F1F5F9; padding: 0.2rem 0.5rem; border-radius: 4px; color: #475569;">${act.type}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                    <span style="color: #64748B; font-size: 0.88rem;">⏱️ ${act.duration}</span>
+                                    <span style="font-weight: 700; color: #059669; font-size: 0.95rem;">${act.cost > 0 ? '$' + act.cost : 'Free'}</span>
+                                </div>
+                            </div>
+                            `;
+                }).join('') : '<div style="padding: 1rem 1.5rem; color: #94A3B8; font-style: italic;">No activities assigned yet.</div>'}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize
+        renderTrips();
+        renderCities(fullCitiesList);
+    </script>
+</body>
+
+</html>

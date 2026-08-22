@@ -158,6 +158,13 @@ function handleAuthSubmit(e, mode) {
     }, 800);
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('tab') === 'signup') {
+    switchAuthTab('signup');
+  }
+});
 </script>
 </body>
 </html>
