@@ -1,250 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlobeTrotter — Login & Signup</title>
-    <style>
-        /* GlobeTrotter Auth Styling */
-        :root {
-            --gt-primary: #FF5A5F;
-            --gt-primary-hover: #E0484D;
-            --gt-secondary: #00A699;
-            --gt-dark: #222222;
-            --gt-light: #F7F7F7;
-            --gt-card-bg: rgba(255, 255, 255, 0.95);
-            --gt-border-radius: 16px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            background-size: cover;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            padding: 1.5rem;
-        }
-
-        /* Card Container */
-        .auth-card {
-            background: var(--gt-card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: var(--gt-border-radius);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 2.5rem;
-            max-width: 440px;
-            width: 100%;
-        }
-
-        /* Header & Brand */
-        .brand-header {
-            text-align: center;
-            margin-bottom: 1.75rem;
-        }
-
-        .brand-header .gt-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, var(--gt-primary), #FF8E53);
-            color: #fff;
-            padding: 0.35rem 1rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 0.75rem;
-        }
-
-        .brand-header h2 {
-            color: var(--gt-dark);
-            font-weight: 700;
-            font-size: 1.65rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .brand-header p {
-            color: #717171;
-            font-size: 0.9rem;
-        }
-
-        /* Form Toggle Tabs */
-        .form-toggle {
-            display: flex;
-            background: #f1f3f5;
-            border-radius: 10px;
-            padding: 4px;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-toggle button {
-            flex: 1;
-            padding: 9px;
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #666;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .form-toggle button.active {
-            background: white;
-            color: var(--gt-primary);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Form Controls */
-        .form-group {
-            margin-bottom: 1.15rem;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.4rem;
-            font-size: 0.88rem;
-            color: #484848;
-            font-weight: 600;
-        }
-
-        .form-control {
-            width: 100%;
-            border-radius: 10px;
-            border: 1.5px solid #E4E4E4;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            transition: all 0.2s ease-in-out;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--gt-primary);
-            box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.15);
-        }
-
-        /* Submit Button */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gt-primary) 0%, #FF385C 100%);
-            border: none;
-            border-radius: 10px;
-            padding: 0.85rem;
-            font-weight: 600;
-            font-size: 1rem;
-            letter-spacing: 0.3px;
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 90, 95, 0.3);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-            width: 100%;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(255, 90, 95, 0.4);
-        }
-
-        /* Links */
-        .auth-footer {
-            margin-top: 1.5rem;
-            font-size: 0.88rem;
-            text-align: center;
-            color: #777;
-        }
-
-        .auth-link {
-            color: var(--gt-secondary);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .auth-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Access · GlobeTrotter</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+}
+.auth-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 440px;
+  width: 100%;
+  padding: 36px 32px;
+}
+.auth-tabs {
+  display: flex;
+  background: var(--parchment);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 24px;
+  border: 1px solid var(--line);
+}
+.auth-tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+.auth-tab-btn.active {
+  background: var(--brass);
+  color: var(--void);
+}
+</style>
 </head>
 <body>
-    <div class="auth-card">
-        <div class="brand-header">
-            <div class="gt-badge">🌍 GlobeTrotter</div>
-            <h2>Plan. Explore. Experience.</h2>
-            <p>Your personalized, multi-city travel companion</p>
-        </div>
 
-        <div class="form-toggle">
-            <button id="tab-login" class="active" onclick="switchTab('login')">Sign In</button>
-            <button id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
-        </div>
-
-        <!-- Login Form -->
-        <form id="login-form" onsubmit="event.preventDefault(); alert('Login test successful!');">
-            <div class="form-group">
-                <label for="login-email">Email Address</label>
-                <input id="login-email" class="form-control" type="email" placeholder="traveler@globetrotter.com" required />
-            </div>
-            <div class="form-group">
-                <label for="login-password">Password</label>
-                <input id="login-password" class="form-control" type="password" placeholder="••••••••" required />
-            </div>
-            <button type="submit" class="btn-primary">Log In to GlobeTrotter</button>
-            <div class="auth-footer">
-                Don't have an account? <span class="auth-link" onclick="switchTab('signup')">Sign Up</span>
-            </div>
-        </form>
-
-        <!-- Signup Form -->
-        <form id="signup-form" style="display: none;" onsubmit="event.preventDefault(); alert('Sign up test successful!');">
-            <div class="form-group">
-                <label for="signup-name">Your Full Name</label>
-                <input id="signup-name" class="form-control" type="text" placeholder="Alex Traveler" required />
-            </div>
-            <div class="form-group">
-                <label for="signup-email">Email Address</label>
-                <input id="signup-email" class="form-control" type="email" placeholder="traveler@globetrotter.com" required />
-            </div>
-            <div class="form-group">
-                <label for="signup-password">Password</label>
-                <input id="signup-password" class="form-control" type="password" placeholder="••••••••" required />
-            </div>
-            <button type="submit" class="btn-primary">Create Account</button>
-            <div class="auth-footer">
-                Already registered? <span class="auth-link" onclick="switchTab('login')">Log In</span>
-            </div>
-        </form>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <a href="home.html" class="nav-logo" style="display: inline-block; margin-bottom: 8px;">Globe<span class="dot">Trotter</span></a>
+      <h2 style="font-size: 1.5rem; margin-bottom: 4px;">Welcome Traveler</h2>
+      <p class="muted" style="font-size: 0.88rem;">Sign in to access your multi-city itineraries and saved routes.</p>
     </div>
 
-    <script>
-        function switchTab(mode) {
-            const loginForm = document.getElementById('login-form');
-            const signupForm = document.getElementById('signup-form');
-            const tabLogin = document.getElementById('tab-login');
-            const tabSignup = document.getElementById('tab-signup');
-            if (mode === 'login') {
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-                tabLogin.classList.add('active');
-                tabSignup.classList.remove('active');
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-                tabSignup.classList.add('active');
-                tabLogin.classList.remove('active');
-            }
-        }
-    </script>
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab-btn" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" onsubmit="handleAuthSubmit(event, 'login')">
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label for="login-email">Email Address</label>
+        <input id="login-email" class="form-control" type="email" placeholder="traveler@globetrotter.com" required value="alex@globetrotter.com">
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="login-password">Password</label>
+        <input id="login-password" class="form-control" type="password" placeholder="••••••••" required value="password123">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Log In to GlobeTrotter</button>
+      
+      <div style="text-align: center; margin-top: 18px; font-size: 0.85rem;" class="muted">
+        Don't have an account? <a href="#" onclick="switchAuthTab('signup')" style="color: var(--brass); font-weight: 600;">Sign up now</a>
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signup-form" style="display: none;" onsubmit="handleAuthSubmit(event, 'signup')">
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label for="signup-name">Full Name</label>
+        <input id="signup-name" class="form-control" type="text" placeholder="Alex Johnson" required>
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label for="signup-email">Email Address</label>
+        <input id="signup-email" class="form-control" type="email" placeholder="traveler@globetrotter.com" required>
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="signup-password">Create Password</label>
+        <input id="signup-password" class="form-control" type="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Create Free Account</button>
+      
+      <div style="text-align: center; margin-top: 18px; font-size: 0.85rem;" class="muted">
+        Already registered? <a href="#" onclick="switchAuthTab('login')" style="color: var(--brass); font-weight: 600;">Sign in</a>
+      </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; border-top: 1px solid var(--line); padding-top: 16px;">
+      <a href="home.html" style="font-size: 0.84rem; color: var(--ink-soft);">← Return to GlobeTrotter Home</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="cursor-ring"></div>
+<div id="cursor-dot"></div>
+
+<script src="js/cursor.js"></script>
+<script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function switchAuthTab(mode) {
+  const loginForm = document.getElementById('login-form');
+  const signupForm = document.getElementById('signup-form');
+  const tabLogin = document.getElementById('tab-login');
+  const tabSignup = document.getElementById('tab-signup');
+
+  if (mode === 'login') {
+    loginForm.style.display = 'block';
+    signupForm.style.display = 'none';
+    tabLogin.classList.add('active');
+    tabSignup.classList.remove('active');
+  } else {
+    loginForm.style.display = 'none';
+    signupForm.style.display = 'block';
+    tabSignup.classList.add('active');
+    tabLogin.classList.remove('active');
+  }
+}
+
+function handleAuthSubmit(e, mode) {
+  e.preventDefault();
+  if (mode === 'login') {
+    showToast('✨ Sign in successful! Redirecting to Dashboard...');
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 800);
+  } else {
+    showToast('🎉 Account created! Welcome to GlobeTrotter.');
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 800);
+  }
+}
+</script>
 </body>
 </html>

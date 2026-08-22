@@ -1,0 +1,56 @@
+.dash-hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-2) 100%);
+  color: var(--parchment);
+  padding: 56px 0 64px;
+  overflow: hidden;
+}
+.dash-hero h1 { color: var(--parchment); }
+.dash-hero .eyebrow { color: #E8B979; }
+.dash-hero p { color: rgba(246,241,227,0.75); }
+.dash-hero .btn-primary { margin-top: 18px; }
+
+/* Decorative dashed route line + dots, purely visual */
+.dash-hero-route {
+  position: absolute;
+  right: -40px; bottom: -30px;
+  width: 420px; height: 160px;
+  background-image:
+    radial-gradient(circle, rgba(246,241,227,0.35) 3px, transparent 3px),
+    radial-gradient(circle, rgba(246,241,227,0.35) 3px, transparent 3px);
+  background-position: 0 0, 380px 40px;
+  background-repeat: no-repeat;
+  border-top: 2px dashed rgba(246,241,227,0.25);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  opacity: 0.9;
+}
+@media (max-width: 700px) { .dash-hero-route { display: none; } }
+
+.stat-value.over { color: var(--rust); }
+.stat-value.ok { color: var(--sage); }
+
+.dest-card {
+  padding: 16px;
+  cursor: pointer;
+}
+.dest-card .dest-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 2px;
+}
+.dest-card .dest-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+.dest-card .dest-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.72rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--parchment);
+  border: 1px solid var(--line);
+  color: var(--brass);
+}

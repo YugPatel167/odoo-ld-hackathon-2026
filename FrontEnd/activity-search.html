@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity Search · GlobeTrotter</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open menu">☰</button>
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-top">
+    <a href="home.html" class="nav-logo">Globe<span class="dot">Trotter</span></a>
+    <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <span class="nav-group-label">Overview</span>
+      <ul class="nav-links">
+        <li><a href="home.html"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Home</a></li>
+        <li><a href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="4" height="10"/><rect x="10" y="5" width="4" height="15"/><rect x="16" y="13" width="4" height="7"/></svg>Dashboard</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">Plan</span>
+      <ul class="nav-links">
+        <li><a href="create-trip.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Create Trip</a></li>
+        <li><a href="my-trips.html"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3"/></svg>My Trips</a></li>
+        <li><a href="itinerary-builder.html"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16"/><path d="M4 8l5-4 5 4 5-4v16l-5 4-5-4-5 4z"/></svg>Itinerary Builder</a></li>
+        <li><a href="itinerary-view.html"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Itinerary View</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">Explore</span>
+      <ul class="nav-links">
+        <li><a href="city-search.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>City Search</a></li>
+        <li><a href="activity-search.html" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6z"/></svg>Activity Search</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">Manage</span>
+      <ul class="nav-links">
+        <li><a href="trip-budget.html"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16" cy="14" r="1.4"/></svg>Trip Budget</a></li>
+        <li><a href="trip-calendar.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Trip Calendar</a></li>
+        <li><a href="ticket-booking.html"><svg viewBox="0 0 24 24"><path d="M3 9a2 2 0 010 6"/><path d="M3 9v6h18V9z"/><path d="M13 9v6" stroke-dasharray="2 2"/></svg>Ticket Booking</a></li>
+        <li><a href="shared-itinerary.html"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 10.8l7.4-4M8.3 13.2l7.4 4"/></svg>Shared Itinerary</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">Account</span>
+      <ul class="nav-links">
+        <li><a href="profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</a></li>
+        <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>Admin</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <span class="nav-group-label">Info</span>
+      <ul class="nav-links">
+        <li><a href="about.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>About</a></li>
+        <li><a href="contact.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="sidebar-user">
+    <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+    <a href="login.html" class="btn btn-primary btn-sm">Sign up</a>
+  </div>
+</aside>
+
+<div class="page">
+
+<header class="page-hero">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <span class="eyebrow">Explore</span>
+        <h1>Activity &amp; Tour Search</h1>
+        <p>Discover tours, outdoor adventures, food tastings, and cultural landmarks across our destination catalog.</p>
+      </div>
+      <a href="create-trip.html" class="btn btn-primary btn-sm">+ Plan New Trip</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section container reveal">
+    
+    <!-- Filters -->
+    <div class="search-container">
+      <div class="search-input-box">
+        <span style="font-size: 1.25rem;">🔍</span>
+        <input type="text" id="activity-search-input" class="search-input" placeholder="Search experiences, tours, museums, or cities..." oninput="filterActivities()">
+      </div>
+
+      <div class="filter-tags-row">
+        <span class="filter-label">Category:</span>
+        <button class="filter-pill active" onclick="setCategoryFilter('all', this)">All Experiences</button>
+        <button class="filter-pill" onclick="setCategoryFilter('Sightseeing', this)">🏛️ Sightseeing</button>
+        <button class="filter-pill" onclick="setCategoryFilter('Culture', this)">🎨 Culture &amp; History</button>
+        <button class="filter-pill" onclick="setCategoryFilter('Food', this)">🍷 Food &amp; Dining</button>
+        <button class="filter-pill" onclick="setCategoryFilter('Adventure', this)">🧗 Adventure</button>
+        <button class="filter-pill" onclick="setCategoryFilter('Leisure', this)">🏖️ Leisure</button>
+      </div>
+    </div>
+
+    <!-- Activities Grid -->
+    <div id="activities-grid" class="trips-grid"></div>
+
+  </section>
+</main>
+
+<!-- Add Activity to Trip Modal -->
+<div id="modal-add-act" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <h3 style="margin-bottom: 6px;">Add to Itinerary</h3>
+    <p class="muted" style="font-size: 0.88rem; margin-bottom: 18px;" id="modal-act-desc">Select which trip you want to assign this activity to:</p>
+    <div class="form-group" style="margin-bottom: 18px;">
+      <label for="modal-act-trip-select">Select Trip</label>
+      <select id="modal-act-trip-select" class="form-control"></select>
+    </div>
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="closeActModal()">Cancel</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="confirmAddActToTrip()">Add Activity</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div>
+      <a href="home.html" class="nav-logo" style="color: var(--ink)">Globe<span class="dot">Trotter</span></a>
+      <p class="muted" style="max-width:260px; margin-top:10px;">Plan, budget, and share multi-city trips — all in one place.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Product</h4>
+      <a href="create-trip.html">Create Trip</a>
+      <a href="city-search.html">City Search</a>
+      <a href="shared-itinerary.html">Shared Itinerary</a>
+    </div>
+    <div class="footer-links">
+      <h4>Account</h4>
+      <a href="profile.html">Profile</a>
+      <a href="login.html">Log In</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 GlobeTrotter. Built for the Odoo Hackathon.</div>
+</footer>
+
+</div><!-- /.page -->
+
+<div class="toast" id="toast"></div>
+
+<button id="chatbot-launcher" aria-label="Open chat">💬</button>
+<div id="chatbot-panel">
+  <div id="chatbot-head">
+    <span>Trip Assistant</span>
+    <button id="chatbot-close" aria-label="Close chat">✕</button>
+  </div>
+  <div id="chatbot-messages">
+    <div class="msg bot">Hi! Ask me how GlobeTrotter works — trips, budgets, sharing, all of it.</div>
+  </div>
+  <form id="chatbot-form">
+    <input id="chatbot-input" type="text" placeholder="Type a message…" autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+<div id="cursor-ring"></div>
+<div id="cursor-dot"></div>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/chatbot.js"></script>
+<script>
+const allActivities = [
+  { name: "Eiffel Tower Summit", city: "Paris", country: "France", cost: 35, duration: "3h", type: "Sightseeing", desc: "Ascend to the top deck for 360-degree vistas across Paris." },
+  { name: "Louvre Museum Guided Tour", city: "Paris", country: "France", cost: 45, duration: "4h", type: "Culture", desc: "Skip-the-line access to the Mona Lisa and classical antiquities." },
+  { name: "Seine River Dinner Cruise", city: "Paris", country: "France", cost: 75, duration: "2.5h", type: "Food", desc: "Four-course French gourmet meal gliding past illuminated monuments." },
+  { name: "Shibuya Crossing & Hachiko", city: "Tokyo", country: "Japan", cost: 0, duration: "1.5h", type: "Sightseeing", desc: "Experience the world's busiest pedestrian intersection." },
+  { name: "TeamLab Planets Digital Art", city: "Tokyo", country: "Japan", cost: 28, duration: "2.5h", type: "Culture", desc: "Walk through water and immersive glowing light installations." },
+  { name: "Mount Fuji Day Trip", city: "Tokyo", country: "Japan", cost: 95, duration: "8h", type: "Adventure", desc: "Full-day scenic excursion to 5th Station and Lake Kawaguchiko." },
+  { name: "Colosseum & Roman Forum Tour", city: "Rome", country: "Italy", cost: 40, duration: "3.5h", type: "Culture", desc: "Walk the gladiatorial arena and ancient imperial ruins." },
+  { name: "Vatican Museums & Sistine Chapel", city: "Rome", country: "Italy", cost: 55, duration: "4h", type: "Culture", desc: "Marvel at Michelangelo's ceiling frescos and St. Peter's Basilica." },
+  { name: "Trastevere Food Tasting", city: "Rome", country: "Italy", cost: 65, duration: "3h", type: "Food", desc: "Authentic handmade pasta, supplì, pecorino, and local wine." },
+  { name: "Jungfraujoch Top of Europe Train", city: "Interlaken", country: "Switzerland", cost: 180, duration: "6h", type: "Adventure", desc: "Cogwheel train climbing to 3,454m glacier wonderland." },
+  { name: "Paragliding over Swiss Alps", city: "Interlaken", country: "Switzerland", cost: 160, duration: "2h", type: "Adventure", desc: "Tandem flight with panoramic views of Eiger and Jungfrau." },
+  { name: "Statue of Liberty & Ellis Island", city: "New York", country: "USA", cost: 30, duration: "4h", type: "Sightseeing", desc: "Ferry cruise and museum tour of American immigration history." },
+  { name: "Broadway Show Musical", city: "New York", country: "USA", cost: 120, duration: "3h", type: "Culture", desc: "World-class theatrical performance in the heart of Times Square." },
+  { name: "Sagrada Família Guided Tour", city: "Barcelona", country: "Spain", cost: 35, duration: "2.5h", type: "Culture", desc: "Gaudí's unfinished basilica masterpiece with stained-glass towers." },
+  { name: "Park Güell Discovery", city: "Barcelona", country: "Spain", cost: 15, duration: "2h", type: "Sightseeing", desc: "Mosaic dragons, wavy benches, and Mediterranean views." },
+  { name: "Tower of London Tour", city: "London", country: "United Kingdom", cost: 40, duration: "3h", type: "Culture", desc: "See the Crown Jewels and 1,000 years of royal intrigue." },
+  { name: "London Eye Flight", city: "London", country: "United Kingdom", cost: 38, duration: "1h", type: "Sightseeing", desc: "Panoramic observation wheel overlooking the River Thames." },
+  { name: "Fushimi Inari Shrine Walk", city: "Kyoto", country: "Japan", cost: 0, duration: "3h", type: "Culture", desc: "Thousands of vermillion torii gates winding up Mount Inari." },
+  { name: "Arashiyama Bamboo Grove", city: "Kyoto", country: "Japan", cost: 0, duration: "2h", type: "Sightseeing", desc: "Towering green bamboo stalks and tranquil walking trails." },
+  { name: "Grand Palace & Wat Pho", city: "Bangkok", country: "Thailand", cost: 18, duration: "3.5h", type: "Culture", desc: "Golden spires, the Emerald Buddha, and the 46m Reclining Buddha." },
+  { name: "Floating Markets Longtail Boat", city: "Bangkok", country: "Thailand", cost: 30, duration: "4h", type: "Adventure", desc: "Cruise bustling canal markets sampling fresh tropical fruits." },
+  { name: "Gardens by the Bay Cloud Forest", city: "Singapore", country: "Singapore", cost: 25, duration: "3h", type: "Sightseeing", desc: "35-meter indoor waterfall and futuristic Supertree Grove." },
+  { name: "Burj Khalifa 148th Floor", city: "Dubai", country: "United Arab Emirates", cost: 95, duration: "2h", type: "Sightseeing", desc: "Highest observation deck on earth with lounge access." },
+  { name: "Desert 4x4 Safari & BBQ", city: "Dubai", country: "United Arab Emirates", cost: 65, duration: "5h", type: "Adventure", desc: "Dune bashing, camel riding, sandboarding, and bedouin dinner." },
+  { name: "Alcatraz Island Night Tour", city: "San Francisco", country: "USA", cost: 55, duration: "3h", type: "Culture", desc: "Infamous former maximum-security federal penitentiary audio tour." },
+  { name: "Christ the Redeemer Train", city: "Rio de Janeiro", country: "Brazil", cost: 25, duration: "3h", type: "Sightseeing", desc: "Cog train up Corcovado mountain through Tijuca rainforest." },
+  { name: "Sydney Opera House Tour", city: "Sydney", country: "Australia", cost: 35, duration: "2h", type: "Culture", desc: "Behind-the-scenes architectural tour of the iconic sail shells." },
+  { name: "Table Mountain Cableway", city: "Cape Town", country: "South Africa", cost: 22, duration: "3h", type: "Adventure", desc: "360-degree rotating cable car to flat-top summit." },
+  { name: "Giza Pyramids & Sphinx Camel Tour", city: "Cairo", country: "Egypt", cost: 45, duration: "4h", type: "Culture", desc: "Ancient wonders of the world with licensed Egyptologist guide." }
+];
+
+let selectedCategory = 'all';
+let currentSelectedAct = null;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function renderActivities(list) {
+  const container = document.getElementById('activities-grid');
+  container.innerHTML = list.map(act => `
+    <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <span class="pill-badge pill-destinations">📍 ${act.city}, ${act.country}</span>
+          <span class="pill-badge pill-duration">⏱️ ${act.duration}</span>
+        </div>
+        <h3 style="font-size: 1.15rem; margin: 8px 0 4px; color: var(--ink);">${act.name}</h3>
+        <span class="pill-badge pill-budget" style="margin-bottom: 8px;">🏷️ ${act.type}</span>
+        <p class="muted" style="font-size: 0.85rem; line-height: 1.45; margin-top: 6px;">${act.desc}</p>
+      </div>
+      <div style="border-top: 1px solid var(--line); padding-top: 14px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-family: var(--font-mono); font-size: 1.1rem; font-weight: 700; color: var(--sage);">${act.cost > 0 ? '$' + act.cost : 'Free'}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openActModal('${act.name}', '${act.city}')">+ Add to Trip</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterActivities() {
+  const q = (document.getElementById('activity-search-input').value || '').toLowerCase();
+  const filtered = allActivities.filter(act => {
+    const matchesQ = act.name.toLowerCase().includes(q) ||
+                     act.city.toLowerCase().includes(q) ||
+                     act.country.toLowerCase().includes(q) ||
+                     act.desc.toLowerCase().includes(q);
+    const matchesCat = selectedCategory === 'all' || act.type.toLowerCase() === selectedCategory.toLowerCase();
+    return matchesQ && matchesCat;
+  });
+  renderActivities(filtered);
+}
+
+function setCategoryFilter(cat, btn) {
+  selectedCategory = cat;
+  btn.parentElement.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterActivities();
+}
+
+function getTrips() {
+  const data = localStorage.getItem('globetrotter_trips');
+  if (!data) return [];
+  try { return JSON.parse(data); } catch(e) { return []; }
+}
+
+function openActModal(actName, actCity) {
+  currentSelectedAct = { name: actName, city: actCity };
+  document.getElementById('modal-act-desc').innerText = `Assign "${actName}" (${actCity}) to a trip:`;
+  const select = document.getElementById('modal-act-trip-select');
+  const trips = getTrips();
+  if (trips.length === 0) {
+    select.innerHTML = `<option value="new">+ Create a new trip for this activity</option>`;
+  } else {
+    select.innerHTML = trips.map(t => `<option value="${t.id}">${t.name} (${t.startDate})</option>`).join('');
+  }
+  document.getElementById('modal-add-act').style.display = 'flex';
+}
+
+function closeActModal() {
+  document.getElementById('modal-add-act').style.display = 'none';
+}
+
+function confirmAddActToTrip() {
+  const tripId = document.getElementById('modal-act-trip-select').value;
+  if (tripId === 'new') {
+    window.location.href = 'create-trip.html';
+    return;
+  }
+  const trips = getTrips();
+  const trip = trips.find(t => t.id === tripId);
+  if (!trip) return;
+
+  if (!trip.stops) trip.stops = [];
+  let matchingStop = trip.stops.find(s => s.city.toLowerCase() === currentSelectedAct.city.toLowerCase());
+  if (!matchingStop) {
+    matchingStop = {
+      id: 'st_' + Date.now(),
+      city: currentSelectedAct.city,
+      startDate: trip.startDate,
+      endDate: trip.endDate,
+      activities: []
+    };
+    trip.stops.push(matchingStop);
+  }
+  if (!matchingStop.activities) matchingStop.activities = [];
+  if (!matchingStop.activities.includes(currentSelectedAct.name)) {
+    matchingStop.activities.push(currentSelectedAct.name);
+  }
+
+  localStorage.setItem('globetrotter_trips', JSON.stringify(trips));
+  closeActModal();
+  showToast(`🎯 "${currentSelectedAct.name}" added to "${trip.name}"!`);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderActivities(allActivities);
+});
+</script>
+</body>
+</html>
