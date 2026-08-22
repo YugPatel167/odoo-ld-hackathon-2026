@@ -1,250 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GlobeTrotter — Plan trips that connect</title>
-<link rel="stylesheet" href="../css/styles.css">
-<link rel="stylesheet" href="../css/home.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobeTrotter — Plan trips that connect</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/home.css">
 </head>
+
 <body>
 
-<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open menu">☰</button>
-<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open menu">☰</button>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-top">
-    <a href="home.html" class="nav-logo">Globe<span class="dot">Trotter</span></a>
-    <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
-  </div>
-
-  <nav class="sidebar-nav">
-    <div class="nav-group">
-      <span class="nav-group-label">Overview</span>
-      <ul class="nav-links">
-        <li><a href="home.html" class="active"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Home</a></li>
-        <li><a href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="4" height="10"/><rect x="10" y="5" width="4" height="15"/><rect x="16" y="13" width="4" height="7"/></svg>Dashboard</a></li>
-      </ul>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <a href="home.html" class="nav-logo">Globe<span class="dot">Trotter</span></a>
+      <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">✕</button>
     </div>
 
-    <div class="nav-group">
-      <span class="nav-group-label">Plan</span>
-      <ul class="nav-links">
-        <li><a href="create-trip.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Create Trip</a></li>
-        <li><a href="my-trips.html"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3"/></svg>My Trips</a></li>
-        <li><a href="itinerary-builder.html"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16"/><path d="M4 8l5-4 5 4 5-4v16l-5 4-5-4-5 4z"/></svg>Itinerary Builder</a></li>
-        <li><a href="itinerary-view.html"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Itinerary View</a></li>
-      </ul>
-    </div>
-
-    <div class="nav-group">
-      <span class="nav-group-label">Explore</span>
-      <ul class="nav-links">
-        <li><a href="city-search.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>City Search</a></li>
-        <li><a href="activity-search.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6z"/></svg>Activity Search</a></li>
-      </ul>
-    </div>
-
-    <div class="nav-group">
-      <span class="nav-group-label">Manage</span>
-      <ul class="nav-links">
-        <li><a href="trip-budget.html"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16" cy="14" r="1.4"/></svg>Trip Budget</a></li>
-        <li><a href="trip-calendar.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Trip Calendar</a></li>
-        <li><a href="ticket-booking.html"><svg viewBox="0 0 24 24"><path d="M3 9a2 2 0 010 6"/><path d="M3 9v6h18V9z"/><path d="M13 9v6" stroke-dasharray="2 2"/></svg>Ticket Booking</a></li>
-        <li><a href="shared-itinerary.html"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 10.8l7.4-4M8.3 13.2l7.4 4"/></svg>Shared Itinerary</a></li>
-      </ul>
-    </div>
-
-    <div class="nav-group">
-      <span class="nav-group-label">Account</span>
-      <ul class="nav-links">
-        <li><a href="profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</a></li>
-        <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>Admin</a></li>
-      </ul>
-    </div>
-
-    <div class="nav-group">
-      <span class="nav-group-label">Info</span>
-      <ul class="nav-links">
-        <li><a href="about.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>About</a></li>
-        <li><a href="contact.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Contact</a></li>
-        <li><a href="feedback.html"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Feedback</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <div class="sidebar-user">
-    <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
-    <a href="login.html?tab=signup" class="btn btn-primary btn-sm">Sign up</a>
-  </div>
-</aside>
-
-<div class="page">
-
-<header class="home-hero">
-  <div class="container home-hero-inner">
-    <div>
-      <span class="eyebrow">Multi-city trip planning</span>
-      <h1>Every stop on your trip,<br>drawn as one route.</h1>
-      <p class="muted" style="max-width:460px; font-size:1.05rem;">
-        GlobeTrotter turns scattered spreadsheets, maps, and notes into one
-        place to design your itinerary, watch your budget in real time, and
-        share the finished trip with anyone.
-      </p>
-      <div style="display:flex; gap:14px; margin-top:22px; flex-wrap:wrap;">
-        <a href="login.html?tab=signup" class="btn btn-primary">Start planning free</a>
-        <a href="#how" class="btn btn-ghost">See how it works</a>
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <span class="nav-group-label">Overview</span>
+        <ul class="nav-links">
+          <li><a href="home.html" class="active"><svg viewBox="0 0 24 24">
+                <path d="M3 11l9-7 9 7" />
+                <path d="M5 10v10h14V10" />
+              </svg>Home</a></li>
+          <li><a href="dashboard.html"><svg viewBox="0 0 24 24">
+                <rect x="4" y="10" width="4" height="10" />
+                <rect x="10" y="5" width="4" height="15" />
+                <rect x="16" y="13" width="4" height="7" />
+              </svg>Dashboard</a></li>
+        </ul>
       </div>
-    </div>
-    <div class="home-hero-visual" aria-hidden="true">
-      <div class="route-card" style="--i:0">🏛️ Rome</div>
-      <div class="route-card" style="--i:1">🥐 Paris</div>
-      <div class="route-card" style="--i:2">🗼 Tokyo</div>
-      <svg class="route-svg" viewBox="0 0 300 220" fill="none">
-        <path d="M40 180 C 90 60, 150 200, 260 40" stroke="#E8B15C" stroke-width="2" stroke-dasharray="6 7" />
-      </svg>
-    </div>
-  </div>
-</header>
 
-<main>
-  <section class="section container reveal">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Why GlobeTrotter</span>
-        <h2>Everything about your trip, in one route</h2>
+      <div class="nav-group">
+        <span class="nav-group-label">Plan</span>
+        <ul class="nav-links">
+          <li><a href="create-trip.html"><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v8M8 12h8" />
+              </svg>Create Trip</a></li>
+          <li><a href="my-trips.html"><svg viewBox="0 0 24 24">
+                <path d="M4 7h16v13H4z" />
+                <path d="M9 7V4h6v3" />
+              </svg>My Trips</a></li>
+          <li><a href="itinerary-builder.html"><svg viewBox="0 0 24 24">
+                <path d="M9 4v16M15 4v16" />
+                <path d="M4 8l5-4 5 4 5-4v16l-5 4-5-4-5 4z" />
+              </svg>Itinerary Builder</a></li>
+          <li><a href="itinerary-view.html"><svg viewBox="0 0 24 24">
+                <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>Itinerary View</a></li>
+        </ul>
       </div>
-    </div>
-    <div class="grid-3">
-      <div class="card feature-card">
-        <div class="feature-icon">🧭</div>
-        <h3>Multi-city itineraries</h3>
-        <p class="muted">Add stops, assign dates, and reorder cities without losing track of the overall trip.</p>
-      </div>
-      <div class="card feature-card">
-        <div class="feature-icon">💰</div>
-        <h3>Automatic budgeting</h3>
-        <p class="muted">Transport, stay, activities, and meals total up automatically — with alerts before you go over.</p>
-      </div>
-      <div class="card feature-card">
-        <div class="feature-icon">🔗</div>
-        <h3>Share & get inspired</h3>
-        <p class="muted">Publish a read-only link so friends can view, or copy your trip as a starting point for their own.</p>
-      </div>
-    </div>
-  </section>
 
-  <section class="section reveal" id="how" style="background:var(--card); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
-    <div class="container">
-      <div class="section-head">
+      <div class="nav-group">
+        <span class="nav-group-label">Explore</span>
+        <ul class="nav-links">
+          <li><a href="city-search.html"><svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>City Search</a></li>
+          <li><a href="activity-search.html"><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M15 9l-2 6-6 2 2-6z" />
+              </svg>Activity Search</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <span class="nav-group-label">Manage</span>
+        <ul class="nav-links">
+          <li><a href="trip-budget.html"><svg viewBox="0 0 24 24">
+                <rect x="3" y="6" width="18" height="13" rx="2" />
+                <path d="M3 10h18" />
+                <circle cx="16" cy="14" r="1.4" />
+              </svg>Trip Budget</a></li>
+          <li><a href="trip-calendar.html"><svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="16" rx="2" />
+                <path d="M3 10h18M8 3v4M16 3v4" />
+              </svg>Trip Calendar</a></li>
+          <li><a href="ticket-booking.html"><svg viewBox="0 0 24 24">
+                <path d="M3 9a2 2 0 010 6" />
+                <path d="M3 9v6h18V9z" />
+                <path d="M13 9v6" stroke-dasharray="2 2" />
+              </svg>Ticket Booking</a></li>
+          <li><a href="shared-itinerary.html"><svg viewBox="0 0 24 24">
+                <circle cx="6" cy="12" r="2.5" />
+                <circle cx="18" cy="6" r="2.5" />
+                <circle cx="18" cy="18" r="2.5" />
+                <path d="M8.3 10.8l7.4-4M8.3 13.2l7.4 4" />
+              </svg>Shared Itinerary</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <span class="nav-group-label">Account</span>
+        <ul class="nav-links">
+          <li><a href="profile.html"><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6" />
+              </svg>Profile</a></li>
+          <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24">
+                <path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z" />
+              </svg>Admin</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <span class="nav-group-label">Info</span>
+        <ul class="nav-links">
+          <li><a href="about.html"><svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8h.01M11 12h1v5h1" />
+              </svg>About</a></li>
+          <li><a href="contact.html"><svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M3 7l9 6 9-6" />
+              </svg>Contact</a></li>
+          <li><a href="feedback.html"><svg viewBox="0 0 24 24">
+                <path
+                  d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+              </svg>Feedback</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <a href="login.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="login.html?tab=signup" class="btn btn-primary btn-sm">Sign up</a>
+    </div>
+  </aside>
+
+  <div class="page">
+
+    <header class="home-hero">
+      <div class="container home-hero-inner">
         <div>
-          <span class="eyebrow">The mission</span>
-          <h2>Built to simplify multi-city planning</h2>
+          <span class="eyebrow">Multi-city trip planning</span>
+          <h1>Every stop on your trip,<br>drawn as one route.</h1>
+          <p class="muted" style="max-width:460px; font-size:1.05rem;">
+            GlobeTrotter turns scattered spreadsheets, maps, and notes into one
+            place to design your itinerary, watch your budget in real time, and
+            share the finished trip with anyone.
+          </p>
+          <div style="display:flex; gap:14px; margin-top:22px; flex-wrap:wrap;">
+            <a href="login.html?tab=signup" class="btn btn-primary">Start planning free</a>
+            <a href="#how" class="btn btn-ghost">See how it works</a>
+          </div>
+        </div>
+        <div class="home-hero-visual" aria-hidden="true">
+          <div class="route-card" style="--i:0">🏛️ Rome</div>
+          <div class="route-card" style="--i:1">🥐 Paris</div>
+          <div class="route-card" style="--i:2">🗼 Tokyo</div>
+          <svg class="route-svg" viewBox="0 0 300 220" fill="none">
+            <path d="M40 180 C 90 60, 150 200, 260 40" stroke="#E8B15C" stroke-width="2" stroke-dasharray="6 7" />
+          </svg>
         </div>
       </div>
-      <p class="muted" style="max-width:640px; font-size:1.02rem;">
-        Planning a trip across several cities usually means juggling separate
-        tools — one for research, one for budget, one for dates. GlobeTrotter
-        brings it into a single, structured plan: add stops and durations,
-        explore activities by interest, watch your budget update as you go,
-        and see the whole journey as a visual timeline before you ever leave home.
-      </p>
-    </div>
-  </section>
+    </header>
 
-  <section class="section container reveal" style="text-align:center;">
-    <h2>Your next trip starts with one stop.</h2>
-    <a href="create-trip.html" class="btn btn-primary" style="margin-top:12px;">Create your first trip</a>
-  </section>
+    <main>
+      <section class="section container reveal">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Why GlobeTrotter</span>
+            <h2>Everything about your trip, in one route</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="card feature-card">
+            <div class="feature-icon">🧭</div>
+            <h3>Multi-city itineraries</h3>
+            <p class="muted">Add stops, assign dates, and reorder cities without losing track of the overall trip.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Automatic budgeting</h3>
+            <p class="muted">Transport, stay, activities, and meals total up automatically — with alerts before you go
+              over.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="feature-icon">🔗</div>
+            <h3>Share & get inspired</h3>
+            <p class="muted">Publish a read-only link so friends can view, or copy your trip as a starting point for
+              their own.</p>
+          </div>
+        </div>
+      </section>
 
-  <section class="section container reveal">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">All Pages</span>
-        <h2>Quick links</h2>
-      </div>
-    </div>
-    <div class="quick-links">
-      <div class="ql-group">
-        <h4 class="ql-label">Plan</h4>
-        <div class="ql-grid">
-          <div class="card"><a href="dashboard.html">Dashboard</a></div>
-          <div class="card"><a href="create-trip.html">Create Trip</a></div>
-          <div class="card"><a href="my-trips.html">My Trips</a></div>
-          <div class="card"><a href="itinerary-builder.html">Itinerary Builder</a></div>
-          <div class="card"><a href="itinerary-view.html">Itinerary View</a></div>
+      <section class="section reveal" id="how"
+        style="background:var(--card); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">The mission</span>
+              <h2>Built to simplify multi-city planning</h2>
+            </div>
+          </div>
+          <p class="muted" style="max-width:640px; font-size:1.02rem;">
+            Planning a trip across several cities usually means juggling separate
+            tools — one for research, one for budget, one for dates. GlobeTrotter
+            brings it into a single, structured plan: add stops and durations,
+            explore activities by interest, watch your budget update as you go,
+            and see the whole journey as a visual timeline before you ever leave home.
+          </p>
         </div>
-      </div>
-      <div class="ql-group">
-        <h4 class="ql-label">Explore</h4>
-        <div class="ql-grid">
-          <div class="card"><a href="city-search.html">City Search</a></div>
-          <div class="card"><a href="activity-search.html">Activity Search</a></div>
-        </div>
-      </div>
-      <div class="ql-group">
-        <h4 class="ql-label">Manage</h4>
-        <div class="ql-grid">
-          <div class="card"><a href="trip-budget.html">Trip Budget</a></div>
-          <div class="card"><a href="trip-calendar.html">Trip Calendar</a></div>
-          <div class="card"><a href="ticket-booking.html">Ticket Booking</a></div>
-          <div class="card"><a href="shared-itinerary.html">Shared Itinerary</a></div>
-        </div>
-      </div>
-      <div class="ql-group">
-        <h4 class="ql-label">Account</h4>
-        <div class="ql-grid">
-          <div class="card"><a href="profile.html">Profile / Settings</a></div>
-          <div class="card"><a href="admin-dashboard.html">Admin / Analytics</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
+      </section>
 
-<footer class="footer">
-  <div class="container">
-    <div>
-      <a href="home.html" class="nav-logo" style="color: var(--ink)">Globe<span class="dot">Trotter</span></a>
-      <p class="muted" style="max-width:260px; margin-top:10px;">Plan, budget, and share multi-city trips — all in one place.</p>
+      <section class="section container reveal" style="text-align:center;">
+        <h2>Your next trip starts with one stop.</h2>
+        <a href="create-trip.html" class="btn btn-primary" style="margin-top:12px;">Create your first trip</a>
+      </section>
+
+      <section class="section container reveal">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">All Pages</span>
+            <h2>Quick links</h2>
+          </div>
+        </div>
+        <div class="quick-links">
+          <div class="ql-group">
+            <h4 class="ql-label">Plan</h4>
+            <div class="ql-grid">
+              <div class="card"><a href="dashboard.html">Dashboard</a></div>
+              <div class="card"><a href="create-trip.html">Create Trip</a></div>
+              <div class="card"><a href="my-trips.html">My Trips</a></div>
+              <div class="card"><a href="itinerary-builder.html">Itinerary Builder</a></div>
+              <div class="card"><a href="itinerary-view.html">Itinerary View</a></div>
+            </div>
+          </div>
+          <div class="ql-group">
+            <h4 class="ql-label">Explore</h4>
+            <div class="ql-grid">
+              <div class="card"><a href="city-search.html">City Search</a></div>
+              <div class="card"><a href="activity-search.html">Activity Search</a></div>
+            </div>
+          </div>
+          <div class="ql-group">
+            <h4 class="ql-label">Manage</h4>
+            <div class="ql-grid">
+              <div class="card"><a href="trip-budget.html">Trip Budget</a></div>
+              <div class="card"><a href="trip-calendar.html">Trip Calendar</a></div>
+              <div class="card"><a href="ticket-booking.html">Ticket Booking</a></div>
+              <div class="card"><a href="shared-itinerary.html">Shared Itinerary</a></div>
+            </div>
+          </div>
+          <div class="ql-group">
+            <h4 class="ql-label">Account</h4>
+            <div class="ql-grid">
+              <div class="card"><a href="profile.html">Profile / Settings</a></div>
+              <div class="card"><a href="admin-dashboard.html">Admin / Analytics</a></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div>
+          <a href="home.html" class="nav-logo" style="color: var(--ink)">Globe<span class="dot">Trotter</span></a>
+          <p class="muted" style="max-width:260px; margin-top:10px;">Plan, budget, and share multi-city trips — all in
+            one place.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <a href="login.html?tab=signup">Get started</a>
+          <a href="login.html">Log in</a>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <a href="about.html">About Us</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 GlobeTrotter. Built for the Odoo Hackathon.</div>
+    </footer>
+
+  </div><!-- /.page -->
+
+  <button id="chatbot-launcher" aria-label="Open chat">💬</button>
+  <div id="chatbot-panel">
+    <div id="chatbot-head">
+      <span>Trip Assistant</span>
+      <button id="chatbot-close" aria-label="Close chat">✕</button>
     </div>
-    <div class="footer-links">
-      <h4>Product</h4>
-      <a href="login.html?tab=signup">Get started</a>
-      <a href="login.html">Log in</a>
+    <div id="chatbot-messages">
+      <div class="msg bot">Hi! Ask me how GlobeTrotter works — trips, budgets, sharing, all of it.</div>
     </div>
-    <div class="footer-links">
-      <h4>Company</h4>
-      <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
-    </div>
+    <form id="chatbot-form">
+      <input id="chatbot-input" type="text" placeholder="Type a message…" autocomplete="off">
+      <button type="submit">Send</button>
+    </form>
   </div>
-  <div class="footer-bottom">© 2026 GlobeTrotter. Built for the Odoo Hackathon.</div>
-</footer>
 
-</div><!-- /.page -->
+  <div id="cursor-ring"></div>
+  <div id="cursor-dot"></div>
 
-<button id="chatbot-launcher" aria-label="Open chat">💬</button>
-<div id="chatbot-panel">
-  <div id="chatbot-head">
-    <span>Trip Assistant</span>
-    <button id="chatbot-close" aria-label="Close chat">✕</button>
-  </div>
-  <div id="chatbot-messages">
-    <div class="msg bot">Hi! Ask me how GlobeTrotter works — trips, budgets, sharing, all of it.</div>
-  </div>
-  <form id="chatbot-form">
-    <input id="chatbot-input" type="text" placeholder="Type a message…" autocomplete="off">
-    <button type="submit">Send</button>
-  </form>
-</div>
-
-<div id="cursor-ring"></div>
-<div id="cursor-dot"></div>
-
-<script src="../js/api.js"></script>
-<script src="../js/nav.js"></script>
-<script src="../js/cursor.js"></script>
-<script src="../js/chatbot.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/cursor.js"></script>
+  <script src="../js/chatbot.js"></script>
 </body>
+
 </html>
