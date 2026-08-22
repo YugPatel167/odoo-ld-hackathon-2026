@@ -2,6 +2,7 @@
 
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const db = require('./models');
 const authRoutes = require('./routes/auth');
 const tripRoutes = require('./routes/trips');
@@ -10,6 +11,9 @@ const activitiesRoutes = require('./routes/activities');
 const TripService = require('./services/tripService');
 
 const app = express();
+
+// Enable CORS for all origins during development
+app.use(cors());
 
 // Body Parser Middleware
 app.use(express.json());
