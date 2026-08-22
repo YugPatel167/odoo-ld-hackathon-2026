@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Customize Login/Signup Layout with GlobeTrotter Branding -->
+    <template id="gt_login_layout" inherit_id="web.login_layout" name="GlobeTrotter Login Branding">
+        <xpath expr="//div[hasclass('card')]" position="before">
+            <div class="globetrotter-brand-header">
+                <div class="gt-badge">🌍 GlobeTrotter</div>
+                <h2>Plan. Explore. Experience.</h2>
+                <p>Your personalized, multi-city travel companion</p>
+            </div>
+        </xpath>
+    </template>
+</odoo>

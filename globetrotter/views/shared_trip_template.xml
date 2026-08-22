@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--
+    Public QWeb template for a shared GlobeTrotter itinerary.
+    Extends web.layout (Odoo's minimal public page — no backend sidebar,
+    no admin chrome). Fully read-only; no edit/delete controls.
+-->
+<template id="shared_trip_page" name="GlobeTrotter — Shared Trip">
+    <t t-call="web.layout">
+        <t t-set="head_custom">
+            <title t-esc="trip.name + ' — GlobeTrotter'"/>
+            <meta name="description"
+                  t-att-content="'Shared itinerary: ' + trip.name"/>
+            <!-- Inline styles so this page has no external CSS dependency -->
+            <style>
+                /* ── Reset / Base ───────────────────────────────────── */
+                *, *::before, *::after { box-sizing: border-box; }
+                body { margin: 0; font-family: 'Segoe UI', system-ui, sans-serif;
+                       background: #f0f2f5; color: #1a1a2e; }
+
+                /* ── Top nav-bar ────────────────────────────────────── */
+                .gt-navbar {
+                    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+                    padding: 14px 24px;
+                    display: flex; align-items: center; justify-content: space-between;
+                    box-shadow: 0 2px 12px rgba(108,92,231,.35);
+                }
+                .gt-navbar .brand { color: #fff; font-size: 1.25rem;
+                                    font-weight: 700; text-decoration: none; }
+                .gt-navbar .nav-actions { display: flex; gap: 10px; }
+
+                /* ── Hero ───────────────────────────────────────────── */
+                .gt-hero {
+                    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+                    color: #fff; padding: 48px 24px 36px; text-align: center;
+                }
+                .gt-hero h1 { margin: 0 0 8px; font-size: 2.2rem; font-weight: 800; }
+                .gt-hero .meta { opacity: .88; font-size: .95rem; margin-bottom: 16px; }
+                .gt-hero .badges { display: flex; gap: 10px; justify-content: center;
+                                   flex-wrap: wrap; }
+                .badge-pill {
+                    background: rgba(255,255,255,.22); backdrop-filter: blur(6px);
+                    border: 1px solid rgba(255,255,255,.35);
+                    border-radius: 999px; padding: 5px 14px;
+                    font-size: .82rem; font-weight: 600; color: #fff;
+                }
+
+                /* ── Main container ─────────────────────────────────── */
+                .gt-container { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+
+                /* ── Share bar ──────────────────────────────────────── */
+                .gt-share-bar {
+                    background: #fff; border-radius: 14px;
+                    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+                    padding: 20px 24px; margin-bottom: 28px;
+                    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+                }
+                .gt-share-bar .share-label {
+                    font-weight: 700; font-size: .95rem; color: #6c5ce7;
+                    flex: 0 0 auto;
+                }
+                .gt-url-box {
+                    flex: 1 1 220px; background: #f7f5ff;
+                    border: 1.5px solid #d6ceff; border-radius: 8px;
+                    padding: 8px 12px; font-size: .85rem;
+                    color: #4a3fbd; font-family: monospace; word-break: break-all;
+                }
+                .btn { border: none; border-radius: 8px; padding: 9px 18px;
+                       font-size: .88rem; font-weight: 600; cursor: pointer;
+                       text-decoration: none; display: inline-flex;
+                       align-items: center; gap: 6px; transition: opacity .15s; }
+                .btn:hover { opacity: .85; }
+                .btn-copy   { background: #6c5ce7; color: #fff; }
+                .btn-wa     { background: #25D366; color: #fff; }
+                .btn-tw     { background: #1DA1F2; color: #fff; }
+                .btn-fb     { background: #1877F2; color: #fff; }
+                .btn-primary { background: #6c5ce7; color: #fff; }
+                .btn-outline {
+                    background: transparent; border: 2px solid #6c5ce7;
+                    color: #6c5ce7;
+                }
+
+                /* ── Stop cards ─────────────────────────────────────── */
+                .gt-stops { display: flex; flex-direction: column; gap: 20px; }
+                .gt-stop-card {
+                    background: #fff; border-radius: 14px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+                    overflow: hidden;
+                }
+                .gt-stop-header {
+                    background: linear-gradient(90deg, #6c5ce7 0%, #a29bfe 100%);
+                    color: #fff; padding: 14px 20px;
+                    display: flex; align-items: center; gap: 14px;
+                }
+                .gt-stop-seq {
+                    width: 32px; height: 32px; border-radius: 50%;
+                    background: rgba(255,255,255,.25); display: flex;
+                    align-items: center; justify-content: center;
+                    font-weight: 800; font-size: .9rem; flex-shrink: 0;
+                }
+                .gt-stop-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+                .gt-stop-header .dates { opacity: .88; font-size: .82rem; margin-top: 2px; }
+                .gt-stop-body { padding: 16px 20px; }
+
+                /* ── Activities ─────────────────────────────────────── */
+                .gt-activities-title {
+                    font-size: .8rem; font-weight: 700; text-transform: uppercase;
+                    letter-spacing: .06em; color: #888; margin: 0 0 10px;
+                }
+                .gt-activities { display: flex; flex-wrap: wrap; gap: 8px; }
+                .gt-activity-chip {
+                    display: flex; align-items: center; gap: 6px;
+                    background: #f7f5ff; border: 1px solid #d6ceff;
+                    border-radius: 999px; padding: 5px 12px;
+                    font-size: .82rem; color: #4a3fbd;
+                }
+                .gt-activity-chip .type-dot {
+                    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+                }
+                .type-sightseeing { background: #6c5ce7; }
+                .type-food        { background: #fd79a8; }
+                .type-adventure   { background: #00b894; }
+                .type-culture     { background: #fdcb6e; }
+                .type-leisure     { background: #74b9ff; }
+
+                .gt-no-activities {
+                    font-size: .85rem; color: #aaa; font-style: italic;
+                }
+
+                /* ── Copy trip CTA ──────────────────────────────────── */
+                .gt-copy-cta {
+                    background: #fff; border-radius: 14px;
+                    box-shadow: 0 2px 12px rgba(0,0,0,.07);
+                    padding: 24px; text-align: center; margin-top: 28px;
+                }
+                .gt-copy-cta h3 { margin: 0 0 6px; font-size: 1.1rem; color: #6c5ce7; }
+                .gt-copy-cta p  { margin: 0 0 16px; color: #666; font-size: .9rem; }
+
+                /* ── Footer ─────────────────────────────────────────── */
+                .gt-footer {
+                    text-align: center; padding: 20px;
+                    font-size: .8rem; color: #aaa;
+                }
+
+                /* ── Copy-to-clipboard feedback ─────────────────────── */
+                .copy-feedback {
+                    display: none; color: #00b894; font-size: .82rem;
+                    font-weight: 600;
+                }
+            </style>
+        </t>
+
+        <!-- ── Navbar ──────────────────────────────────────────────── -->
+        <nav class="gt-navbar">
+            <a class="brand" href="/">✈ GlobeTrotter</a>
+            <div class="nav-actions">
+                <t t-if="not request.env.user._is_public()">
+                    <a href="/odoo/globetrotter-trips" class="btn btn-outline"
+                       style="border-color:#fff; color:#fff;">My Trips</a>
+                </t>
+                <t t-else="">
+                    <a href="/web/login" class="btn"
+                       style="background:#fff; color:#6c5ce7;">Log In</a>
+                </t>
+            </div>
+        </nav>
+
+        <!-- ── Hero ────────────────────────────────────────────────── -->
+        <div class="gt-hero">
+            <h1 t-esc="trip.name"/>
+            <div class="meta">
+                Shared itinerary by
+                <strong t-esc="trip.user_id.name"/>
+            </div>
+            <div class="badges">
+                <span class="badge-pill">
+                    📅 <t t-esc="trip.start_date"/> — <t t-esc="trip.end_date"/>
+                </span>
+                <span class="badge-pill">
+                    ⏱ <t t-esc="trip.duration_days"/> days
+                </span>
+                <span class="badge-pill">
+                    📍 <t t-esc="trip.destination_count"/> stops
+                </span>
+                <span class="badge-pill" t-esc="dict(trip._fields['state'].selection).get(trip.state, trip.state)"/>
+            </div>
+        </div>
+
+        <!-- ── Main content ─────────────────────────────────────────── -->
+        <div class="gt-container">
+
+            <!-- Share bar -->
+            <div class="gt-share-bar">
+                <span class="share-label">🔗 Share this trip</span>
+                <div class="gt-url-box" id="publicUrl" t-esc="public_url"/>
+                <button class="btn btn-copy" onclick="copyUrl()">📋 Copy Link</button>
+                <span class="copy-feedback" id="copyFeedback">✓ Copied!</span>
+                <!-- Social intent links -->
+                <a class="btn btn-wa"
+                   t-att-href="'https://wa.me/?text=Check%20out%20this%20trip%20on%20GlobeTrotter!%20' + public_url"
+                   target="_blank" rel="noopener">WhatsApp</a>
+                <a class="btn btn-tw"
+                   t-att-href="'https://twitter.com/intent/tweet?text=Check%20out%20this%20trip!&url=' + public_url"
+                   target="_blank" rel="noopener">Twitter</a>
+                <a class="btn btn-fb"
+                   t-att-href="'https://www.facebook.com/sharer/sharer.php?u=' + public_url"
+                   target="_blank" rel="noopener">Facebook</a>
+            </div>
+
+            <!-- Stops list -->
+            <div class="gt-stops">
+                <t t-foreach="stops" t-as="stop">
+                    <div class="gt-stop-card">
+                        <div class="gt-stop-header">
+                            <div class="gt-stop-seq" t-esc="stop_index + 1"/>
+                            <div>
+                                <h3 t-esc="stop.city_id.name + ', ' + stop.city_id.country_id.name"/>
+                                <div class="dates">
+                                    <t t-esc="stop.start_date"/> — <t t-esc="stop.end_date"/>
+                                    · <t t-esc="stop.duration_days"/> days
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gt-stop-body">
+                            <t t-if="stop.activity_ids">
+                                <p class="gt-activities-title">Planned Activities</p>
+                                <div class="gt-activities">
+                                    <t t-foreach="stop.activity_ids" t-as="act">
+                                        <div class="gt-activity-chip">
+                                            <span t-att-class="'type-dot type-' + act.activity_type"/>
+                                            <span t-esc="act.name"/>
+                                            <t t-if="act.cost">
+                                                · <span style="opacity:.7;"
+                                                        t-esc="'$%.0f' % act.cost"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <span class="gt-no-activities">No activities planned for this stop.</span>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-if="not stops">
+                    <div style="text-align:center; padding:40px; color:#aaa;">
+                        This trip has no stops added yet.
+                    </div>
+                </t>
+            </div>
+
+            <!-- Copy Trip CTA -->
+            <div class="gt-copy-cta">
+                <h3>✈ Like this itinerary?</h3>
+                <p>Copy it to your own GlobeTrotter account and make it your own.</p>
+                <t t-if="not request.env.user._is_public()">
+                    <!-- Logged in: POST to copy endpoint -->
+                    <form t-att-action="'/trip/shared/' + trip.share_token + '/copy'"
+                          method="post">
+                        <input type="hidden" name="csrf_token"
+                               t-att-value="request.csrf_token()"/>
+                        <button type="submit" class="btn btn-primary">
+                            📋 Copy Trip to My Account
+                        </button>
+                    </form>
+                </t>
+                <t t-else="">
+                    <!-- Not logged in: redirect to login first -->
+                    <a t-att-href="'/web/login?redirect=/trip/shared/' + trip.share_token + '/copy'"
+                       class="btn btn-primary">
+                        Log in to Copy This Trip
+                    </a>
+                </t>
+            </div>
+
+        </div><!-- /gt-container -->
+
+        <!-- ── Footer ───────────────────────────────────────────────── -->
+        <div class="gt-footer">
+            Powered by <strong>GlobeTrotter</strong> ·
+            <a href="/" style="color:#6c5ce7;">Plan your own trip</a>
+        </div>
+
+        <!-- ── Clipboard JS ──────────────────────────────────────────── -->
+        <script>
+            function copyUrl() {
+                var url = document.getElementById('publicUrl').textContent.trim();
+                navigator.clipboard.writeText(url).then(function() {
+                    var fb = document.getElementById('copyFeedback');
+                    fb.style.display = 'inline';
+                    setTimeout(function() { fb.style.display = 'none'; }, 2000);
+                });
+            }
+        </script>
+
+    </t>
+</template>
+</odoo>

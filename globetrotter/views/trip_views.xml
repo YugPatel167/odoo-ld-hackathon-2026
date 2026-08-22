@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════
+         TRIP FORM VIEW  (Create / Edit Trip)
+         - Smart-button to jump into Itinerary Builder
+    ═══════════════════════════════════════════════════ -->
+    <record id="view_globetrotter_trip_form" model="ir.ui.view">
+        <field name="name">globetrotter.trip.form</field>
+        <field name="model">globetrotter.trip</field>
+        <field name="arch" type="xml">
+            <form string="Trip">
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed,ongoing,completed"/>
+                </header>
+                <sheet>
+                    <!-- Smart buttons row -->
+                    <div class="oe_button_box" name="button_box">
+                        <!-- Itinerary stops count → opens builder -->
+                        <button name="action_view_itinerary"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-map-marker">
+                            <field name="destination_count" widget="statinfo"
+                                   string="Stops"/>
+                        </button>
+
+                        <!-- Share toggle: green when public, grey when private -->
+                        <button name="action_disable_sharing"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-share-alt"
+                                attrs="{'invisible': [('is_public', '=', False)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value" style="color:#00b894;">ON</span>
+                                <span class="o_stat_text">Shared</span>
+                            </div>
+                        </button>
+                        <button name="action_generate_share_link"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-share-alt"
+                                attrs="{'invisible': [('is_public', '=', True)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value" style="color:#b2bec3;">OFF</span>
+                                <span class="o_stat_text">Share</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Hidden fields needed for smart-button attrs -->
+                    <field name="is_public" invisible="1"/>
+                    <field name="share_token" invisible="1"/>
+
+                    <field name="cover_photo" widget="image" class="oe_avatar"
+                           options="{'preview_image': 'cover_photo', 'size': [120, 120]}"/>
+                    <div class="oe_title">
+                        <label for="name" string="Trip Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Summer EuroTrip 2026"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Travel Schedule">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="duration_days" readonly="1"/>
+                        </group>
+                        <group string="Traveler Info">
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description &amp; Goals" name="description">
+                            <field name="description"
+                                   placeholder="Write a description, packing list, or notes about this journey..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════
+         TRIP TREE / LIST VIEW
+         - Shows destination_count column
+         - Color-coded by state
+    ═══════════════════════════════════════════════════ -->
+    <record id="view_globetrotter_trip_tree" model="ir.ui.view">
+        <field name="name">globetrotter.trip.tree</field>
+        <field name="model">globetrotter.trip</field>
+        <field name="arch" type="xml">
+            <tree string="My Trips"
+                  decoration-info="state == 'draft'"
+                  decoration-success="state == 'confirmed'"
+                  decoration-warning="state == 'ongoing'"
+                  decoration-muted="state == 'completed'">
+                <field name="name" string="Trip Name"/>
+                <field name="start_date" string="From"/>
+                <field name="end_date" string="To"/>
+                <field name="duration_days" string="Days"/>
+                <field name="destination_count" string="Stops"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'confirmed'"
+                       decoration-warning="state == 'ongoing'"
+                       decoration-muted="state == 'completed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════
+         TRIP KANBAN VIEW  (My Trips — flat, no default group)
+         - Shows name, dates, duration, destination count
+         - Edit opens trip form; Itinerary opens builder
+         - Delete via kebab menu
+    ═══════════════════════════════════════════════════ -->
+    <record id="view_globetrotter_trip_kanban" model="ir.ui.view">
+        <field name="name">globetrotter.trip.kanban</field>
+        <field name="model">globetrotter.trip</field>
+        <field name="arch" type="xml">
+            <kanban quick_create="false" class="o_kanban_small_column">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="duration_days"/>
+                <field name="destination_count"/>
+                <field name="cover_photo"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record"
+                             style="border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.10);">
+
+                            <!-- Cover photo strip (shown only when present) -->
+                            <t t-if="record.cover_photo.raw_value">
+                                <div style="height:120px; overflow:hidden; background:#e9ecef;">
+                                    <img t-att-src="kanban_image('globetrotter.trip', 'cover_photo', record.id.raw_value)"
+                                         style="width:100%; height:100%; object-fit:cover;"
+                                         alt="Trip Cover"/>
+                                </div>
+                            </t>
+                            <!-- Placeholder gradient strip when no cover photo -->
+                            <t t-else="">
+                                <div style="height:8px; background:linear-gradient(90deg,#6c5ce7,#a29bfe);"/>
+                            </t>
+
+                            <div class="oe_kanban_details" style="padding:12px 14px 8px;">
+                                <!-- Trip name + status badge -->
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <strong class="o_kanban_record_title fs-6" style="line-height:1.3;">
+                                        <field name="name"/>
+                                    </strong>
+                                    <field name="state" widget="label_selection"
+                                           options="{'classes': {'draft':'info','confirmed':'success','ongoing':'warning','completed':'secondary','cancelled':'danger'}}"/>
+                                </div>
+
+                                <!-- Date range -->
+                                <div class="text-muted small mt-1">
+                                    <i class="fa fa-calendar me-1"/>
+                                    <field name="start_date"/> — <field name="end_date"/>
+                                </div>
+
+                                <!-- Stats row: days + stops -->
+                                <div class="d-flex gap-2 mt-2">
+                                    <span class="badge rounded-pill"
+                                          style="background:#6c5ce7; color:#fff;">
+                                        <i class="fa fa-clock-o me-1"/>
+                                        <field name="duration_days"/> days
+                                    </span>
+                                    <span class="badge rounded-pill"
+                                          style="background:#00b894; color:#fff;">
+                                        <i class="fa fa-map-marker me-1"/>
+                                        <field name="destination_count"/> stops
+                                    </span>
+                                </div>
+
+                                <!-- Action buttons -->
+                                <div class="d-flex gap-2 mt-3">
+                                    <button name="action_view_itinerary"
+                                            type="object"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            style="flex:1;">
+                                        <i class="fa fa-map me-1"/>Itinerary
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Kebab menu: Edit / View / Delete -->
+                            <div class="o_kanban_manage_button_section">
+                                <a class="o_kanban_manage_toggle_button" href="#">
+                                    <i class="fa fa-ellipsis-v" role="img" aria-label="Manage"/>
+                                </a>
+                                <div class="o_kanban_manage_pane" role="menu">
+                                    <div class="o_kanban_manage_section o_kanban_manage_view">
+                                        <ul>
+                                            <li><a type="edit"><i class="fa fa-pencil me-1"/>Edit Trip</a></li>
+                                            <li><a type="open"><i class="fa fa-eye me-1"/>View Details</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="o_kanban_manage_section o_kanban_manage_delete">
+                                        <ul>
+                                            <li>
+                                                <a type="delete" class="text-danger">
+                                                    <i class="fa fa-trash me-1"/>Delete Trip
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════
+         TRIP SEARCH VIEW
+         - Name search, state filters, upcoming filter
+         - Group-by: state, start month (not default)
+    ═══════════════════════════════════════════════════ -->
+    <record id="view_globetrotter_trip_search" model="ir.ui.view">
+        <field name="name">globetrotter.trip.search</field>
+        <field name="model">globetrotter.trip</field>
+        <field name="arch" type="xml">
+            <search string="Search My Trips">
+                <field name="name" string="Trip Name"
+                       filter_domain="[('name', 'ilike', self)]"/>
+                <separator/>
+                <filter name="filter_planning"  string="Planning"
+                        domain="[('state','=','draft')]"/>
+                <filter name="filter_confirmed" string="Confirmed"
+                        domain="[('state','=','confirmed')]"/>
+                <filter name="filter_ongoing"   string="Ongoing"
+                        domain="[('state','=','ongoing')]"/>
+                <filter name="filter_completed" string="Completed"
+                        domain="[('state','=','completed')]"/>
+                <separator/>
+                <filter name="filter_upcoming" string="Upcoming"
+                        domain="[('start_date','&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_state"      string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_by_start_date" string="Start Month"
+                            context="{'group_by': 'start_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════
+         MAIN WINDOW ACTION  (My Trips — kanban first, flat)
+         - No default_group_by
+         - default_user_id ensures new trips belong to logged-in user
+         - Empty-state help shown when zero trips
+    ═══════════════════════════════════════════════════ -->
+    <record id="action_globetrotter_trip" model="ir.actions.act_window">
+        <field name="name">My Trips</field>
+        <field name="res_model">globetrotter.trip</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'default_user_id': uid}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No trips planned yet — let's fix that!
+            </p>
+            <p>
+                Click <strong>New</strong> to start planning your first GlobeTrotter adventure.
+            </p>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════
+         MENUS
+    ═══════════════════════════════════════════════════ -->
+    <menuitem id="menu_globetrotter_root"
+              name="GlobeTrotter"
+              web_icon="globetrotter,static/description/icon.png"
+              sequence="10"/>
+    <menuitem id="menu_globetrotter_trips"
+              name="My Trips"
+              parent="menu_globetrotter_root"
+              action="action_globetrotter_trip"
+              sequence="10"/>
+
+</odoo>

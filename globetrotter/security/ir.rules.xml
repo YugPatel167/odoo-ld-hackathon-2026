@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Record Rule: Users can only read/write/create/delete their own trips.
+        Enforced at the ORM security layer — not just hidden in the UI.
+    -->
+    <record id="rule_globetrotter_trip_own" model="ir.rule">
+        <field name="name">GlobeTrotter Trip: Own Records Only</field>
+        <field name="model_id" ref="model_globetrotter_trip"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!--
+        Record Rule: Users can only read/write/create/delete stops on their own trips.
+    -->
+    <record id="rule_globetrotter_trip_stop_own" model="ir.rule">
+        <field name="name">GlobeTrotter Trip Stop: Own Trips Only</field>
+        <field name="model_id" ref="model_globetrotter_trip_stop"/>
+        <field name="domain_force">[('trip_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+</odoo>
