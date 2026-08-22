@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Trip · GlobeTrotter</title>
-<link rel="stylesheet" href="css/styles.css">
+<title>Profile · GlobeTrotter</title>
+<link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
 
@@ -28,7 +28,7 @@
     <div class="nav-group">
       <span class="nav-group-label">Plan</span>
       <ul class="nav-links">
-        <li><a href="create-trip.html" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Create Trip</a></li>
+        <li><a href="create-trip.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Create Trip</a></li>
         <li><a href="my-trips.html"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3"/></svg>My Trips</a></li>
         <li><a href="itinerary-builder.html"><svg viewBox="0 0 24 24"><path d="M9 4v16M15 4v16"/><path d="M4 8l5-4 5 4 5-4v16l-5 4-5-4-5 4z"/></svg>Itinerary Builder</a></li>
         <li><a href="itinerary-view.html"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>Itinerary View</a></li>
@@ -53,7 +53,7 @@
     <div class="nav-group">
       <span class="nav-group-label">Account</span>
       <ul class="nav-links">
-        <li><a href="profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</a></li>
+        <li><a href="profile.html" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>Profile</a></li>
         <li><a href="admin-dashboard.html"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>Admin</a></li>
       </ul>
     </div>
@@ -62,6 +62,8 @@
       <ul class="nav-links">
         <li><a href="about.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>About</a></li>
         <li><a href="contact.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Contact</a></li>
+        <li><a href="feedback.html"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Feedback</a></li>
+
       </ul>
     </div>
   </nav>
@@ -76,69 +78,81 @@
 
 <header class="page-hero">
   <div class="container">
-    <span class="eyebrow">Plan</span>
-    <h1>Create a new trip</h1>
-    <p>Set dates, cover photo, trip goals, and begin building your multi-city journey.</p>
+    <span class="eyebrow">Account</span>
+    <h1>User Profile &amp; Preferences</h1>
+    <p>Manage your traveler identity, default currency, preferred travel style, and notification settings.</p>
   </div>
 </header>
 
 <main>
   <section class="section container reveal">
+    <div class="grid-3" style="margin-bottom: 28px;">
+      <div class="card stat">
+        <div class="stat-value" id="stat-trips-count">2</div>
+        <div class="stat-label">Total Saved Trips</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Cities Explored</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-value" style="color: var(--sage);">Active</div>
+        <div class="stat-label">Member Tier &bull; GlobeTrotter Pro</div>
+      </div>
+    </div>
+
     <div class="form-view-container">
-      <form id="create-trip-form" onsubmit="handleCreateTrip(event)">
-        
-        <!-- Cover image selector / preview -->
-        <div style="border: 2px dashed var(--line); border-radius: var(--radius-sm); padding: 24px; text-align: center; background: var(--parchment); margin-bottom: 24px; cursor: pointer;" onclick="document.getElementById('cover-file').click()">
-          <span style="font-size: 2.2rem; display: block; margin-bottom: 6px;">📷</span>
-          <strong style="color: var(--brass);">Upload / Pick Cover Image</strong>
-          <p class="muted" style="font-size: 0.85rem; margin: 4px 0 0;">Click to upload or choose an image file, or enter an image URL below.</p>
-          <input id="cover-file" type="file" accept="image/*" style="display: none;" onchange="handleImageFile(this)">
-        </div>
-
-        <div class="form-group" style="margin-bottom: 18px;">
-          <label for="trip-name">Trip Name *</label>
-          <input id="trip-name" class="form-control" type="text" placeholder="e.g. Summer EuroTrip 2026" required value="Summer EuroTrip 2026">
+      <form onsubmit="event.preventDefault(); showToast('✨ Profile preferences saved!');">
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px;">
+          <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--brass); color: var(--void); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700;">
+            AJ
+          </div>
+          <div>
+            <h3 style="margin: 0 0 4px;">Alex Johnson</h3>
+            <p class="muted" style="margin: 0; font-size: 0.88rem;">alex.johnson@globetrotter.com &bull; Member since 2026</p>
+          </div>
         </div>
 
         <div class="grid-2" style="margin-bottom: 18px;">
           <div class="form-group">
-            <label for="start-date">Start Date *</label>
-            <input id="start-date" class="form-control" type="date" required onchange="calculateDuration()">
+            <label>Full Name</label>
+            <input class="form-control" type="text" value="Alex Johnson" required>
           </div>
           <div class="form-group">
-            <label for="end-date">End Date *</label>
-            <input id="end-date" class="form-control" type="date" required onchange="calculateDuration()">
+            <label>Email Address</label>
+            <input class="form-control" type="email" value="alex.johnson@globetrotter.com" required>
           </div>
-        </div>
-
-        <div id="duration-badge-box" style="margin-bottom: 20px;">
-          <span class="pill-badge pill-duration" id="duration-text">⏱️ 8 Days Duration</span>
         </div>
 
         <div class="grid-2" style="margin-bottom: 18px;">
           <div class="form-group">
-            <label for="cover-url">Cover Image URL (Optional)</label>
-            <input id="cover-url" class="form-control" type="url" placeholder="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=700" value="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=700&auto=format&fit=crop&q=80">
-          </div>
-          <div class="form-group">
-            <label for="trip-status">Initial Status</label>
-            <select id="trip-status" class="form-control">
-              <option value="Planning" selected>Planning</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Ongoing">Ongoing</option>
-              <option value="Completed">Completed</option>
+            <label>Preferred Currency</label>
+            <select class="form-control">
+              <option selected>USD ($) - US Dollar</option>
+              <option>EUR (€) - Euro</option>
+              <option>GBP (£) - British Pound</option>
+              <option>JPY (¥) - Japanese Yen</option>
             </select>
+          </div>
+          <div class="form-group">
+            <label>Home Airport / City</label>
+            <input class="form-control" type="text" value="New York (JFK)">
           </div>
         </div>
 
         <div class="form-group" style="margin-bottom: 24px;">
-          <label for="trip-desc">Trip Description &amp; Travel Goals</label>
-          <textarea id="trip-desc" class="form-control" rows="3" placeholder="Describe your dream stops, packing goals, or personal travel notes...">Scenic multi-city journey exploring world-class art, culinary hotspots, and historic landmarks.</textarea>
+          <label>Travel Styles (Select all that apply)</label>
+          <div class="badge-row" style="margin-top: 8px;">
+            <button type="button" class="filter-pill active">🏛️ Cultural &amp; Museums</button>
+            <button type="button" class="filter-pill active">🍷 Culinary &amp; Food Walks</button>
+            <button type="button" class="filter-pill active">🧗 Scenic &amp; Hiking</button>
+            <button type="button" class="filter-pill">🏖️ Beach &amp; Coastal</button>
+            <button type="button" class="filter-pill">🛍️ Luxury Shopping</button>
+          </div>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--line); padding-top: 20px;">
-          <a href="my-trips.html" class="btn btn-ghost">Cancel</a>
-          <button type="submit" class="btn btn-primary">Save &amp; Build Itinerary →</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
       </form>
     </div>
@@ -188,38 +202,11 @@
 <div id="cursor-ring"></div>
 <div id="cursor-dot"></div>
 
-<script src="js/api.js"></script>
-<script src="js/nav.js"></script>
-<script src="js/cursor.js"></script>
-<script src="js/chatbot.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/cursor.js"></script>
+<script src="../js/chatbot.js"></script>
 <script>
-const today = new Date().toISOString().split('T')[0];
-const nextWeek = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-document.getElementById('start-date').value = today;
-document.getElementById('end-date').value = nextWeek;
-
-function calculateDuration() {
-  const start = new Date(document.getElementById('start-date').value);
-  const end = new Date(document.getElementById('end-date').value);
-  if (start && end && end >= start) {
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    document.getElementById('duration-text').innerText = `⏱️ ${diffDays} Days Duration`;
-  }
-}
-calculateDuration();
-
-function handleImageFile(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('cover-url').value = e.target.result;
-      showToast('📷 Cover photo selected!');
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
@@ -228,47 +215,15 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function handleCreateTrip(e) {
-  e.preventDefault();
-  const name = document.getElementById('trip-name').value;
-  const startDate = document.getElementById('start-date').value;
-  const endDate = document.getElementById('end-date').value;
-  const cover = document.getElementById('cover-url').value || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80';
-  const status = document.getElementById('trip-status').value;
-  const description = document.getElementById('trip-desc').value;
-  
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const diffDays = Math.max(1, Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1);
-
-  const newId = 'trip_' + Date.now();
-  const newTrip = {
-    id: newId,
-    name,
-    startDate,
-    endDate,
-    durationDays: diffDays,
-    status,
-    cover,
-    description,
-    stops: [
-      { id: 'st_1', city: 'Paris', startDate: startDate, endDate: endDate, activities: ['Eiffel Tower Summit'] }
-    ]
-  };
-
+document.addEventListener('DOMContentLoaded', () => {
   const stored = localStorage.getItem('globetrotter_trips');
-  let trips = [];
   if (stored) {
-    try { trips = JSON.parse(stored); } catch(err) { trips = []; }
+    try {
+      const trips = JSON.parse(stored);
+      document.getElementById('stat-trips-count').innerText = trips.length;
+    } catch(e) {}
   }
-  trips.unshift(newTrip);
-  localStorage.setItem('globetrotter_trips', JSON.stringify(trips));
-
-  showToast('🎉 Trip created! Redirecting to Itinerary Builder...');
-  setTimeout(() => {
-    window.location.href = `itinerary-builder.html?id=${newId}`;
-  }, 800);
-}
+});
 </script>
 </body>
 </html>
