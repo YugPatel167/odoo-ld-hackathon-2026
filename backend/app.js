@@ -5,6 +5,8 @@ const express = require('express');
 const db = require('./models');
 const authRoutes = require('./routes/auth');
 const tripRoutes = require('./routes/trips');
+const citiesRoutes = require('./routes/cities');
+const activitiesRoutes = require('./routes/activities');
 const TripService = require('./services/tripService');
 
 const app = express();
@@ -32,27 +34,20 @@ app.get('/api/health', async (req, res) => {
 // Auth Routes (/api/auth/signup, /api/auth/login)
 app.use('/api/auth', authRoutes);
 
-// Protected Trip Routes (/api/trips, /api/trips/:id)
+// Protected Trip Routes (/api/trips, /api/trips/:id, /api/trips/:id/stops)
 app.use('/api/trips', tripRoutes);
+
+// Public Cities Routes (/api/cities?country=X&search=X)
+app.use('/api/cities', citiesRoutes);
+
+// Public Activities Catalog Routes (/api/activities?city_id=X&category=X)
+app.use('/api/activities', activitiesRoutes);
 
 // -----------------------------------------------------------------------------
 // PUBLIC MASTER & HELPER ROUTES
 // -----------------------------------------------------------------------------
 
-// Master Cities Reference List
-app.get('/api/cities', async (req, res) => {
-  try {
-    const cities = await db.City.findAll({
-      order: [['popularity_score', 'DESC']]
-    });
-    res.json(cities);
-  } catch (error) {
-    console.error('Error fetching cities:', error);
-    res.status(500).json({ error: 'Internal server error while fetching cities' });
-  }
-});
-
-// Search Activity Catalog
+// Search Activity Catalog (Legacy alias)
 app.get('/api/catalog', async (req, res) => {
   try {
     const { city_id, category, query } = req.query;

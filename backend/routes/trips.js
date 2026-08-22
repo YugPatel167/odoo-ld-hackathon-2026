@@ -150,4 +150,101 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/trips/:id/stops
+ * Add a stop (city leg) to a user's trip
+ */
+router.post('/:id/stops', async (req, res) => {
+  try {
+    const tripId = parseInt(req.params.id, 10);
+    if (isNaN(tripId)) {
+      return res.status(400).json({ error: 'Invalid trip ID parameter' });
+    }
+
+    // 1. Verify trip exists and belongs to authenticated user
+    const trip = await Trip.findOne({
+      where: {
+        id: tripId,
+        user_id: req.user.id
+      }
+    });
+
+    if (!trip) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+
+    // 2. Validate input fields
+    const { city_id, start_date, end_date, order_index } = req.body;
+
+    if (!city_id) {
+      return res.status(400).json({ error: 'city_id is required' });
+    }
+
+    const parsedCityId = parseInt(city_id, 10);
+    if (isNaN(parsedCityId)) {
+      return res.status(400).json({ error: 'Invalid city_id' });
+    }
+
+    // Check city exists
+    const city = await City.findByPk(parsedCityId);
+    if (!city) {
+      return res.status(404).json({ error: 'City not found' });
+    }
+
+    if (!start_date || !end_date) {
+      return res.status(400).json({ error: 'start_date and end_date are required' });
+    }
+
+    const startDateObj = new Date(start_date);
+    const endDateObj = new Date(end_date);
+
+    if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) {
+      return res.status(400).json({ error: 'Invalid date format for start_date or end_date (YYYY-MM-DD)' });
+    }
+
+    if (start_date > end_date) {
+      return res.status(400).json({ error: 'end_date must be greater than or equal to start_date' });
+    }
+
+    // 3. Determine order_index if not supplied
+    let stopOrderIndex = order_index;
+    if (stopOrderIndex === undefined || stopOrderIndex === null || isNaN(parseInt(stopOrderIndex, 10))) {
+      const highestStop = await Stop.findOne({
+        where: { trip_id: tripId },
+        order: [['order_index', 'DESC']],
+        attributes: ['order_index']
+      });
+      stopOrderIndex = highestStop ? highestStop.order_index + 1 : 0;
+    } else {
+      stopOrderIndex = parseInt(stopOrderIndex, 10);
+    }
+
+    // 4. Create Stop
+    const newStop = await Stop.create({
+      trip_id: tripId,
+      city_id: parsedCityId,
+      start_date,
+      end_date,
+      order_index: stopOrderIndex
+    });
+
+    // 5. Fetch created stop with nested city info
+    const createdStop = await Stop.findByPk(newStop.id, {
+      attributes: ['id', 'trip_id', 'start_date', 'end_date', 'order_index', 'created_at', 'updated_at'],
+      include: [
+        {
+          model: City,
+          as: 'city',
+          attributes: ['id', 'name', 'country', 'cost_index', 'image_url']
+        }
+      ]
+    });
+
+    return res.status(201).json(createdStop);
+  } catch (err) {
+    console.error('Error adding stop to trip:', err);
+    return res.status(500).json({ error: 'Internal server error while adding stop to trip' });
+  }
+});
+
 module.exports = router;

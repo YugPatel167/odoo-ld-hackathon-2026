@@ -94,16 +94,25 @@ Server runs on: `http://localhost:4000`
 - `POST /api/auth/signup` - Register a new user (`name`, `email`, `password`)
 - `POST /api/auth/login` - Login (`email`, `password`) -> Returns JWT token
 
+### Cities (Public)
+- `GET /api/cities` - Get all cities
+- `GET /api/cities?country=France` - Filter cities by country
+- `GET /api/cities?search=tok` - Search cities by name (case-insensitive)
+
+### Activities Catalog (Public)
+- `GET /api/activities` - Get all catalog activities (includes city info)
+- `GET /api/activities?city_id=1` - Filter activities by city
+- `GET /api/activities?category=culture` - Filter activities by category
+
 ### Trips (Requires `Authorization: Bearer <token>`)
 - `GET /api/trips` - List all trips for current authenticated user
 - `POST /api/trips` - Create a trip (`name`, `start_date`, `end_date`, `description`, `is_public`)
 - `GET /api/trips/:id` - Get full trip details with nested stops, cities, and scheduled activities
+- `POST /api/trips/:id/stops` - Add a stop to a trip (`city_id`, `start_date`, `end_date`, `order_index`)
 
 ### Public & Helper Endpoints
 - `GET /api/trips/public/:share_token` - View read-only shared trip by token (no auth required)
 - `GET /api/trips/:id/budget` - Real-time dynamically calculated trip budget breakdown
-- `GET /api/cities` - Master searchable cities catalog
-- `GET /api/catalog?city_id=1&category=food` - Search activities by city/category
 - `GET /api/health` - Check API and MySQL database connection status
 
 ---
