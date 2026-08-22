@@ -222,17 +222,19 @@ function switchItineraryMode(mode) {
   }
 }
 
-function loadItineraryView() {
+async function loadItineraryView() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
-  const trips = getTrips();
   let trip = null;
 
   if (tripId) {
-    trip = trips.find(t => t.id === tripId);
+    try {
+      trip = await Api.getTrip(tripId);
+    } catch(e) {}
   }
-  if (!trip && trips.length > 0) {
-    trip = trips[0];
+  if (!trip) {
+    const trips = Api.trips();
+    if (trips.length > 0) trip = trips[0];
   }
 
   if (!trip) {

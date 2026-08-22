@@ -184,50 +184,16 @@ const defaultTrips = [
   }
 ];
 
-function getTrips() {
-  const data = localStorage.getItem('globetrotter_trips');
-  if (!data) {
-    localStorage.setItem('globetrotter_trips', JSON.stringify(defaultTrips));
-    return defaultTrips;
-  }
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    return defaultTrips;
-  }
-}
-
-function saveTrips(trips) {
-  localStorage.setItem('globetrotter_trips', JSON.stringify(trips));
-  renderTrips();
-}
-
-function calculateDays(start, end) {
-  if (!start || !end) return 1;
-  const diff = new Date(end) - new Date(start);
-  return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function deleteTrip(tripId) {
-  if (confirm('Are you sure you want to delete this trip itinerary?')) {
-    const trips = getTrips().filter(t => t.id !== tripId);
-    saveTrips(trips);
-    showToast('🗑️ Trip deleted successfully.');
-  }
-}
-
-function renderTrips() {
-  const trips = getTrips();
+async function loadAndRenderTrips() {
   const grid = document.getElementById('trips-grid-container');
   const emptyState = document.getElementById('empty-state-container');
+  
+  let trips = [];
+  try {
+    trips = await Api.getTrips();
+  } catch(e) {
+    trips = Api.trips();
+  }
 
   if (!trips || trips.length === 0) {
     grid.innerHTML = '';
@@ -237,20 +203,23 @@ function renderTrips() {
 
   emptyState.style.display = 'none';
   grid.innerHTML = trips.map(trip => {
-    const stopCount = (trip.stops && trip.stops.length) || 1;
-    const stopNames = trip.stops && trip.stops.length ? trip.stops.map(s => s.city).join(' &rarr; ') : 'Custom Route';
-    const duration = trip.durationDays || calculateDays(trip.startDate, trip.endDate);
+    const stops = trip.stops || [];
+    const stopCount = stops.length || trip.stop_count || 1;
+    const stopNames = stops.length > 0 ? stops.map(s => typeof s.city === 'object' ? s.city.name : s.city).join(' &rarr; ') : 'Custom Route';
+    const startDate = trip.startDate || trip.start_date || '2026-06-15';
+    const endDate = trip.endDate || trip.end_date || '2026-06-25';
+    const duration = trip.durationDays || calculateDays(startDate, endDate);
     return `
     <div class="trip-card">
-      <div class="card-cover" style="background-image: url('${trip.cover || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80'}');">
-        <span class="card-state-badge">${trip.status || 'Planning'}</span>
+      <div class="card-cover" style="background-image: url('${trip.cover || trip.cover_photo_url || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80'}');">
+        <span class="card-state-badge">${trip.status || 'Active'}</span>
         <div class="card-cover-title">${trip.name}</div>
       </div>
       <div class="card-body">
         <div class="card-meta">
           <div class="meta-item">
             <span>📅</span>
-            <strong>${trip.startDate}</strong> &rarr; <strong>${trip.endDate}</strong>
+            <strong>${startDate}</strong> &rarr; <strong>${endDate}</strong>
           </div>
           <div class="meta-item" style="color: var(--ink); font-weight: 500;">
             <span>🗺️</span> <span>Route: ${stopNames}</span>
@@ -274,7 +243,16 @@ function renderTrips() {
   }).join('');
 }
 
-document.addEventListener('DOMContentLoaded', renderTrips);
+function deleteTrip(tripId) {
+  if (confirm('Are you sure you want to delete this trip itinerary?')) {
+    const currentTrips = Api.trips().filter(t => String(t.id) !== String(tripId));
+    Api.saveTrips(currentTrips);
+    showToast('🗑️ Trip deleted successfully.');
+    loadAndRenderTrips();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadAndRenderTrips);
 </script>
 </body>
 </html>

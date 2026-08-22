@@ -247,12 +247,37 @@ function renderCities(cities) {
   `).join('');
 }
 
-function filterCities() {
-  const query = (document.getElementById('city-search-input').value || '').toLowerCase();
+let currentCitiesList = [...fullCitiesList];
+
+async function filterCities() {
+  const query = (document.getElementById('city-search-input').value || '').trim();
+  
+  try {
+    if (query.length > 0) {
+      const remoteCities = await Api.getCities({ search: query });
+      if (remoteCities && remoteCities.length > 0) {
+        // Map backend format if returned
+        const mapped = remoteCities.map(c => ({
+          name: c.name,
+          country: c.country,
+          region: c.region || "Destination",
+          cost: c.cost_index || "$$",
+          popularity: c.popularity_score || 95,
+          image: c.image_url || "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=700&auto=format&fit=crop&q=80",
+          desc: `Explore top sights, cultural heritage, and culinary adventures in ${c.name}, ${c.country}.`
+        }));
+        renderCities(mapped);
+        return;
+      }
+    }
+  } catch(e) {}
+
+  const qLower = query.toLowerCase();
   const filtered = fullCitiesList.filter(city => {
-    const matchesQuery = city.name.toLowerCase().includes(query) || 
-                         city.country.toLowerCase().includes(query) || 
-                         city.region.toLowerCase().includes(query);
+    const matchesQuery = !qLower || 
+                         city.name.toLowerCase().includes(qLower) || 
+                         city.country.toLowerCase().includes(qLower) || 
+                         city.region.toLowerCase().includes(qLower);
     const matchesRegion = selectedRegion === 'all' || city.region === selectedRegion;
     const matchesCost = selectedCost === 'all' || city.cost === selectedCost;
     return matchesQuery && matchesRegion && matchesCost;
@@ -275,9 +300,7 @@ function setCostFilter(cost, btn) {
 }
 
 function getTrips() {
-  const data = localStorage.getItem('globetrotter_trips');
-  if (!data) return [];
-  try { return JSON.parse(data); } catch(e) { return []; }
+  return Api.trips();
 }
 
 function openAddCityModal(cityName) {
@@ -288,7 +311,7 @@ function openAddCityModal(cityName) {
   if (trips.length === 0) {
     select.innerHTML = `<option value="new">+ Create a new trip for ${cityName}</option>`;
   } else {
-    select.innerHTML = trips.map(t => `<option value="${t.id}">${t.name} (${t.startDate})</option>`).join('');
+    select.innerHTML = trips.map(t => `<option value="${t.id}">${t.name} (${t.startDate || t.start_date || 'Upcoming'})</option>`).join('');
   }
   document.getElementById('modal-add-city').style.display = 'flex';
 }
@@ -309,8 +332,8 @@ function confirmAddCityToTrip() {
 
   if (!trip.stops) trip.stops = [];
   const lastStop = trip.stops[trip.stops.length - 1];
-  const startDate = lastStop ? lastStop.endDate : trip.startDate;
-  const endDate = trip.endDate;
+  const startDate = lastStop ? (lastStop.endDate || lastStop.end_date) : (trip.startDate || trip.start_date);
+  const endDate = trip.endDate || trip.end_date;
 
   trip.stops.push({
     id: 'stop_' + Date.now(),
@@ -320,16 +343,30 @@ function confirmAddCityToTrip() {
     activities: []
   });
 
-  localStorage.setItem('globetrotter_trips', JSON.stringify(trips));
+  Api.saveTrips(trips);
   closeCityModal();
   showToast(`🎉 ${currentCityToAdd} added to "${trip.name}"!`);
   setTimeout(() => {
     window.location.href = `itinerary-builder.html?id=${trip.id}`;
-  }, 1000);
+  }, 800);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderCities(fullCitiesList);
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const remoteCities = await Api.getCities();
+    if (remoteCities && remoteCities.length > 0) {
+      currentCitiesList = remoteCities.map(c => ({
+        name: c.name,
+        country: c.country,
+        region: c.region || "Destination",
+        cost: c.cost_index || "$$",
+        popularity: c.popularity_score || 95,
+        image: c.image_url || "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=700&auto=format&fit=crop&q=80",
+        desc: `Explore top sights, cultural heritage, and culinary adventures in ${c.name}, ${c.country}.`
+      }));
+    }
+  } catch(e) {}
+  renderCities(currentCitiesList);
 });
 </script>
 </body>

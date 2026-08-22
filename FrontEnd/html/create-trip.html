@@ -230,46 +230,45 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function handleCreateTrip(e) {
+async function handleCreateTrip(e) {
   e.preventDefault();
-  const name = document.getElementById('trip-name').value;
+  const name = document.getElementById('trip-name').value.trim();
   const startDate = document.getElementById('start-date').value;
   const endDate = document.getElementById('end-date').value;
   const cover = document.getElementById('cover-url').value || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=700&auto=format&fit=crop&q=80';
   const status = document.getElementById('trip-status').value;
-  const description = document.getElementById('trip-desc').value;
+  const description = document.getElementById('trip-desc').value.trim();
   
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const diffDays = Math.max(1, Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1);
-
-  const newId = 'trip_' + Date.now();
-  const newTrip = {
-    id: newId,
-    name,
-    startDate,
-    endDate,
-    durationDays: diffDays,
-    status,
-    cover,
-    description,
-    stops: [
-      { id: 'st_1', city: 'Paris', startDate: startDate, endDate: endDate, activities: ['Eiffel Tower Summit'] }
-    ]
-  };
-
-  const stored = localStorage.getItem('globetrotter_trips');
-  let trips = [];
-  if (stored) {
-    try { trips = JSON.parse(stored); } catch(err) { trips = []; }
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Creating Itinerary...';
   }
-  trips.unshift(newTrip);
-  localStorage.setItem('globetrotter_trips', JSON.stringify(trips));
 
-  showToast('🎉 Trip created! Redirecting to Itinerary Builder...');
-  setTimeout(() => {
-    window.location.href = `itinerary-builder.html?id=${newId}`;
-  }, 800);
+  try {
+    const payload = {
+      name,
+      start_date: startDate,
+      end_date: endDate,
+      description,
+      cover_photo_url: cover,
+      is_public: false
+    };
+
+    const newTrip = await Api.createTrip(payload);
+    const targetId = (newTrip && newTrip.id) || ('trip_' + Date.now());
+
+    showToast('🎉 Trip created! Redirecting to Itinerary Builder...');
+    setTimeout(() => {
+      window.location.href = `itinerary-builder.html?id=${targetId}`;
+    }, 600);
+  } catch (err) {
+    showToast(`⚠️ ${err.message || 'Failed to create trip.'}`);
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Create Trip & Start Building';
+    }
+  }
 }
 </script>
 </body>

@@ -718,8 +718,103 @@ function confirmAddActToTrip() {
   showToast(`🎯 "${currentSelectedAct.name}" added to "${trip.name}"!`);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+async function filterActivities() {
+  const q = (document.getElementById('activity-search-input').value || '').toLowerCase().trim();
+  const city = document.getElementById('filter-city-select').value;
+  const maxCost = parseInt(document.getElementById('price-range').value, 10);
+  const sort = document.getElementById('sort-select').value;
+
+  let filtered = currentActivities.filter(act => {
+    const matchesQ = !q || (act.name && act.name.toLowerCase().includes(q)) ||
+                     (act.city && act.city.toLowerCase().includes(q)) ||
+                     (act.country && act.country.toLowerCase().includes(q)) ||
+                     (act.desc && act.desc.toLowerCase().includes(q)) ||
+                     (act.type && act.type.toLowerCase().includes(q));
+    const matchesCat = selectedCategory === 'all' || (act.type && act.type.toLowerCase() === selectedCategory.toLowerCase());
+    const matchesCity = city === 'all' || (act.city && act.city.toLowerCase() === city.toLowerCase());
+    const matchesPrice = (act.cost || 0) <= maxCost;
+    return matchesQ && matchesCat && matchesCity && matchesPrice;
+  });
+
+  if (sort === 'price-asc') {
+    filtered.sort((a, b) => (a.cost || 0) - (b.cost || 0));
+  } else if (sort === 'price-desc') {
+    filtered.sort((a, b) => (b.cost || 0) - (a.cost || 0));
+  } else if (sort === 'duration') {
+    filtered.sort((a, b) => parseFloat(a.duration || 0) - parseFloat(b.duration || 0));
+  } else {
+    filtered.sort((a, b) => parseFloat(b.rating || 4.5) - parseFloat(a.rating || 4.5));
+  }
+
+  renderActivities(filtered);
+}
+
+function confirmAddActToTrip() {
+  const tripId = document.getElementById('modal-act-trip-select').value;
+  if (tripId === 'new') {
+    window.location.href = 'create-trip.html';
+    return;
+  }
+  const trips = Api.trips() || [];
+  const trip = trips.find(t => t.id === tripId);
+  if (!trip) return;
+
+  if (!trip.stops) trip.stops = [];
+  const stopChoice = document.getElementById('modal-act-stop-select').value;
+  
+  let targetStop = trip.stops.find(s => s.id === stopChoice);
+  if (!targetStop && stopChoice !== 'new_stop') {
+    targetStop = trip.stops.find(s => s.city.toLowerCase() === currentSelectedAct.city.toLowerCase());
+  }
+
+  if (!targetStop) {
+    targetStop = {
+      id: 'st_' + Date.now(),
+      city: currentSelectedAct.city,
+      country: 'Destination',
+      startDate: trip.startDate || '2026-06-15',
+      endDate: trip.endDate || '2026-06-20',
+      activities: []
+    };
+    trip.stops.push(targetStop);
+  }
+
+  if (!targetStop.activities) targetStop.activities = [];
+  if (!targetStop.activities.includes(currentSelectedAct.name)) {
+    targetStop.activities.push(currentSelectedAct.name);
+  }
+
+  Api.saveTrips(trips);
+  GlobeStorage.trackClick("add_activity_btn");
+  closeActModal();
+  showToast(`🎯 "${currentSelectedAct.name}" added to "${trip.name}"!`);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
   currentActivities = getStoredActivities();
+  try {
+    const remoteActs = await Api.getActivities();
+    if (remoteActs && remoteActs.length > 0) {
+      const mapped = remoteActs.map(a => ({
+        id: 'act_cat_' + a.id,
+        name: a.name,
+        city: a.city ? a.city.name : 'Destination',
+        country: a.city ? a.city.country : '',
+        type: a.category || 'Sightseeing',
+        cost: a.estimated_cost || 0,
+        duration: `${Math.round((a.duration_minutes || 120) / 60)}h`,
+        rating: '4.9',
+        desc: `Experience top rated ${a.category || 'activity'} in ${a.city ? a.city.name : 'your destination'}.`
+      }));
+      // Merge unique by name
+      const existingNames = new Set(currentActivities.map(a => a.name));
+      mapped.forEach(m => {
+        if (!existingNames.has(m.name)) {
+          currentActivities.push(m);
+        }
+      });
+    }
+  } catch(e) {}
   filterActivities();
 });
 </script>

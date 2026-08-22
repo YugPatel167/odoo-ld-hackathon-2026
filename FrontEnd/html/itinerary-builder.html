@@ -247,32 +247,37 @@ function calculateDays(start, end) {
   return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)) + 1);
 }
 
-function loadTrip() {
+async function loadTrip() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
-  const trips = getTrips();
   let trip = null;
 
   if (tripId) {
-    trip = trips.find(t => t.id === tripId);
+    try {
+      trip = await Api.getTrip(tripId);
+    } catch(e) {
+      trip = null;
+    }
   }
-  if (!trip && trips.length > 0) {
-    trip = trips[0];
+
+  if (!trip) {
+    const trips = Api.trips();
+    if (trips.length > 0) trip = trips[0];
   }
 
   if (trip) {
     document.getElementById('edit-trip-id').value = trip.id;
     document.getElementById('trip-name').value = trip.name || '';
-    document.getElementById('trip-start-date').value = trip.startDate || '';
-    document.getElementById('trip-end-date').value = trip.endDate || '';
+    document.getElementById('trip-start-date').value = trip.startDate || trip.start_date || '';
+    document.getElementById('trip-end-date').value = trip.endDate || trip.end_date || '';
     document.getElementById('trip-status').value = trip.status || 'Planning';
-    document.getElementById('trip-cover').value = trip.cover || '';
+    document.getElementById('trip-cover').value = trip.cover || trip.cover_photo_url || '';
     document.getElementById('trip-desc').value = trip.description || '';
     document.getElementById('builder-heading').innerText = `Edit Itinerary: ${trip.name}`;
     document.getElementById('btn-save-trip').innerText = 'Update Itinerary & View Summary';
 
     currentStops = trip.stops && trip.stops.length ? JSON.parse(JSON.stringify(trip.stops)) : [
-      { id: 'st_1', city: 'Paris', startDate: trip.startDate, endDate: trip.endDate, activities: ['Eiffel Tower Summit'] }
+      { id: 'st_1', city: 'Paris', startDate: trip.startDate || trip.start_date, endDate: trip.endDate || trip.end_date, activities: ['Eiffel Tower Summit'] }
     ];
   } else {
     const today = new Date().toISOString().split('T')[0];

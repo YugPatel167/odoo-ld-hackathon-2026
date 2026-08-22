@@ -49,6 +49,16 @@
   background: var(--brass);
   color: var(--void);
 }
+.auth-error-banner {
+  display: none;
+  background: rgba(255, 92, 108, 0.15);
+  border: 1px solid var(--rust);
+  color: #FF8F9C;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
 </style>
 </head>
 <body>
@@ -66,6 +76,8 @@
       <button class="auth-tab-btn active" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
     </div>
 
+    <div id="auth-error" class="auth-error-banner"></div>
+
     <!-- Signup Form -->
     <form id="signup-form" onsubmit="handleAuthSubmit(event, 'signup')">
       <div class="form-group" style="margin-bottom: 16px;">
@@ -77,13 +89,13 @@
         <input id="signup-email" class="form-control" type="email" placeholder="hemilclg001@gmail.com" required value="hemilclg001@gmail.com">
       </div>
       <div class="form-group" style="margin-bottom: 20px;">
-        <label for="signup-password">Create Password</label>
-        <input id="signup-password" class="form-control" type="password" placeholder="••••••••" required value="password123">
+        <label for="signup-password">Create Password (min 6 chars)</label>
+        <input id="signup-password" class="form-control" type="password" placeholder="••••••••" required value="password123" minlength="6">
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Create Free Account &amp; Start Planning</button>
+      <button type="submit" id="btn-signup-submit" class="btn btn-primary" style="width: 100%; padding: 12px; justify-content: center;">Create Free Account &amp; Start Planning</button>
       
       <div style="text-align: center; margin-top: 18px; font-size: 0.85rem;" class="muted">
-        Already registered? <a href="login.html" style="color: var(--brass); font-weight: 600;">Sign in to your account</a>
+        Already registered? <a href="#" onclick="switchAuthTab('login')" style="color: var(--brass); font-weight: 600;">Sign in to your account</a>
       </div>
     </form>
 
@@ -97,10 +109,10 @@
         <label for="login-password">Password</label>
         <input id="login-password" class="form-control" type="password" placeholder="••••••••" required value="password123">
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Log In to GlobeTrotter</button>
+      <button type="submit" id="btn-login-submit" class="btn btn-primary" style="width: 100%; padding: 12px; justify-content: center;">Log In to GlobeTrotter</button>
       
       <div style="text-align: center; margin-top: 18px; font-size: 0.85rem;" class="muted">
-        Don't have an account? <a href="#" onclick="switchAuthTab('signup')" style="color: var(--brass); font-weight: 600;">Sign up now</a>
+        Don't have an account? <a href="#" onclick="switchAuthTab('signup')" style="color: var(--brass); font-weight: 600;">Create free account</a>
       </div>
     </form>
 
@@ -126,7 +138,23 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+function showError(msg) {
+  const errBox = document.getElementById('auth-error');
+  if (errBox) {
+    errBox.textContent = msg;
+    errBox.style.display = 'block';
+  } else {
+    showToast(`⚠️ ${msg}`);
+  }
+}
+
+function clearError() {
+  const errBox = document.getElementById('auth-error');
+  if (errBox) errBox.style.display = 'none';
+}
+
 function switchAuthTab(mode) {
+  clearError();
   const loginForm = document.getElementById('login-form');
   const signupForm = document.getElementById('signup-form');
   const tabLogin = document.getElementById('tab-login');
@@ -145,23 +173,61 @@ function switchAuthTab(mode) {
   }
 }
 
-function handleAuthSubmit(e, mode) {
+async function handleAuthSubmit(e, mode) {
   e.preventDefault();
-  const name = document.getElementById('signup-name').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
+  clearError();
 
-  if (name && email) {
-    const profile = Api.getProfile();
-    profile.name = name;
-    profile.email = email;
-    Api.saveProfile(profile);
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectTarget = urlParams.get('redirect') || 'dashboard.html';
+
+  if (mode === 'login') {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('btn-login-submit');
+
+    try {
+      btn.disabled = true;
+      btn.innerText = 'Signing In...';
+      await Api.login(email, password);
+      showToast('✨ Sign in successful! Redirecting...');
+      setTimeout(() => {
+        window.location.href = redirectTarget;
+      }, 600);
+    } catch (err) {
+      showError(err.message || 'Invalid email or password. Please try again.');
+      btn.disabled = false;
+      btn.innerText = 'Log In to GlobeTrotter';
+    }
+  } else {
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const btn = document.getElementById('btn-signup-submit');
+
+    try {
+      btn.disabled = true;
+      btn.innerText = 'Creating Account...';
+      await Api.signup(name, email, password);
+      // Auto log in with newly created account
+      await Api.login(email, password);
+      showToast('🎉 Welcome to GlobeTrotter! Account created.');
+      setTimeout(() => {
+        window.location.href = redirectTarget;
+      }, 600);
+    } catch (err) {
+      showError(err.message || 'Registration failed. Please check your information.');
+      btn.disabled = false;
+      btn.innerText = 'Create Free Account & Start Planning';
+    }
   }
-
-  showToast('🎉 Account created! Welcome to GlobeTrotter.');
-  setTimeout(() => {
-    window.location.href = 'create-trip.html';
-  }, 800);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('tab') === 'login') {
+    switchAuthTab('login');
+  }
+});
 </script>
 </body>
 </html>

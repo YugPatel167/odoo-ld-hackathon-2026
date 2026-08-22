@@ -258,27 +258,37 @@ function switchProfileTab(tab) {
   }
 }
 
-function loadProfile() {
-  const profile = Api.getProfile();
-  const trips = Api.trips();
+async function loadProfile() {
+  const currentUser = Api.getCurrentUser() || {};
+  const profile = Api.getProfile() || {};
+  
+  let trips = [];
+  try {
+    trips = await Api.getTrips();
+  } catch(e) {
+    trips = Api.trips();
+  }
   const bookings = Api.getBookings();
+
+  const activeName = currentUser.name || profile.name || "Hemil Patadiya";
+  const activeEmail = currentUser.email || profile.email || "hemilclg001@gmail.com";
 
   document.getElementById('stat-trips-count').innerText = trips.length;
   document.getElementById('stat-passes-count').innerText = bookings.length;
-  document.getElementById('stat-tier').innerText = profile.tier || "Gold";
+  document.getElementById('stat-tier').innerText = profile.tier || "GlobeTrotter Gold";
 
-  document.getElementById('prof-name').value = profile.name || "Hemil Patadiya";
-  document.getElementById('prof-email').value = profile.email || "hemilclg001@gmail.com";
+  document.getElementById('prof-name').value = activeName;
+  document.getElementById('prof-email').value = activeEmail;
   document.getElementById('prof-phone').value = profile.phone || "+1 (555) 234-5678";
   document.getElementById('prof-currency').value = profile.currency || "USD ($)";
   document.getElementById('prof-airport').value = profile.homeAirport || "New York (JFK)";
   document.getElementById('prof-bio').value = profile.bio || "Avid traveler & software designer.";
 
-  document.getElementById('disp-name').innerText = profile.name || "Hemil Patadiya";
-  document.getElementById('disp-email-sub').innerText = `${profile.email || 'hemilclg001@gmail.com'} \u2022 Member since 2026`;
+  document.getElementById('disp-name').innerText = activeName;
+  document.getElementById('disp-email-sub').innerText = `${activeEmail} \u2022 Active Traveler`;
 
   // Initials avatar
-  const initials = (profile.name || "Hemil Patadiya").split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+  const initials = activeName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase() || 'GT';
   document.getElementById('user-avatar').innerText = initials;
 }
 

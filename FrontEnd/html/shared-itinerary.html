@@ -205,17 +205,45 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function loadSharedTrip() {
+async function loadSharedTrip() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get('id');
-  const trips = getTrips();
+  const shareToken = urlParams.get('token');
   let trip = null;
 
-  if (tripId) {
-    trip = trips.find(t => t.id === tripId);
+  if (shareToken) {
+    try {
+      const publicTrip = await Api.getPublicTrip(shareToken);
+      if (publicTrip) {
+        trip = {
+          id: String(publicTrip.id),
+          name: publicTrip.name,
+          startDate: publicTrip.start_date,
+          endDate: publicTrip.end_date,
+          durationDays: calculateDays(publicTrip.start_date, publicTrip.end_date),
+          status: 'Public Itinerary',
+          description: publicTrip.description,
+          stops: (publicTrip.stops || []).map(s => ({
+            city: s.city ? s.city.name : 'Destination',
+            country: s.city ? s.city.country : '',
+            startDate: s.start_date,
+            endDate: s.end_date,
+            activities: (s.activities || []).map(a => a.custom_name || (a.catalogItem && a.catalogItem.name) || 'Activity')
+          }))
+        };
+      }
+    } catch(e) {}
   }
-  if (!trip && trips.length > 0) {
-    trip = trips[0];
+
+  if (!trip && tripId) {
+    try {
+      trip = await Api.getTrip(tripId);
+    } catch(e) {}
+  }
+
+  if (!trip) {
+    const trips = Api.trips();
+    if (trips.length > 0) trip = trips[0];
   }
 
   if (!trip) {
@@ -239,7 +267,7 @@ function loadSharedTrip() {
   currentSharedTrip = trip;
 
   document.getElementById('shared-title').innerText = trip.name;
-  document.getElementById('badge-dates').innerText = `📅 ${trip.startDate} &rarr; ${trip.endDate}`;
+  document.getElementById('badge-dates').innerText = `📅 ${trip.startDate || trip.start_date} &rarr; ${trip.endDate || trip.end_date}`;
   document.getElementById('badge-stops').innerText = `📍 ${(trip.stops && trip.stops.length) || 1} stops`;
   document.getElementById('badge-status').innerText = `✈ ${trip.status || 'Planning'}`;
 

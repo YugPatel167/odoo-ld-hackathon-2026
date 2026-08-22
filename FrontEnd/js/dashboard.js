@@ -1,37 +1,15 @@
 /* ==========================================================================
-   GlobeTrotter — Dashboard logic
-   Reads trip and budget data from localStorage (shared with my-trips & budget)
+   GlobeTrotter — Dashboard Logic (Backend Connected)
+   Fetches user data, live trips from Express backend, and renders budget stats.
    ========================================================================== */
 
-const defaultTrips = [
-  {
-    id: 'trip_1',
-    name: 'Grand European Discovery',
-    startDate: '2026-06-15',
-    endDate: '2026-06-25',
-    durationDays: 11,
-    status: 'Planning',
-    cover: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=700&auto=format&fit=crop&q=80',
-    description: 'Scenic journey across Paris and Rome exploring art, cuisine, and history.',
-    stops: [
-      { id: 'stop_1', city: 'Paris', startDate: '2026-06-15', endDate: '2026-06-20', activities: ['Eiffel Tower Summit', 'Louvre Museum Guided Tour'] },
-      { id: 'stop_2', city: 'Rome', startDate: '2026-06-20', endDate: '2026-06-25', activities: ['Colosseum & Roman Forum Tour'] }
-    ]
-  },
-  {
-    id: 'trip_2',
-    name: 'Tokyo & Kyoto Highlights',
-    startDate: '2026-09-10',
-    endDate: '2026-09-22',
-    durationDays: 13,
-    status: 'Confirmed',
-    cover: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=700&auto=format&fit=crop&q=80',
-    description: 'Ultra-modern tech, historic shrines, culinary exploration, and Mount Fuji.',
-    stops: [
-      { id: 'stop_1', city: 'Tokyo', startDate: '2026-09-10', endDate: '2026-09-16', activities: ['TeamLab Planets Digital Art', 'Mount Fuji Day Trip'] },
-      { id: 'stop_2', city: 'Kyoto', startDate: '2026-09-16', endDate: '2026-09-22', activities: ['Fushimi Inari Shrine Walk', 'Arashiyama Bamboo Grove'] }
-    ]
-  }
+const fallbackDestinations = [
+  { name: "Paris", country: "France", costIndex: "$$", tag: "Culture & Cuisine" },
+  { name: "Tokyo", country: "Japan", costIndex: "$$$", tag: "Modern & Heritage" },
+  { name: "Rome", country: "Italy", costIndex: "$$", tag: "Ancient History" },
+  { name: "Interlaken", country: "Switzerland", costIndex: "$$$", tag: "Alpine Adventure" },
+  { name: "Barcelona", country: "Spain", costIndex: "$$", tag: "Architecture & Beach" },
+  { name: "Kyoto", country: "Japan", costIndex: "$$", tag: "Shrines & Nature" }
 ];
 
 const cityDailyEst = {
@@ -40,29 +18,6 @@ const cityDailyEst = {
   "Bangkok": 60, "Singapore": 180, "Dubai": 210, "San Francisco": 200,
   "Rio de Janeiro": 75, "Sydney": 170, "Cape Town": 85, "Cairo": 55
 };
-
-const recommendedDestinations = [
-  { name: "Paris", country: "France", costIndex: "$$$", tag: "Culture & Cuisine" },
-  { name: "Tokyo", country: "Japan", costIndex: "$$$$", tag: "Modern & Heritage" },
-  { name: "Rome", country: "Italy", costIndex: "$$$", tag: "Ancient History" },
-  { name: "Interlaken", country: "Switzerland", costIndex: "$$$$", tag: "Alpine Adventure" },
-  { name: "Barcelona", country: "Spain", costIndex: "$$", tag: "Architecture & Beach" },
-  { name: "Kyoto", country: "Japan", costIndex: "$$$", tag: "Shrines & Nature" }
-];
-
-function getTrips() {
-  const data = localStorage.getItem('globetrotter_trips');
-  if (!data) {
-    localStorage.setItem('globetrotter_trips', JSON.stringify(defaultTrips));
-    return defaultTrips;
-  }
-  try {
-    const parsed = JSON.parse(data);
-    return Array.isArray(parsed) ? parsed : defaultTrips;
-  } catch (e) {
-    return defaultTrips;
-  }
-}
 
 function calculateDays(start, end) {
   if (!start || !end) return 1;
@@ -87,7 +42,7 @@ function currency(n) {
 }
 
 function estimateTripCost(trip) {
-  const totalDays = trip.durationDays || calculateDays(trip.startDate, trip.endDate);
+  const totalDays = trip.durationDays || calculateDays(trip.startDate || trip.start_date, trip.endDate || trip.end_date);
   const stops = trip.stops || [];
 
   let staysCost = 0;
@@ -96,8 +51,9 @@ function estimateTripCost(trip) {
   let foodCost = totalDays * 45;
 
   stops.forEach(stop => {
-    const days = calculateDays(stop.startDate, stop.endDate);
-    const dailyRate = cityDailyEst[stop.city] || 150;
+    const days = calculateDays(stop.startDate || stop.start_date, stop.endDate || stop.end_date);
+    const cityName = typeof stop.city === 'object' ? stop.city.name : stop.city;
+    const dailyRate = cityDailyEst[cityName] || 150;
     staysCost += days * dailyRate;
     activitiesCost += (stop.activities || []).length * 35;
   });
@@ -110,10 +66,12 @@ function estimateTripCost(trip) {
 }
 
 function renderTripTicket(trip, index) {
-  const stopCount = (trip.stops && trip.stops.length) || 1;
-  const days = trip.durationDays || calculateDays(trip.startDate, trip.endDate);
+  const stopCount = (trip.stops && trip.stops.length) || trip.stop_count || 1;
+  const startDate = trip.startDate || trip.start_date;
+  const endDate = trip.endDate || trip.end_date;
+  const days = trip.durationDays || calculateDays(startDate, endDate);
   const costInfo = estimateTripCost(trip);
-  const formattedDates = formatDateRange(trip.startDate, trip.endDate);
+  const formattedDates = formatDateRange(startDate, endDate);
   const tripNum = String(index + 1).padStart(3, '0');
 
   return `
@@ -140,51 +98,61 @@ function renderTripTicket(trip, index) {
 
 function renderDestCard(city) {
   return `
-    <div class="card dest-card" onclick="window.location.href='city-search.html'">
-      <div class="dest-name">${city.name}</div>
-      <div class="dest-meta">${city.country} &bull; ${city.tag}</div>
-      <span class="dest-badge">Cost index: ${city.costIndex}</span>
+    <div class="card dest-card" onclick="window.location.href='city-search.html'" style="cursor: pointer;">
+      <div class="dest-name" style="font-weight: 600; color: var(--ink);">${city.name}</div>
+      <div class="dest-meta muted" style="font-size: 0.82rem;">${city.country} &bull; ${city.tag || 'Popular Destination'}</div>
+      <span class="dest-badge" style="display: inline-block; margin-top: 8px; font-size: 0.75rem; color: var(--brass);">Cost index: ${city.costIndex || city.cost_index || '$$'}</span>
     </div>`;
 }
 
-function loadDashboard() {
-  // Populate user name if span is present
+async function loadDashboard() {
+  // 1. Greet current user
+  const currentUser = (typeof Api !== 'undefined' && Api.getCurrentUser()) || {};
+  const userName = currentUser.name || (currentUser.email ? currentUser.email.split('@')[0] : 'Traveler');
+
   document.querySelectorAll('[data-user-name]').forEach(el => {
-    el.textContent = 'Traveler';
+    el.textContent = userName;
   });
 
-  const trips = getTrips();
+  // 2. Fetch User Trips from Backend
+  let trips = [];
+  try {
+    trips = (typeof Api !== 'undefined' && await Api.getTrips()) || [];
+  } catch (err) {
+    console.warn('[Dashboard] Fallback trips loaded:', err);
+    trips = (typeof Api !== 'undefined' && Api.trips()) || [];
+  }
 
-  // 1. Populate Recent Trips
+  // 3. Populate Recent Trips
   const tripsContainer = document.getElementById('trips-list');
   if (tripsContainer) {
     if (!trips || trips.length === 0) {
       tripsContainer.innerHTML = `
         <div class="empty-state" style="grid-column: 1 / -1; text-align:center; padding: 40px 20px;">
           <p class="muted" style="margin-bottom: 12px;">No trips yet — your next journey starts here.</p>
-          <a href="create-trip.html" class="btn btn-primary btn-sm">Plan your first trip</a>
+          <a href="create-trip.html" class="btn btn-primary btn-sm">+ Plan your first trip</a>
         </div>`;
     } else {
-      const recent = trips.slice(0, 3);
+      const recent = trips.slice(0, 6);
       tripsContainer.innerHTML = recent.map((t, idx) => renderTripTicket(t, idx)).join('');
     }
   }
 
-  // 2. Populate Budget Highlights
+  // 4. Populate Budget Highlights
   const budgetContainer = document.getElementById('budget-stats');
   if (budgetContainer) {
     if (!trips || trips.length === 0) {
       budgetContainer.innerHTML = `
         <div class="card stat">
-          <div class="stat-value">$0</div>
+          <div class="stat-value" style="color: var(--sage);">$0</div>
           <div class="stat-label">Total planned spend</div>
         </div>
         <div class="card stat">
-          <div class="stat-value">0</div>
+          <div class="stat-value" style="color: var(--brass);">0</div>
           <div class="stat-label">Trips planned</div>
         </div>
         <div class="card stat">
-          <div class="stat-value">$0</div>
+          <div class="stat-value" style="color: var(--coral);">$0</div>
           <div class="stat-label">Avg. cost / day</div>
         </div>`;
     } else {
@@ -201,24 +169,38 @@ function loadDashboard() {
 
       budgetContainer.innerHTML = `
         <div class="card stat">
-          <div class="stat-value ok">${currency(grandTotal)}</div>
+          <div class="stat-value ok" style="color: var(--sage);">${currency(grandTotal)}</div>
           <div class="stat-label">Total planned spend</div>
         </div>
         <div class="card stat">
-          <div class="stat-value">${trips.length}</div>
+          <div class="stat-value" style="color: var(--brass);">${trips.length}</div>
           <div class="stat-label">Active & planned trips</div>
         </div>
         <div class="card stat">
-          <div class="stat-value ok">${currency(avgDaily)}</div>
+          <div class="stat-value ok" style="color: var(--coral);">${currency(avgDaily)}</div>
           <div class="stat-label">Avg. cost / day</div>
         </div>`;
     }
   }
 
-  // 3. Populate Recommended Destinations
+  // 5. Populate Recommended Destinations from Backend or Fallback
   const recommendedContainer = document.getElementById('recommended-list');
   if (recommendedContainer) {
-    recommendedContainer.innerHTML = recommendedDestinations.map(renderDestCard).join('');
+    let dests = fallbackDestinations;
+    try {
+      if (typeof Api !== 'undefined') {
+        const remoteCities = await Api.getCities();
+        if (remoteCities && remoteCities.length > 0) {
+          dests = remoteCities.slice(0, 6).map(c => ({
+            name: c.name,
+            country: c.country,
+            costIndex: c.cost_index,
+            tag: `${c.country} Exploration`
+          }));
+        }
+      }
+    } catch(e) {}
+    recommendedContainer.innerHTML = dests.map(renderDestCard).join('');
   }
 }
 
