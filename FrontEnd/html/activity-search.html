@@ -63,7 +63,6 @@
         <li><a href="about.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>About</a></li>
         <li><a href="contact.html"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Contact</a></li>
         <li><a href="feedback.html"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Feedback</a></li>
-
       </ul>
     </div>
   </nav>
@@ -80,11 +79,14 @@
   <div class="container">
     <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
       <div>
-        <span class="eyebrow">Explore</span>
-        <h1>Activity &amp; Tour Search</h1>
-        <p>Discover tours, outdoor adventures, food tastings, and cultural landmarks across our destination catalog.</p>
+        <span class="eyebrow" style="color:#E8B979;">Explore &amp; Manage</span>
+        <h1>Activity &amp; Experience Hub</h1>
+        <p>Discover, create, customize, and assign activities across our global destinations directly to your itineraries.</p>
       </div>
-      <a href="create-trip.html" class="btn btn-primary btn-sm">+ Plan New Trip</a>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="openActivityEditor()">+ Add Custom Activity</button>
+        <a href="create-trip.html" class="btn btn-ghost btn-sm" style="color: var(--ink);">+ Plan New Trip</a>
+      </div>
     </div>
   </div>
 </header>
@@ -112,13 +114,15 @@
             <option value="London">London, UK</option>
             <option value="Kyoto">Kyoto, Japan</option>
             <option value="Bangkok">Bangkok, Thailand</option>
+            <option value="Singapore">Singapore</option>
             <option value="Dubai">Dubai, UAE</option>
+            <option value="San Francisco">San Francisco, USA</option>
           </select>
         </div>
 
         <div>
           <select id="sort-select" class="form-control" onchange="filterActivities()">
-            <option value="popular">⭐ Sort by Popularity</option>
+            <option value="popular">⭐ Sort by Popularity / Rating</option>
             <option value="price-asc">💵 Price: Low to High</option>
             <option value="price-desc">💰 Price: High to Low</option>
             <option value="duration">⏱️ Duration</option>
@@ -137,18 +141,21 @@
           <button class="filter-pill" onclick="setCategoryFilter('Leisure', this)">🏖️ Leisure</button>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--ink);">
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--ink);">
           <span>Max Price:</span>
-          <strong id="price-val" style="font-family: var(--font-mono); color: var(--brass);">$200</strong>
-          <input type="range" id="price-range" min="0" max="200" value="200" oninput="updatePriceFilter(this.value)" style="accent-color: var(--brass); width: 100px;">
+          <strong id="price-val" style="font-family: var(--font-mono); color: var(--brass);">$250</strong>
+          <input type="range" id="price-range" min="0" max="250" value="250" oninput="updatePriceFilter(this.value)" style="accent-color: var(--brass); width: 110px;">
         </div>
       </div>
     </div>
 
     <!-- Active Filter Counter -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <span id="results-count" class="muted" style="font-size: 0.9rem;">Showing 29 experiences</span>
-      <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Clear Filters</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <span id="results-count" class="muted" style="font-size: 0.9rem;">Showing experiences</span>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Reset Filters</button>
+        <button class="btn btn-primary btn-sm" onclick="openActivityEditor()">+ Create Activity</button>
+      </div>
     </div>
 
     <!-- Activities Grid -->
@@ -157,22 +164,22 @@
   </section>
 </main>
 
-<!-- Activity Details & Add Modal -->
+<!-- Activity Details Modal -->
 <div id="modal-act-detail" class="modal-overlay" style="display: none; z-index: 9999;">
-  <div class="modal-box" style="max-width: 540px;">
+  <div class="modal-box" style="max-width: 560px;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
       <div>
         <span id="det-cat" class="pill-badge pill-budget" style="margin-bottom: 6px;">Category</span>
         <h2 id="det-title" style="margin: 4px 0 2px; color: var(--ink);">Activity Title</h2>
         <span id="det-location" class="muted" style="font-size: 0.88rem;">Location</span>
       </div>
-      <button class="sidebar-close" onclick="closeDetailModal()" style="font-size: 1.4rem;">✕</button>
+      <button class="sidebar-close" onclick="closeDetailModal()" style="font-size: 1.4rem; cursor:pointer;">✕</button>
     </div>
 
     <div style="background: var(--parchment); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;">
       <div>
         <span class="muted" style="font-size: 0.75rem; display: block;">ESTIMATED COST</span>
-        <strong id="det-cost" style="font-family: var(--font-mono); font-size: 1.1rem; color: var(--sage);">$0</strong>
+        <strong id="det-cost" style="font-family: var(--font-mono); font-size: 1.15rem; color: var(--sage);">$0</strong>
       </div>
       <div>
         <span class="muted" style="font-size: 0.75rem; display: block;">DURATION</span>
@@ -191,36 +198,104 @@
       <ul style="font-size: 0.85rem; color: var(--ink-soft); line-height: 1.6; padding-left: 20px;" id="det-inclusions">
         <li>Licensed local expert guide</li>
         <li>Skip-the-line fast track admission</li>
-        <li>Mobile confirmation ticket</li>
+        <li>Mobile confirmation ticket &amp; instant itinerary sync</li>
       </ul>
     </div>
 
-    <div style="border-top: 1px solid var(--line); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-      <button id="det-fav-btn" type="button" class="btn btn-ghost btn-sm" onclick="toggleWishlistFromModal()">❤️ Save to Wishlist</button>
-      <button type="button" class="btn btn-primary btn-sm" onclick="proceedToAddFromModal()">+ Assign to Trip Itinerary</button>
+    <div style="border-top: 1px solid var(--line); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div style="display: flex; gap: 8px;">
+        <button id="det-fav-btn" type="button" class="btn btn-ghost btn-sm" onclick="toggleWishlistFromModal()">❤️ Save to Wishlist</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="editCurrentDetailActivity()" style="color: var(--brass);">✏️ Edit</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="deleteCurrentDetailActivity()" style="color: var(--rust);">🗑️ Delete</button>
+      </div>
+      <button type="button" class="btn btn-primary btn-sm" onclick="proceedToAddFromModal()">+ Assign to Itinerary</button>
     </div>
+  </div>
+</div>
+
+<!-- Create / Edit Activity Modal -->
+<div id="modal-edit-act" class="modal-overlay" style="display: none; z-index: 10001;">
+  <div class="modal-box" style="max-width: 540px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 id="act-modal-title" style="margin: 0; font-size: 1.35rem;">Add New Activity</h2>
+      <button class="sidebar-close" onclick="closeActivityEditor()" style="font-size: 1.4rem; cursor:pointer;">✕</button>
+    </div>
+
+    <form id="activity-editor-form" onsubmit="saveActivityForm(event)">
+      <input type="hidden" id="form-act-id" value="">
+      
+      <div class="form-group">
+        <label for="form-act-name">Activity Name / Title *</label>
+        <input type="text" id="form-act-name" class="form-control" placeholder="e.g. Louvre Guided Night Tour" required>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="form-act-city">Destination City *</label>
+          <input type="text" id="form-act-city" class="form-control" placeholder="e.g. Paris" required>
+        </div>
+        <div class="form-group">
+          <label for="form-act-country">Country *</label>
+          <input type="text" id="form-act-country" class="form-control" placeholder="e.g. France" required>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="form-group">
+          <label for="form-act-type">Category *</label>
+          <select id="form-act-type" class="form-control">
+            <option value="Sightseeing">Sightseeing</option>
+            <option value="Culture">Culture</option>
+            <option value="Food">Food &amp; Dining</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Leisure">Leisure</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="form-act-cost">Cost ($ USD)</label>
+          <input type="number" id="form-act-cost" class="form-control" min="0" step="1" value="0" required>
+        </div>
+        <div class="form-group">
+          <label for="form-act-duration">Duration</label>
+          <input type="text" id="form-act-duration" class="form-control" placeholder="e.g. 2.5h" value="2h" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="form-act-desc">Description &amp; Highlights</label>
+        <textarea id="form-act-desc" class="form-control" rows="3" placeholder="Brief description of the experience, landmarks visited, meeting point..." required></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--line); padding-top: 16px;">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeActivityEditor()">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm" id="btn-save-activity">Save Activity</button>
+      </div>
+    </form>
   </div>
 </div>
 
 <!-- Add Activity to Trip Select Modal -->
 <div id="modal-add-act" class="modal-overlay" style="display: none; z-index: 10000;">
   <div class="modal-box">
-    <h3 style="margin-bottom: 6px;">Add to Trip Itinerary</h3>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+      <h3 style="margin: 0;">Add to Trip Itinerary</h3>
+      <button class="sidebar-close" onclick="closeActModal()" style="font-size: 1.3rem; cursor:pointer;">✕</button>
+    </div>
     <p class="muted" style="font-size: 0.88rem; margin-bottom: 18px;" id="modal-act-desc">Select which trip you want to assign this activity to:</p>
     
-    <div class="form-group" style="margin-bottom: 14px;">
+    <div class="form-group">
       <label for="modal-act-trip-select">Select Trip</label>
       <select id="modal-act-trip-select" class="form-control" onchange="updateModalStopsOptions()"></select>
     </div>
 
-    <div class="form-group" style="margin-bottom: 18px;" id="modal-stop-group">
+    <div class="form-group" id="modal-stop-group">
       <label for="modal-act-stop-select">Select Destination Stop</label>
       <select id="modal-act-stop-select" class="form-control"></select>
     </div>
 
-    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
       <button type="button" class="btn btn-ghost btn-sm" onclick="closeActModal()">Cancel</button>
-      <button type="button" class="btn btn-primary btn-sm" onclick="confirmAddActToTrip()">Add Activity</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="confirmAddActToTrip()">Confirm Add to Trip</button>
     </div>
   </div>
 </div>
@@ -274,7 +349,7 @@
 <script src="../js/cursor.js"></script>
 <script src="../js/chatbot.js"></script>
 <script>
-const allActivities = [
+const defaultActivitiesSeed = [
   { id: "a1", name: "Eiffel Tower Summit", city: "Paris", country: "France", cost: 35, duration: "3h", type: "Sightseeing", rating: "4.9", desc: "Ascend to the top deck for 360-degree vistas across Paris." },
   { id: "a2", name: "Louvre Museum Guided Tour", city: "Paris", country: "France", cost: 45, duration: "4h", type: "Culture", rating: "4.8", desc: "Skip-the-line access to the Mona Lisa and classical antiquities." },
   { id: "a3", name: "Seine River Dinner Cruise", city: "Paris", country: "France", cost: 75, duration: "2.5h", type: "Food", rating: "4.7", desc: "Four-course French gourmet meal gliding past illuminated monuments." },
@@ -299,8 +374,25 @@ const allActivities = [
   { id: "a22", name: "Desert 4x4 Safari & BBQ", city: "Dubai", country: "United Arab Emirates", cost: 65, duration: "5h", type: "Adventure", rating: "4.9", desc: "Dune bashing, camel riding, sandboarding, and bedouin dinner." }
 ];
 
+let allActivities = [];
 let selectedCategory = 'all';
 let currentSelectedAct = null;
+
+function loadStoredActivities() {
+  const stored = localStorage.getItem('globetrotter_activities');
+  if (stored) {
+    try {
+      allActivities = JSON.parse(stored);
+      return;
+    } catch (e) {}
+  }
+  allActivities = [...defaultActivitiesSeed];
+  saveStoredActivities();
+}
+
+function saveStoredActivities() {
+  localStorage.setItem('globetrotter_activities', JSON.stringify(allActivities));
+}
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -317,14 +409,17 @@ function updatePriceFilter(val) {
 
 function renderActivities(list) {
   const container = document.getElementById('activities-grid');
-  document.getElementById('results-count').innerText = `Showing ${list.length} experiences`;
+  document.getElementById('results-count').innerText = `Showing ${list.length} experience${list.length === 1 ? '' : 's'}`;
 
   if (list.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: var(--card); border-radius: var(--radius-md); border: 1px dashed var(--line);">
-        <p style="font-size: 1.1rem; margin-bottom: 8px;">No matching experiences found.</p>
-        <p class="muted" style="font-size: 0.9rem; margin-bottom: 16px;">Try adjusting your price range, city, or category filters.</p>
-        <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Reset All Filters</button>
+      <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: var(--card); border-radius: var(--radius); border: 1px dashed var(--line);">
+        <p style="font-size: 1.15rem; font-weight: 600; margin-bottom: 8px;">No matching experiences found.</p>
+        <p class="muted" style="font-size: 0.9rem; margin-bottom: 20px;">Try adjusting your price range, city, or category filters, or create a custom one.</p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Reset All Filters</button>
+          <button class="btn btn-primary btn-sm" onclick="openActivityEditor()">+ Add Custom Activity</button>
+        </div>
       </div>
     `;
     return;
@@ -336,28 +431,31 @@ function renderActivities(list) {
   container.innerHTML = list.map(act => {
     const isFav = saved.includes(act.name);
     return `
-    <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease;">
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--line);">
       <div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-          <span class="pill-badge pill-destinations">📍 ${act.city}, ${act.country}</span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+          <span class="pill-badge pill-destinations">📍 ${act.city}, ${act.country || 'Destination'}</span>
           <div style="display: flex; align-items: center; gap: 6px;">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="toggleFav('${act.name}', this)" style="padding: 2px 6px; font-size: 0.9rem;" title="Save to favorites">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="toggleFav('${act.name}', this)" style="padding: 2px 6px; font-size: 0.95rem;" title="Save to favorites">
               ${isFav ? '❤️' : '🤍'}
             </button>
             <span class="pill-badge pill-duration">⏱️ ${act.duration}</span>
           </div>
         </div>
-        <h3 style="font-size: 1.15rem; margin: 8px 0 4px; color: var(--ink); cursor: pointer;" onclick="openDetailModal('${act.id}')">${act.name}</h3>
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <h3 style="font-size: 1.18rem; margin: 10px 0 6px; color: var(--ink); cursor: pointer;" onclick="openDetailModal('${act.id}')">${act.name}</h3>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
           <span class="pill-badge pill-budget">🏷️ ${act.type}</span>
-          <span style="font-size: 0.8rem; color: var(--brass); font-weight: 600;">${act.rating} ★</span>
+          <span style="font-size: 0.82rem; color: var(--brass); font-weight: 600;">${act.rating || '4.9'} ★</span>
         </div>
-        <p class="muted" style="font-size: 0.85rem; line-height: 1.45; margin-top: 6px;">${act.desc}</p>
+        <p class="muted" style="font-size: 0.86rem; line-height: 1.5; margin: 8px 0 0;">${act.desc}</p>
       </div>
-      <div style="border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: var(--sage);">${act.cost > 0 ? '$' + act.cost : 'Free'}</span>
+
+      <div style="border-top: 1px solid var(--line); padding-top: 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; color: var(--sage);">${act.cost > 0 ? '$' + act.cost : 'Free'}</span>
         <div style="display: flex; gap: 6px;">
-          <button class="btn btn-ghost btn-sm" onclick="openDetailModal('${act.id}')">Details</button>
+          <button class="btn btn-ghost btn-sm" onclick="openDetailModal('${act.id}')" title="View details">Details</button>
+          <button class="btn btn-ghost btn-sm" onclick="openActivityEditor('${act.id}')" style="color: var(--brass);" title="Edit activity">✏️</button>
+          <button class="btn btn-ghost btn-sm" onclick="deleteActivity('${act.id}')" style="color: var(--rust);" title="Delete activity">🗑️</button>
           <button class="btn btn-primary btn-sm" onclick="openActModal('${act.name}', '${act.city}')">+ Add</button>
         </div>
       </div>
@@ -366,30 +464,31 @@ function renderActivities(list) {
 }
 
 function filterActivities() {
-  const q = (document.getElementById('activity-search-input').value || '').toLowerCase();
+  const q = (document.getElementById('activity-search-input').value || '').toLowerCase().trim();
   const city = document.getElementById('filter-city-select').value;
   const maxCost = parseInt(document.getElementById('price-range').value, 10);
   const sort = document.getElementById('sort-select').value;
 
   let filtered = allActivities.filter(act => {
-    const matchesQ = act.name.toLowerCase().includes(q) ||
+    const matchesQ = !q || act.name.toLowerCase().includes(q) ||
                      act.city.toLowerCase().includes(q) ||
-                     act.country.toLowerCase().includes(q) ||
-                     act.desc.toLowerCase().includes(q);
+                     (act.country && act.country.toLowerCase().includes(q)) ||
+                     (act.desc && act.desc.toLowerCase().includes(q)) ||
+                     act.type.toLowerCase().includes(q);
     const matchesCat = selectedCategory === 'all' || act.type.toLowerCase() === selectedCategory.toLowerCase();
     const matchesCity = city === 'all' || act.city.toLowerCase() === city.toLowerCase();
-    const matchesPrice = act.cost <= maxCost;
+    const matchesPrice = (act.cost || 0) <= maxCost;
     return matchesQ && matchesCat && matchesCity && matchesPrice;
   });
 
   if (sort === 'price-asc') {
-    filtered.sort((a, b) => a.cost - b.cost);
+    filtered.sort((a, b) => (a.cost || 0) - (b.cost || 0));
   } else if (sort === 'price-desc') {
-    filtered.sort((a, b) => b.cost - a.cost);
+    filtered.sort((a, b) => (b.cost || 0) - (a.cost || 0));
   } else if (sort === 'duration') {
-    filtered.sort((a, b) => parseFloat(a.duration) - parseFloat(b.duration));
+    filtered.sort((a, b) => parseFloat(a.duration || 0) - parseFloat(b.duration || 0));
   } else {
-    filtered.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+    filtered.sort((a, b) => parseFloat(b.rating || 4.5) - parseFloat(a.rating || 4.5));
   }
 
   renderActivities(filtered);
@@ -406,8 +505,8 @@ function resetFilters() {
   document.getElementById('activity-search-input').value = '';
   document.getElementById('filter-city-select').value = 'all';
   document.getElementById('sort-select').value = 'popular';
-  document.getElementById('price-range').value = 200;
-  document.getElementById('price-val').innerText = '$200';
+  document.getElementById('price-range').value = 250;
+  document.getElementById('price-val').innerText = '$250';
   selectedCategory = 'all';
   const pills = document.querySelectorAll('.filter-tags-row .filter-pill');
   pills.forEach((p, idx) => {
@@ -437,13 +536,13 @@ function toggleFav(actName, btn) {
 function openDetailModal(actId) {
   const act = allActivities.find(a => a.id === actId);
   if (!act) return;
-  currentSelectedAct = { name: act.name, city: act.city };
+  currentSelectedAct = { ...act };
   document.getElementById('det-title').innerText = act.name;
   document.getElementById('det-cat').innerText = act.type;
-  document.getElementById('det-location').innerText = `📍 ${act.city}, ${act.country}`;
+  document.getElementById('det-location').innerText = `📍 ${act.city}, ${act.country || 'Destination'}`;
   document.getElementById('det-cost').innerText = act.cost > 0 ? `$${act.cost}` : 'Free';
   document.getElementById('det-duration').innerText = act.duration;
-  document.getElementById('det-rating').innerText = `${act.rating} ★`;
+  document.getElementById('det-rating').innerText = `${act.rating || '4.9'} ★`;
   document.getElementById('det-desc').innerText = act.desc;
 
   const profile = Api.getProfile();
@@ -460,6 +559,21 @@ function closeDetailModal() {
 function toggleWishlistFromModal() {
   if (!currentSelectedAct) return;
   toggleFav(currentSelectedAct.name);
+  const profile = Api.getProfile();
+  const isFav = (profile.savedActivities || []).includes(currentSelectedAct.name);
+  document.getElementById('det-fav-btn').innerHTML = isFav ? '❤️ Saved in Wishlist' : '🤍 Save to Wishlist';
+  filterActivities();
+}
+
+function editCurrentDetailActivity() {
+  if (!currentSelectedAct) return;
+  closeDetailModal();
+  openActivityEditor(currentSelectedAct.id);
+}
+
+function deleteCurrentDetailActivity() {
+  if (!currentSelectedAct) return;
+  deleteActivity(currentSelectedAct.id);
   closeDetailModal();
 }
 
@@ -470,6 +584,102 @@ function proceedToAddFromModal() {
   }
 }
 
+/* ==========================================================================
+   Activity Creator & Editor Manager
+   ========================================================================== */
+function openActivityEditor(actId) {
+  const form = document.getElementById('activity-editor-form');
+  form.reset();
+
+  if (actId) {
+    const act = allActivities.find(a => a.id === actId);
+    if (!act) return;
+    document.getElementById('act-modal-title').innerText = 'Edit Activity';
+    document.getElementById('form-act-id').value = act.id;
+    document.getElementById('form-act-name').value = act.name;
+    document.getElementById('form-act-city').value = act.city;
+    document.getElementById('form-act-country').value = act.country || '';
+    document.getElementById('form-act-type').value = act.type;
+    document.getElementById('form-act-cost').value = act.cost || 0;
+    document.getElementById('form-act-duration').value = act.duration;
+    document.getElementById('form-act-desc').value = act.desc;
+    document.getElementById('btn-save-activity').innerText = 'Update Activity';
+  } else {
+    document.getElementById('act-modal-title').innerText = 'Add Custom Activity';
+    document.getElementById('form-act-id').value = '';
+    document.getElementById('btn-save-activity').innerText = 'Save Activity';
+  }
+
+  document.getElementById('modal-edit-act').style.display = 'flex';
+}
+
+function closeActivityEditor() {
+  document.getElementById('modal-edit-act').style.display = 'none';
+}
+
+function saveActivityForm(e) {
+  e.preventDefault();
+  const id = document.getElementById('form-act-id').value;
+  const name = document.getElementById('form-act-name').value.trim();
+  const city = document.getElementById('form-act-city').value.trim();
+  const country = document.getElementById('form-act-country').value.trim();
+  const type = document.getElementById('form-act-type').value;
+  const cost = parseInt(document.getElementById('form-act-cost').value, 10) || 0;
+  const duration = document.getElementById('form-act-duration').value.trim() || '2h';
+  const desc = document.getElementById('form-act-desc').value.trim();
+
+  if (id) {
+    // Update existing activity
+    const idx = allActivities.findIndex(a => a.id === id);
+    if (idx > -1) {
+      allActivities[idx] = {
+        ...allActivities[idx],
+        name,
+        city,
+        country,
+        type,
+        cost,
+        duration,
+        desc
+      };
+      showToast(`✨ Updated activity "${name}" successfully!`);
+    }
+  } else {
+    // Add new activity
+    const newAct = {
+      id: 'act_' + Date.now(),
+      name,
+      city,
+      country,
+      type,
+      cost,
+      duration,
+      rating: "5.0",
+      desc
+    };
+    allActivities.unshift(newAct);
+    showToast(`🎉 Added new activity "${name}" to catalog!`);
+  }
+
+  saveStoredActivities();
+  closeActivityEditor();
+  filterActivities();
+}
+
+function deleteActivity(actId) {
+  const act = allActivities.find(a => a.id === actId);
+  if (!act) return;
+  if (!confirm(`Are you sure you want to delete "${act.name}"?`)) return;
+
+  allActivities = allActivities.filter(a => a.id !== actId);
+  saveStoredActivities();
+  showToast(`🗑️ Deleted "${act.name}" from catalog.`);
+  filterActivities();
+}
+
+/* ==========================================================================
+   Assign Activity to Trip Itinerary
+   ========================================================================== */
 function openActModal(actName, actCity) {
   currentSelectedAct = { name: actName, city: actCity };
   document.getElementById('modal-act-desc').innerText = `Assign "${actName}" (${actCity}) to a trip itinerary:`;
@@ -479,7 +689,7 @@ function openActModal(actName, actCity) {
   if (trips.length === 0) {
     select.innerHTML = `<option value="new">+ Create a new trip for this activity</option>`;
   } else {
-    select.innerHTML = trips.map(t => `<option value="${t.id}">${t.name} (${t.startDate})</option>`).join('');
+    select.innerHTML = trips.map(t => `<option value="${t.id}">${t.name} (${t.startDate || 'Upcoming'})</option>`).join('');
   }
   updateModalStopsOptions();
   document.getElementById('modal-add-act').style.display = 'flex';
@@ -495,7 +705,7 @@ function updateModalStopsOptions() {
     stopSelect.innerHTML = `<option value="auto">+ Auto-create "${currentSelectedAct.city}" stop</option>`;
     return;
   }
-  stopSelect.innerHTML = trip.stops.map(s => `<option value="${s.id}">${s.city} (${s.startDate})</option>`).join('') +
+  stopSelect.innerHTML = trip.stops.map(s => `<option value="${s.id}">${s.city} (${s.startDate || 'Stop'})</option>`).join('') +
     `<option value="new_stop">+ Add as new ${currentSelectedAct.city} stop</option>`;
 }
 
@@ -517,7 +727,7 @@ function confirmAddActToTrip() {
   const stopChoice = document.getElementById('modal-act-stop-select').value;
   
   let targetStop = trip.stops.find(s => s.id === stopChoice);
-  if (!targetStop) {
+  if (!targetStop && stopChoice !== 'new_stop') {
     targetStop = trip.stops.find(s => s.city.toLowerCase() === currentSelectedAct.city.toLowerCase());
   }
 
@@ -526,8 +736,8 @@ function confirmAddActToTrip() {
       id: 'st_' + Date.now(),
       city: currentSelectedAct.city,
       country: 'Destination',
-      startDate: trip.startDate,
-      endDate: trip.endDate,
+      startDate: trip.startDate || '2026-06-15',
+      endDate: trip.endDate || '2026-06-20',
       activities: []
     };
     trip.stops.push(targetStop);
@@ -545,7 +755,8 @@ function confirmAddActToTrip() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderActivities(allActivities);
+  loadStoredActivities();
+  filterActivities();
 });
 </script>
 </body>
