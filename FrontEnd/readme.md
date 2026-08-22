@@ -1,46 +1,64 @@
-# GlobeTrotter — Frontend
+# 🌐 GlobeTrotter - Frontend Client
 
-## What's in here
-- `home.html`, `about.html`, `contact.html` — public pages (no login needed)
-- `dashboard.html` — protected page, needs a logged-in user
-- `css/styles.css` — shared design system (colors, type, nav, footer, cards, chatbot). Import this on EVERY page, including login/signup.
-- `css/dashboard.css`, `css/home.css` — page-specific styles
-- `js/api.js` — all backend calls go through here. **Change `API_BASE` at the top once you know the real backend URL/port.**
-- `js/nav.js` — logout button + active nav link + fills in user name/avatar
-- `js/chatbot.js` — rule-based chatbot widget, works with zero backend
-- `server/routes-example.js` — the exact API shape the frontend expects, plus a matching MySQL schema, for your backend teammate
+A responsive, multi-page frontend interface for the **GlobeTrotter** travel planner web application.
 
-## Design system (use these everywhere, including login/signup)
-Colors:
-- `--ink: #13293D` — headers, dark surfaces
-- `--ink-2: #1E4B5F` — hover/gradient
-- `--parchment: #F6F1E3` — page background
-- `--card: #FFFDF7` — card surface
-- `--brass: #B98530` — links, accents
-- `--coral: #E1572C` — primary buttons/CTAs
-- `--sage: #6E8F6B` — on-budget/positive
-- `--rust: #B5482A` — over-budget/errors
+---
 
-Fonts: `Fraunces` (headings), `Work Sans` (body), `IBM Plex Mono` (numbers/data — used for prices, trip IDs).
+## ⚙️ Backend Integration
 
-**To match the login/signup page to this system:** link `css/styles.css` on those pages too, and reuse `.btn`, `.btn-primary`, `.card`, and the `.field`/`.field-error` pattern from `contact.html`.
+- **Target API Base**: `http://localhost:4000/api` (Node.js + Express + Sequelize + MySQL)
+- **Authentication**: JWT Bearer token stored in `localStorage` under `token`, attached to every protected request via `Authorization: Bearer <token>`.
+- **API Client Helper**: [`js/api.js`](file:///FrontEnd/js/api.js) centralizes all API interactions.
 
-## Backend contract (give to your DB teammate)
-The frontend expects these endpoints — see `server/routes-example.js` for full implementation + schema:
-- `GET /api/me`
-- `GET /api/trips?limit=&sort=`
-- `GET /api/budget/summary`
-- `GET /api/cities/recommended?limit=`
-- `POST /api/logout`
-- `POST /api/contact`
+---
 
-All use `credentials: "include"` — the backend should set an **httpOnly session cookie** on login (safer than localStorage), not return a token the frontend stores itself.
+## 📑 Pages Breakdown & Support Status
 
-## Still needed (not built yet — cut for time, build if hours remain)
-- `create-trip.html` — form: name, dates, description → `POST /api/trips`
-- `my-trips.html` — full trip list, reuses the `.ticket` component from dashboard
-- `itinerary.html` — itinerary builder/view (linked from trip tickets already)
-- `login.html` / `signup.html` — restyle with `css/styles.css` for visual consistency
+### ✅ Fully Supported Pages (Ready with Working Backend)
 
-## Chatbot
-Currently rule-based (`js/chatbot.js`, `CHATBOT_RULES` array) — works instantly, no backend needed, good enough for a demo. To upgrade to a real AI-backed bot later, add a `POST /api/chatbot` route and swap the `chatbotReply()` function to call it instead.
+| Page | Description | Backend Routes Used |
+| :--- | :--- | :--- |
+| [`login.html`](file:///FrontEnd/login.html) | User Authentication (Sign up & Log in) | `POST /api/auth/signup`, `POST /api/auth/login` |
+| [`home.html`](file:///FrontEnd/home.html) | Public Landing Page & Featured Highlights | `GET /api/cities`, `GET /api/activities` |
+| [`dashboard.html`](file:///FrontEnd/dashboard.html) | User Dashboard with overview & upcoming trips | `GET /api/trips`, local storage user profile |
+| [`my-trips.html`](file:///FrontEnd/my-trips.html) | Lists all user-created trips with stop counts | `GET /api/trips` |
+| [`create-trip.html`](file:///FrontEnd/create-trip.html) | Multi-city trip creation modal & form | `POST /api/trips` |
+| [`itinerary-builder.html`](file:///FrontEnd/itinerary-builder.html) | Add stops and activities to an existing trip | `GET /api/trips/:id`, `POST /api/trips/:id/stops`, `GET /api/cities`, `GET /api/activities` |
+| [`itinerary-view.html`](file:///FrontEnd/itinerary-view.html) | Full detailed view of scheduled stops & activities | `GET /api/trips/:id` |
+| [`shared-itinerary.html`](file:///FrontEnd/shared-itinerary.html) | Public read-only trip viewer for shared links | `GET /api/trips/public/:share_token` |
+| [`trip-budget.html`](file:///FrontEnd/trip-budget.html) | Real-time budget breakdown (stays, transport, activities) | `GET /api/trips/:id/budget` |
+| [`trip-calendar.html`](file:///FrontEnd/trip-calendar.html) | Calendar visualization of scheduled trip legs | `GET /api/trips/:id` |
+| [`city-search.html`](file:///FrontEnd/city-search.html) | Master city catalog browser with search & filter | `GET /api/cities?country=X&search=X` |
+| [`activity-search.html`](file:///FrontEnd/activity-search.html) | Master activity browser with city/category filter | `GET /api/activities?city_id=X&category=X` |
+| [`about.html`](file:///FrontEnd/about.html) | Static about and information page | None (Static) |
+
+---
+
+### ⚠️ Pages Referencing Future / Missing Backend Features
+
+| Page | Description | Missing Backend Route / Feature |
+| :--- | :--- | :--- |
+| [`contact.html`](file:///FrontEnd/contact.html) | Support and contact submission form | `POST /api/contact` (currently mocked in `api.js`) |
+| [`profile.html`](file:///FrontEnd/profile.html) | User profile and settings management | `PUT /api/users/profile`, `PUT /api/users/password` |
+| [`ticket-booking.html`](file:///FrontEnd/ticket-booking.html) | Flight/Train booking simulation | `POST /api/tickets/book`, `GET /api/tickets` |
+| [`admin-dashboard.html`](file:///FrontEnd/admin-dashboard.html) | Platform metrics, user administration | `GET /api/admin/metrics`, `GET /api/admin/users` |
+
+---
+
+## 📁 Directory Structure
+
+```
+FrontEnd/
+├── css/
+│   ├── styles.css        # Main stylesheet & component design tokens
+│   ├── home.css          # Landing page styles
+│   └── dashboard.css     # Dashboard layout & card styling
+├── js/
+│   ├── api.js            # Centralized API fetch wrapper with JWT auth
+│   ├── nav.js            # Responsive navigation & mobile menu handling
+│   ├── dashboard.js      # Dashboard charts and metrics interactions
+│   ├── chatbot.js        # Travel assistant chatbot component
+│   └── cursor.js         # Interactive cursor enhancements
+├── *.html                # Frontend views
+└── readme.md             # Frontend documentation
+```
