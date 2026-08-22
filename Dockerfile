@@ -1,0 +1,2 @@
+FROM odoo:16 
+EXPOSE 4000
